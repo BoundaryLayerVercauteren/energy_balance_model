@@ -1,0 +1,11 @@
+# This file may be used to create an environment:
+dataclasses-json
+matplotlib
+numpy
+python=3.10.6
+scienceplots
+scipy
+sdeint
+seaborn
+PyDSTool
+cmcrameri
