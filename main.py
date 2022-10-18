@@ -36,7 +36,7 @@ if not os.path.exists(param.sol_directory_path):
 save_parameters_in_file(param)
 
 # Process Dome C data and plot it
-process_dome_c_data.main(param)
+#process_dome_c_data.main(param)
 
 # Make bifurcation analysis and run 1D model (with and without randomizations)
 run_1D_model.main(param)

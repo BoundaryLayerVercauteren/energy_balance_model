@@ -1,6 +1,8 @@
 import matplotlib.pyplot as plt
+import matplotlib
 import seaborn as sns
 import numpy as np
+import cmcrameri.cm as cmc
 
 from one_D_model.model import solve_ODE
 
@@ -27,17 +29,26 @@ def make_2D_plot(params, x, y, file_name, xlabel='t [h]', ylabel=r'$\Delta T$ [K
     ax1.set_xlabel(xlabel)
     ax1.set_ylabel(ylabel)
     plt.savefig(params.sol_directory_path + file_name, bbox_inches='tight', dpi=300)
+    # To clear memory
+    plt.cla()  # Clear the current axes.
+    plt.clf()  # Clear the current figure.
+    plt.close('all')  # Closes all the figure windows.
 
 
 def make_2D_multi_line_plot(params, x, y_array, labels, file_name, xlabel='u [m/s]', ylabel=r'$\Delta T_{eq}$ [K]'):
-    fig = plt.figure(figsize=(5, 5))
+    color = matplotlib.cm.get_cmap('cmc.batlow', np.shape(y_array)[1] + 1).colors
+    fig = plt.figure(figsize=(15, 5))
     ax1 = fig.add_subplot(1, 1, 1)
     for idx in range(np.shape(y_array)[1]):
-        ax1.plot(x, y_array[:, idx], label=labels[idx])
+        ax1.plot(x, y_array[:, idx], label=labels[idx], color=color[idx])
     ax1.set_xlabel(xlabel)
     ax1.set_ylabel(ylabel)
     plt.legend()
     plt.savefig(params.sol_directory_path + file_name, bbox_inches='tight', dpi=300)
+    # To clear memory
+    plt.cla()  # Clear the current axes.
+    plt.clf()  # Clear the current figure.
+    plt.close('all')  # Closes all the figure windows.
 
 
 def make_distribution_plot(values, params, file_name, xlabel):
