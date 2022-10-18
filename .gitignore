@@ -131,3 +131,6 @@ dmypy.json
 
 # Data
 *.ascii
+
+# Nikkis Code
+Nikkis_code/
