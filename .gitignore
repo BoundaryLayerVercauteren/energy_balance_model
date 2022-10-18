@@ -134,3 +134,6 @@ dmypy.json
 
 # Nikkis Code
 Nikkis_code/
+
+# Pycharm files
+.idea
