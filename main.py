@@ -10,8 +10,9 @@ import json
 import ast
 
 from DomeC import process_dome_c_data
-from one_D_model.model import run_model as run_1D_model
-from one_D_model.model import parameters
+from one_D_model.utils import plot_output as plot
+from one_D_model.model import run_SDE_model as run_1D_SDE_model
+from one_D_model.model import parameters, solve_ODE, make_bifurcation_analysis
 
 
 def save_parameters_in_file(params):
@@ -26,17 +27,27 @@ def save_parameters_in_file(params):
 
 # Load Parameters
 param = parameters.Parameters()
-
+# -----------------------------------------------------------------------------------------
 # Make directory for output
 param.sol_directory_path = 'output' + '/' + time.strftime("%Y%m%d_%H%M_%S") + '/'
 if not os.path.exists(param.sol_directory_path):
     os.makedirs(param.sol_directory_path)
-
+# -----------------------------------------------------------------------------------------
 # Save parameters
 save_parameters_in_file(param)
-
+# -----------------------------------------------------------------------------------------
 # Process Dome C data and plot it
 #process_dome_c_data.main(param)
-
-# Make bifurcation analysis and run 1D model (with and without randomizations)
-run_1D_model.main(param)
+# -----------------------------------------------------------------------------------------
+# Solve deterministic ODE
+ODE_sol = solve_ODE.solve_deterministic_ODE(param)
+# Plot solution of deterministic model
+plot.make_2D_plot(param, ODE_sol.t.flatten(), ODE_sol.y.flatten(), 'ODE_sol.png')
+# Plot potential
+plot.plot_potentials(param)
+# -----------------------------------------------------------------------------------------
+# Make bifurcation plots
+make_bifurcation_analysis.make_bifurcation_analysis(param)
+# -----------------------------------------------------------------------------------------
+# Run 1D model (with randomizations)
+run_1D_SDE_model.main(param)
