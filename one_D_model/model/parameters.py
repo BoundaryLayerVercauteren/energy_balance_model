@@ -33,7 +33,7 @@ class Parameters:
 
     sigma_delta_T: float = 0.2  # sigma for delta T noise term
     sigma_u: float = 0.11  # sigma for u noise term
-    sigma_Q_i: float = 1.0  # sigma for Q_i noise term
+    sigma_Q_i: float = 0.1  # sigma for Q_i noise term
     sigma_lambda: float = 0.07  # sigma for lambda noise term
     sigma_z0: float = 0.05  # sigma for z0 noise term
     mu_z0: float = 0.001

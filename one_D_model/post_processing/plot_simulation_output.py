@@ -6,7 +6,7 @@ import json
 from one_D_model.utils import plot_output as plot
 
 # Load data
-output_directory = 'output/20221019_1359_49/'
+output_directory = 'output/20221019_1649_59/'
 
 SDE_sol_delta_T = np.load(output_directory + 'SDE_sol_delta_T.npy')
 SDE_u_sol_delta_T = np.load(output_directory + 'SDE_u_sol_delta_T.npy')
