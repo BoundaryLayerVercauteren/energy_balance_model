@@ -53,9 +53,12 @@ def make_2D_multi_line_plot(params, x, y_array, labels, file_name, xlabel='u [m/
 
 def make_distribution_plot(values, params, file_name, xlabel):
     fig = plt.figure(figsize=(5, 5))
-    plot = sns.displot(data=values, color='blue', kde=True, legend=False)
-    plot.set(xlabel=xlabel, ylabel='Density')
-    sns.despine(fig=None, ax=None, top=False, right=False, left=False, bottom=False, offset=None, trim=False)
+    # plot = sns.displot(data=values, color='blue', kde=False, legend=False)
+    # plot.set(xlabel=xlabel, ylabel='Density')
+    # sns.despine(fig=None, ax=None, top=False, right=False, left=False, bottom=False, offset=None, trim=False)
+    plt.hist(values, 100)
+    plt.xlabel(xlabel)
+    plt.ylabel(r'Density of $\Delta T$')
     plt.savefig(params.sol_directory_path + file_name, bbox_inches='tight', dpi=300)
     # To clear memory
     plt.cla()  # Clear the current axes.

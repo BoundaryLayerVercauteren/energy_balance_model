@@ -62,7 +62,7 @@ def solve_SDE_with_stoch_lambda(param):
     return sdeint.itoint(_f, _G, initial_cond, param.t_span)
 
 
-def solve_SDE_with_stoch_z0(param, _):
+def solve_SDE_with_stoch_z0(_, param):
     """Original model by van de Wiel with stochastic roughness length equation"""
     z0_list = []
     # Define SDE

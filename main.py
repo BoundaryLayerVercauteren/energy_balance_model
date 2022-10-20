@@ -37,17 +37,17 @@ if not os.path.exists(param.sol_directory_path):
 save_parameters_in_file(param)
 # -----------------------------------------------------------------------------------------
 # Process Dome C data and plot it
-#process_dome_c_data.main(param)
+process_dome_c_data.main(param)
+#-----------------------------------------------------------------------------------------
+# Solve deterministic ODE
+ODE_sol = solve_ODE.solve_deterministic_ODE(param)
+# Plot solution of deterministic model
+plot.make_2D_plot(param, ODE_sol.t.flatten(), ODE_sol.y.flatten(), 'ODE_sol.png')
+# Plot potential
+plot.plot_potentials(param)
 # -----------------------------------------------------------------------------------------
-# # Solve deterministic ODE
-# ODE_sol = solve_ODE.solve_deterministic_ODE(param)
-# # Plot solution of deterministic model
-# plot.make_2D_plot(param, ODE_sol.t.flatten(), ODE_sol.y.flatten(), 'ODE_sol.png')
-# # Plot potential
-# plot.plot_potentials(param)
-# # -----------------------------------------------------------------------------------------
-# # Make bifurcation plots
-# make_bifurcation_analysis.make_bifurcation_analysis(param)
+# Make bifurcation plots
+make_bifurcation_analysis.make_bifurcation_analysis(param)
 # -----------------------------------------------------------------------------------------
 # Run 1D model (with randomizations)
 run_1D_SDE_model.main(param)
