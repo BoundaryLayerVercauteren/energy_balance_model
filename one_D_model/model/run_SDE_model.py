@@ -31,6 +31,7 @@ def main(params):
             SDE_delta_T_sol.append(res)
 
     np.save(params.sol_directory_path + 'SDE_sol_delta_T.npy', SDE_delta_T_sol)
+    print('solution for SDE with random base function f has been saved')
     # ------------------------------------------------------------
     with multiprocessing.Pool(processes=params.num_proc) as pool:
 
@@ -42,6 +43,7 @@ def main(params):
 
     np.save(params.sol_directory_path + 'SDE_u_sol_delta_T.npy', SDE_u_sol_delta_T)
     np.save(params.sol_directory_path + 'SDE_u_sol_u.npy', SDE_u_sol_u)
+    print('solution for SDE with random u has been saved')
     # ------------------------------------------------------------
     with multiprocessing.Pool(processes=params.num_proc) as pool:
         for res_Qi in pool.imap_unordered(partial(solve_SDEs_wrapper, func_name=solve_SDEs.solve_SDE_with_stoch_Qi, param=params), range(num_simulation)):
@@ -52,6 +54,7 @@ def main(params):
 
     np.save(params.sol_directory_path + 'SDE_Qi_sol_delta_T.npy', SDE_Qi_sol_delta_T)
     np.save(params.sol_directory_path + 'SDE_Qi_sol_Qi.npy', SDE_Qi_sol_Qi)
+    print('solution for SDE with random Qi has been saved')
     # ------------------------------------------------------------
     with multiprocessing.Pool(processes=params.num_proc) as pool:
         for res_lambda in pool.imap_unordered(partial(solve_SDEs_wrapper, func_name=solve_SDEs.solve_SDE_with_stoch_lambda, param=params), range(num_simulation)):
@@ -62,6 +65,7 @@ def main(params):
 
     np.save(params.sol_directory_path + 'SDE_lambda_sol_delta_T.npy', SDE_lambda_sol_delta_T)
     np.save(params.sol_directory_path + 'SDE_lambda_sol_lambda.npy', SDE_lambda_sol_lambda)
+    print('solution for SDE with random lambda has been saved')
     # ------------------------------------------------------------
     with multiprocessing.Pool(processes=params.num_proc) as pool:
         for res_sf in pool.imap_unordered(
@@ -74,6 +78,7 @@ def main(params):
 
     np.save(params.sol_directory_path + 'SDE_stab_func_sol_delta_T.npy', SDE_stab_func_sol_delta_T)
     np.save(params.sol_directory_path + 'SDE_stab_func_sol_sf.npy', SDE_stab_func_sol_sf)
+    print('solution for SDE with random stability function has been saved')
     # ------------------------------------------------------------
     with multiprocessing.Pool(processes=params.num_proc) as pool:
         for res_z0 in pool.imap_unordered(
@@ -94,3 +99,4 @@ def main(params):
     np.save(params.sol_directory_path + 'SDE_z0_sol_delta_T.npy', SDE_z0_sol_delta_T)
     np.save(params.sol_directory_path + 'SDE_z0_sol_z0.npy', SDE_z0_sol_z0)
     np.save(params.sol_directory_path + 'SDE_z0_sol_time.npy', SDE_z0_sol_time)
+    print('solution for SDE with random z0 has been saved')

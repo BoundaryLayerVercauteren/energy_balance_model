@@ -73,6 +73,9 @@ def solve_SDE_with_stoch_z0(_, param):
         c_D = (param.kappa / np.math.log(param.zr / z0)) ** 2
         return (1 / param.cv) * (param.Q_i - param.Lambda * delta_T - param.rho * param.cp * c_D * param.U * delta_T * f_stab)
 
-    result = scipy.integrate.solve_ivp(_define_SDE, [param.t_start, param.t_end], [param.delta_T_0], t_eval=param.t_span, args=(z0_list,))
+    try:
+        result = scipy.integrate.solve_ivp(_define_SDE, [param.t_start, param.t_end], [param.delta_T_0], t_eval=param.t_span, args=(z0_list,))
+        return result.t.flatten(), result.y.flatten(), z0_list
+    except Exception:
+        return np.nan, np.nan, np.nan
 
-    return result.t.flatten(), result.y.flatten(), z0_list
