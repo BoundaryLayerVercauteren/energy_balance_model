@@ -6,24 +6,24 @@ import json
 from one_D_model.utils import plot_output as plot
 
 # Load data
-output_directory = 'output/1000_sim/'
+output_directory = 'output/20221024_0951_59/'
 
 SDE_sol_delta_T = np.load(output_directory + 'SDE_sol_delta_T.npy')
 
 SDE_u_sol_delta_T = np.load(output_directory + 'SDE_u_sol_delta_T.npy')
-SDE_u_sol_u = np.load(output_directory + 'SDE_u_sol_u.npy')
+SDE_u_sol_u = np.load(output_directory + 'SDE_u_sol_param.npy')
 
 SDE_Qi_sol_delta_T = np.load(output_directory + 'SDE_Qi_sol_delta_T.npy')
-SDE_Qi_sol_Qi = np.load(output_directory + 'SDE_Qi_sol_Qi.npy')
+SDE_Qi_sol_Qi = np.load(output_directory + 'SDE_Qi_sol_param.npy')
 
 SDE_lambda_sol_delta_T = np.load(output_directory + 'SDE_lambda_sol_delta_T.npy')
-SDE_lambda_sol_lambda = np.load(output_directory + 'SDE_lambda_sol_lambda.npy')
+SDE_lambda_sol_lambda = np.load(output_directory + 'SDE_lambda_sol_param.npy')
 
 SDE_stab_func_sol_delta_T = np.load(output_directory + 'SDE_stab_func_sol_delta_T.npy')
-SDE_stab_func_sol_sf = np.load(output_directory + 'SDE_stab_func_sol_sf.npy')
+SDE_stab_func_sol_sf = np.load(output_directory + 'SDE_stab_func_sol_param.npy')
 
 SDE_z0_sol_delta_T = np.load(output_directory + 'SDE_z0_sol_delta_T.npy', allow_pickle=True)
-SDE_z0_sol_z0 = np.load(output_directory + 'SDE_z0_sol_z0.npy', allow_pickle=True)
+SDE_z0_sol_z0 = np.load(output_directory + 'SDE_z0_sol_param.npy', allow_pickle=True)
 SDE_z0_sol_time = np.load(output_directory + 'SDE_z0_sol_time.npy', allow_pickle=True)
 
 
@@ -50,18 +50,18 @@ params.sol_directory_path = output_directory
 params.t_span_h = np.linspace(params.t_start, params.t_end_h, params.num_steps)
 
 # Make distribution plots
-# plot.make_distribution_plot(np.array(SDE_sol_delta_T).flatten(), params, 'SDE_sol_delta_T_distribution.png',
-#                             r'$\Delta T$ [K]')
-# plot.make_distribution_plot(SDE_u_sol_delta_T.flatten(), params, 'SDE_u_sol_delta_T_distribution.png',
-#                             r'$\Delta T$ [K]')
-# plot.make_distribution_plot(SDE_Qi_sol_delta_T.flatten(), params, 'SDE_Qi_sol_delta_T_distribution.png',
-#                             r'$\Delta T$ [K]')
-# plot.make_distribution_plot(SDE_lambda_sol_delta_T.flatten(), params, 'SDE_lambda_sol_delta_T_distribution.png',
-#                             r'$\Delta T$ [K]')
-# plot.make_distribution_plot(SDE_stab_func_sol_delta_T.flatten(), params, 'SDE_stab_func_sol_delta_T_distribution.png',
-#                             r'$\Delta T$ [K]')
-# plot.make_distribution_plot(SDE_z0_sol_delta_T.flatten(), params, 'SDE_z0_sol_delta_T_distribution.png',
-#                             r'$\Delta T$ [K]')
+plot.make_distribution_plot(np.array(SDE_sol_delta_T).flatten(), params, 'SDE_sol_delta_T_distribution.png',
+                            r'$\Delta T$ [K]')
+plot.make_distribution_plot(SDE_u_sol_delta_T.flatten(), params, 'SDE_u_sol_delta_T_distribution.png',
+                            r'$\Delta T$ [K]')
+plot.make_distribution_plot(SDE_Qi_sol_delta_T.flatten(), params, 'SDE_Qi_sol_delta_T_distribution.png',
+                            r'$\Delta T$ [K]')
+plot.make_distribution_plot(SDE_lambda_sol_delta_T.flatten(), params, 'SDE_lambda_sol_delta_T_distribution.png',
+                            r'$\Delta T$ [K]')
+plot.make_distribution_plot(SDE_stab_func_sol_delta_T.flatten(), params, 'SDE_stab_func_sol_delta_T_distribution.png',
+                            r'$\Delta T$ [K]')
+plot.make_distribution_plot(SDE_z0_sol_delta_T.flatten(), params, 'SDE_z0_sol_delta_T_distribution.png',
+                            r'$\Delta T$ [K]')
 
 # Plot ten time series
 if params.num_simulation > 10:

@@ -41,4 +41,4 @@ class Parameters:
     relax: float = 0.005  # coefficient of relaxation to equilibrium
 
     num_simulation: int = 1000  # number of runs for Monte Carlo simulation
-    num_proc: int = 5
+    num_proc: int = 100
