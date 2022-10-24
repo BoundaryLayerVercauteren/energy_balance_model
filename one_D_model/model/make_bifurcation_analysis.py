@@ -37,18 +37,18 @@ def make_bifurcation_analysis(param):
     DSargs.tdomain = [0, 10]
 
     # -----------------------------------------------------------------------
-    # # Plot solution trajectories for different initial conditions
-    # ode = dst.Generator.Vode_ODEsystem(DSargs)
-    # init_cond = np.linspace(0, 30, 30)
-    # fig = plt.figure(figsize=(5, 5))
-    # for i, x0 in enumerate(init_cond):
-    #     ode.set(ics={'x': x0})
-    #     tmp = ode.compute('pol%3i' % i).sample()
-    #     plt.plot(tmp['t'], tmp['x'])
-    # plt.xlabel('$t$ [s]')
-    # plt.ylabel(r'$\Delta T$ [K]')
-    # plt.title(ode.name + ' multi ICs')
-    # plt.savefig(param.sol_directory_path + 'sol_trajectories.png', bbox_inches='tight', dpi=300)
+    # Plot solution trajectories for different initial conditions
+    ode = dst.Generator.Vode_ODEsystem(DSargs)
+    init_cond = np.linspace(0, 30, 30)
+    fig = plt.figure(figsize=(5, 5))
+    for i, x0 in enumerate(init_cond):
+        ode.set(ics={'x': x0})
+        tmp = ode.compute('pol%3i' % i).sample()
+        plt.plot(tmp['t'], tmp['x'])
+    plt.xlabel('$t$ [s]')
+    plt.ylabel(r'$\Delta T$ [K]')
+    plt.title(ode.name + ' multi ICs')
+    plt.savefig(param.sol_directory_path + 'sol_trajectories.png', bbox_inches='tight', dpi=300)
 
     # -----------------------------------------------------------------------
     # Plot bifurcation diagram
@@ -87,6 +87,7 @@ def make_bifurcation_diagram(DSargs, val_list, val_name, label, ax, title):
         ax.plot(PC['EQ1'].sol['U'], PC['EQ1'].sol['x'], label=label + str(val), color=color[idx], marker=markers[idx], markevery=5)
 
         # # Get information about the bifurcation points LP1 and LP2:
+        # print(str(val_name) + '=' + str(val))
         # print(PC['EQ1'].getSpecialPoint('LP1'))
         # print(PC['EQ1'].getSpecialPoint('LP2'))
 

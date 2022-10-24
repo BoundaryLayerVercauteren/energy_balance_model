@@ -64,17 +64,21 @@ def solve_SDE_with_stoch_lambda(param):
 
 def solve_SDE_with_stoch_z0(_, param):
     """Original model by van de Wiel with stochastic roughness length equation"""
+
     z0_list = []
+    def _z0(t):
+        z_0 = scipy.stats.lognorm.rvs(s=param.sigma_z0, loc=param.mu_z0, scale=param.sigma_z0)
+        z0_list.append([t,z_0])
+        return z_0
+
     # Define SDE
-    def _define_SDE(t, delta_T, store_z0):
-        z0 = scipy.stats.lognorm.rvs(s=param.sigma_z0, loc=param.mu_z0, scale=param.sigma_z0)
-        store_z0.append({'time': t, 'z0': z0})
+    def _define_SDE(t, delta_T):
         f_stab = solve_ODE.calculate_stability_function(param, delta_T, param.U)
-        c_D = (param.kappa / np.math.log(param.zr / z0)) ** 2
+        c_D = (param.kappa / np.math.log(param.zr / _z0(t))) ** 2
         return (1 / param.cv) * (param.Q_i - param.Lambda * delta_T - param.rho * param.cp * c_D * param.U * delta_T * f_stab)
 
     try:
-        result = scipy.integrate.solve_ivp(_define_SDE, [param.t_start, param.t_end], [param.delta_T_0], t_eval=param.t_span, args=(z0_list,))
+        result = scipy.integrate.solve_ivp(_define_SDE, [param.t_start, param.t_end], [param.delta_T_0], t_eval=param.t_span)
         return result.t.flatten(), result.y.flatten(), z0_list
     except Exception:
         return np.nan, np.nan, np.nan

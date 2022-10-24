@@ -8,7 +8,7 @@ def command_line_parser():
     # Parser for command line options
     parser = argparse.ArgumentParser(description="Run the 1D ABL model.")
     # Add arguments
-    parser.add_argument("-pl", "--plot", help="Make plots automatically.", action="store_true", default=False)
+    parser.add_argument("-pl", "--plot", help="Make potential, bifurcation, ... plots.", action="store_true", default=False)
     parser.add_argument('-V', '--version', action='version', version=f'ABL 1D model version: {__version__}')
     parser.add_argument('-f', '--function', help='Randomize the model function itself.', action="store_true",
                         default=False)
@@ -47,4 +47,4 @@ def read_command_line_input():
         z0 = args.z0
         u = args.u
 
-    return function, stab_function, Qi, Lambda, z0, u
+    return function, stab_function, Qi, Lambda, z0, u, args.plot

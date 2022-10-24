@@ -26,7 +26,7 @@ def save_parameters_in_file(params):
 
 
 # Read command line input
-function, stab_function, Qi, Lambda, z0, u = parse_command_line_input.read_command_line_input()
+function, stab_function, Qi, Lambda, z0, u, make_plot = parse_command_line_input.read_command_line_input()
 # -----------------------------------------------------------------------------------------
 # Load Parameters
 param = parameters.Parameters()
@@ -40,18 +40,19 @@ if not os.path.exists(param.sol_directory_path):
 # Save parameters
 save_parameters_in_file(param)
 # -----------------------------------------------------------------------------------------
-# # Process Dome C data and plot it
-# process_dome_c_data.main(param)
-# #-----------------------------------------------------------------------------------------
-# # Solve deterministic ODE
-# ODE_sol = solve_ODE.solve_deterministic_ODE(param)
-# # Plot solution of deterministic model
-# plot.make_2D_plot(param, ODE_sol.t.flatten(), ODE_sol.y.flatten(), 'ODE_sol.png')
-# # Plot potential
-# plot.plot_potentials(param)
-# # -----------------------------------------------------------------------------------------
-# # Make bifurcation plots
-# make_bifurcation_analysis.make_bifurcation_analysis(param)
+if make_plot:
+    # Process Dome C data and plot it
+    process_dome_c_data.main(param)
+    # -------------------------------------------------------------------------------------
+    # Solve deterministic ODE
+    ODE_sol = solve_ODE.solve_deterministic_ODE(param)
+    # Plot solution of deterministic model
+    plot.make_2D_plot(param, ODE_sol.t.flatten(), ODE_sol.y.flatten(), 'ODE_sol.png')
+    # Plot potential
+    plot.plot_potentials(param)
+    # -------------------------------------------------------------------------------------
+    # Make bifurcation plots
+    make_bifurcation_analysis.make_bifurcation_analysis(param)
 # -----------------------------------------------------------------------------------------
 # Run 1D model (with randomizations)
 if function:

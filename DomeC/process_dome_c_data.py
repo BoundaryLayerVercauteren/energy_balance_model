@@ -1,5 +1,5 @@
 import pandas as pd
-
+import numpy as np
 import one_D_model.utils.plot_output as plot
 
 
@@ -25,8 +25,10 @@ def convert_to_data_format(values):
 
 def select_time_period(values, period):
     # select only data for given month interval
-    #return values.loc[values['Local Time (UTC+8h)'].dt.month.between(period[0], period[1]), values.columns]
-    return values[(values['Local Time (UTC+8h)'] >= '2017-07-01 00:00:00') & (values['Local Time (UTC+8h)'] <= '2017-07-15 23:50:00')]
+    if len(period) == 2:
+        return values.loc[values['Local Time (UTC+8h)'].dt.month.between(period[0], period[1]), values.columns]
+    else:
+        return values[(values['Local Time (UTC+8h)'] >= '2017-07-01 00:00:00') & (values['Local Time (UTC+8h)'] <= '2017-07-15 23:50:00')]
 
 
 def calculate_rad_force(values):
@@ -58,16 +60,18 @@ def prepare_dome_c_data():
     # calculate values for temperature inversion
     data = calculate_temp_inv(data)
     # select subset where the forcing is less than a given value and from a specific time period
-    #data.loc[data['radForce'] >= 80, data.columns] = np.nan
+    data.loc[data['radForce'] >= 80, data.columns] = np.nan
     sub_data = data.copy()
-    period = [8, 9]
-    sub_data = select_time_period(sub_data, period)
+    sub_data_day = select_time_period(sub_data, 'none')
+    sub_data_season = select_time_period(sub_data, [6,9])
 
-    return sub_data.copy()
+    return sub_data_day, sub_data_season
 
 
 def main(params):
     # Prepare data
-    data = prepare_dome_c_data()
+    data_day, data_season = prepare_dome_c_data()
     # Plot temperature inversion over time
-    plot.make_2D_plot(params, data['Local Time (UTC+8h)'], data['tempInv [K]'], 'dome_c.png', xlabel='t [d]', ylabel=r'$\Delta T$ [K]')
+    plot.make_2D_plot(params, data_day['Local Time (UTC+8h)'], data_day['tempInv [K]'], 'dome_c_day.png', xlabel='t [d]', ylabel=r'$\Delta T$ [K]')
+    # Plot distribution for whole season
+    plot.make_distribution_plot(data_season['tempInv [K]'], params, 'dome_c_season_distribution.png', r'$\Delta T$ [K]')

@@ -3,6 +3,7 @@ import matplotlib
 import seaborn as sns
 import numpy as np
 import cmcrameri.cm as cmc
+import dataclasses
 
 from one_D_model.model import solve_ODE
 
@@ -22,10 +23,12 @@ plt.rc('legend', fontsize=SMALL_SIZE)  # legend fontsize
 plt.rc('figure', titlesize=BIGGER_SIZE)  # fontsize of the figure title
 
 
-def make_2D_plot(params, x, y, file_name, xlabel='t [h]', ylabel=r'$\Delta T$ [K]'):
-    fig = plt.figure(figsize=(10, 5))
+def make_2D_plot(params, x, y, file_name, xlabel='t [h]', ylabel=r'$\Delta T$ [K]', ylim=(0,40)):
+    color = matplotlib.cm.get_cmap('cmc.batlow', 1).colors
+    fig = plt.figure(figsize=(15, 5))
     ax1 = fig.add_subplot(1, 1, 1)
-    ax1.plot(x, y, color='black')
+    ax1.plot(x, y, color=color)
+    ax1.set_ylim(ylim)
     ax1.set_xlabel(xlabel)
     ax1.set_ylabel(ylabel)
     plt.savefig(params.sol_directory_path + file_name, bbox_inches='tight', dpi=300)
@@ -35,12 +38,13 @@ def make_2D_plot(params, x, y, file_name, xlabel='t [h]', ylabel=r'$\Delta T$ [K
     plt.close('all')  # Closes all the figure windows.
 
 
-def make_2D_multi_line_plot(params, x, y_array, labels, file_name, xlabel='u [m/s]', ylabel=r'$\Delta T_{eq}$ [K]'):
+def make_2D_multi_line_plot(params, x, y_array, labels, file_name, xlabel='u [m/s]', ylabel=r'$\Delta T_{eq}$ [K]', ylim=(0,30)):
     color = matplotlib.cm.get_cmap('cmc.batlow', np.shape(y_array)[1] + 1).colors
     fig = plt.figure(figsize=(15, 5))
     ax1 = fig.add_subplot(1, 1, 1)
     for idx in range(np.shape(y_array)[1]):
         ax1.plot(x, y_array[:, idx], label=labels[idx], color=color[idx])
+    ax1.set_ylim(ylim)
     ax1.set_xlabel(xlabel)
     ax1.set_ylabel(ylabel)
     plt.legend()
@@ -53,9 +57,6 @@ def make_2D_multi_line_plot(params, x, y_array, labels, file_name, xlabel='u [m/
 
 def make_distribution_plot(values, params, file_name, xlabel):
     fig = plt.figure(figsize=(5, 5))
-    # plot = sns.displot(data=values, color='blue', kde=False, legend=False)
-    # plot.set(xlabel=xlabel, ylabel='Density')
-    # sns.despine(fig=None, ax=None, top=False, right=False, left=False, bottom=False, offset=None, trim=False)
     plt.hist(values, 100)
     plt.xlabel(xlabel)
     plt.ylabel(r'Density of $\Delta T$')
@@ -70,15 +71,18 @@ def plot_potentials(param_class):
     delta_T_range = np.arange(0, 30, 0.5)
     u_list = [5.6]
 
+    # copy dataclass to prevent overwriting original
+    param_copy = dataclasses.replace(param_class)
+
     fig = plt.figure(figsize=(5, 5))
     ax1 = fig.add_subplot(1, 1, 1)
     for u_elem in u_list:
-        param_class.stab_func_type = 'short_tail'
-        potential_st = solve_ODE.calculate_potential(delta_T_range, u_elem, param_class)
+        param_copy.stab_func_type = 'short_tail'
+        potential_st = solve_ODE.calculate_potential(delta_T_range, u_elem, param_copy)
         ax1.plot(delta_T_range, - potential_st, label='short tail')
 
-        param_class.stab_func_type = 'long_tail'
-        potential_lt = solve_ODE.calculate_potential(delta_T_range, u_elem, param_class)
+        param_copy.stab_func_type = 'long_tail'
+        potential_lt = solve_ODE.calculate_potential(delta_T_range, u_elem, param_copy)
         ax1.plot(delta_T_range, - potential_lt, label='long tail')
 
     ax1.set_xlabel('$\Delta T$ [K]')
