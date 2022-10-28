@@ -6,17 +6,17 @@ from one_D_model.model import solve_ODE
 # First define the scaling functions that scale the SDE parameter values with Ri
 def kappa(x):
     # Coefficients of the Kappa function
-    aK = 9.32123
-    bK = 0.908809
-    cK = 0.0538121
-    dK = 8.32201
+    aK = 9.3212
+    bK = 0.9088
+    cK = 0.0738
+    dK = 8.3220
     Kappa = aK * np.tanh(bK * np.log10(x) - cK) + dK
     return Kappa
 
 
 def upsilon(x):
     # Coefficients of the Upsilon function
-    aU = 0.429429
+    aU = 0.4294
     bU = 0.1749
     Upsilon = 10 ** (aU * np.log10(x) + bU)
     return Upsilon
@@ -24,11 +24,11 @@ def upsilon(x):
 
 def sigma(x):
     # Coefficients of the Sigma function
-    aS = 0.806905
-    bS = 0.60448
-    cS = 0.836781
-    dS = -0.1
-    Sigma = 10 ** (aS * np.tanh(bS * np.log10(x) + cS) + dS)
+    aS = 0.8069
+    bS = 0.6044
+    cS = 0.8368
+    dS = 0.0
+    Sigma = 10 ** (aS * np.tanh(bS * np.log10(x) - cS) + dS)
     return Sigma
 
 

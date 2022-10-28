@@ -50,16 +50,16 @@ if make_plot:
     # # Plot solution of deterministic model
     # plot.make_2D_plot(param, ODE_sol.t.flatten(), ODE_sol.y.flatten(), 'ODE_sol.png')
     # Plot stability functions
-    #compare_stability_functions.make_comparison(param)
+    compare_stability_functions.make_comparison(param)
     # -------------------------------------------------------------------------------------
     # Make bifurcation plots
     # copy dataclass to prevent overwriting original
-    param_copy = dataclasses.replace(param)
-    param_copy.sol_directory_path = param.sol_directory_path
-    param_copy.stab_func_type = 'short_tail'
-    make_bifurcation_analysis.make_bifurcation_analysis(param_copy)
-    param_copy.stab_func_type = 'long_tail'
-    make_bifurcation_analysis.make_bifurcation_analysis(param_copy)
+    # param_copy = dataclasses.replace(param)
+    # param_copy.sol_directory_path = param.sol_directory_path
+    # param_copy.stab_func_type = 'short_tail'
+    # make_bifurcation_analysis.make_bifurcation_analysis(param_copy)
+    # param_copy.stab_func_type = 'long_tail'
+    # make_bifurcation_analysis.make_bifurcation_analysis(param_copy)
     # Plot potential
     #plot.plot_potentials(param)
 # -----------------------------------------------------------------------------------------

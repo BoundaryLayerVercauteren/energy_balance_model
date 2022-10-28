@@ -56,14 +56,14 @@ def solve_SDE_stoch_stab_function(Ri_span):
 
 
 def make_comparison(params):
-    richardson_num = np.linspace(0, 0.5, 100)  # , 10**(-3))
+    richardson_num = np.linspace(0.001, 0.5, 100)
 
     vec_vandewiel_short_tail_stab_func = np.vectorize(define_vandewiel_short_tail_stab_function)
     vec_vandewiel_long_tail_stab_func = np.vectorize(define_vandewiel_long_tail_stab_function)
     #vec_vandewiel_cutoff_stab_func = np.vectorize(define_vandewiel_cutoff_stab_function)
 
-    stoch_stab_function_val = 0.5/solve_SDE_stoch_stab_function(richardson_num)
-
+    stoch_stab_function_val = 1/solve_SDE_stoch_stab_function(richardson_num)
+    print(stoch_stab_function_val)
     # Create plot
     color = matplotlib.cm.get_cmap('cmc.batlow', 3).colors
     markers = ['v', '*', '^', 's', 'p', '.']
@@ -77,8 +77,8 @@ def make_comparison(params):
              color=color[1], marker=markers[1], markevery=10)
     # ax1.plot(richardson_num, vec_vandewiel_cutoff_stab_func(richardson_num), label='cutoff',
     #          color=color[2], marker=markers[2], markevery=100)
-    # ax1.plot(richardson_num, stoch_stab_function_val, label='stochastic',
-    #          color=color[2], marker=markers[3], markevery=100)
+    ax1.plot(richardson_num, stoch_stab_function_val, label='stochastic',
+             color=color[2], marker=markers[3], markevery=100)
 
     ax1.set_xlabel('Ri')
     ax1.set_ylabel(r'$f$')
