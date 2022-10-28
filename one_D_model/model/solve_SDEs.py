@@ -24,7 +24,7 @@ def solve_SDE_with_stoch_u(param):
 
     # Define functions for 2D SDE
     def _f(X, t):
-        return np.array([solve_ODE.define_deterministic_ODE(t, X[0], X[1], param.Lambda, param.Q_i, param.z0, param), -param.relax * (X[1] - param.U)])
+        return np.array([solve_ODE.define_deterministic_ODE(t, X[0], X[1], param.Lambda, param.Q_i, param.z0, param), param.relax_u * (X[1] - param.mu_u)])
 
     def _G(X, t):
         return np.diag([0.0, define_noise_term(X[0], t, param.sigma_u)])
@@ -39,7 +39,7 @@ def solve_SDE_with_stoch_Qi(param):
 
     # Define functions for 2D SDE
     def _f(X, t):
-        return np.array([solve_ODE.define_deterministic_ODE(t, X[0], param.U, param.Lambda, X[1], param.z0, param), -param.relax * (X[1] - param.Q_i)])
+        return np.array([solve_ODE.define_deterministic_ODE(t, X[0], param.U, param.Lambda, X[1], param.z0, param), param.relax * (X[1] - param.Q_i)])
 
     def _G(X, t):
         return np.diag([0.0, define_noise_term(X[0], t, param.sigma_Q_i)])
@@ -54,7 +54,7 @@ def solve_SDE_with_stoch_lambda(param):
 
     # Define functions for 2D SDE
     def _f(X, t):
-        return np.array([solve_ODE.define_deterministic_ODE(t, X[0], param.U, X[1], param.Q_i, param.z0, param), -param.relax * (X[1] - param.Lambda)])
+        return np.array([solve_ODE.define_deterministic_ODE(t, X[0], param.U, X[1], param.Q_i, param.z0, param), param.relax * (X[1] - param.Lambda)])
 
     def _G(X, t):
         return np.diag([0.0, define_noise_term(X[0], t, param.sigma_lambda)])

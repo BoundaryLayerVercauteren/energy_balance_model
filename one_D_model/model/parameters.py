@@ -32,13 +32,15 @@ class Parameters:
     delta_T_0: float = 25  # initial condition for delta T
 
     sigma_delta_T: float = 0.3  # sigma for delta T noise term
-    sigma_u: float = 0.1  # sigma for u noise term
+    sigma_u: float = 0.66  # sigma for u noise term
     sigma_Q_i: float = 0.7  # sigma for Q_i noise term
     sigma_lambda: float = 0.1  # sigma for lambda noise term
     sigma_z0: float = 0.1  # sigma for z0 noise term
     mu_z0: float = 0.001  # mu for z0 noise term
 
-    relax: float = 0.005  # coefficient of relaxation to equilibrium
+    relax: float = -0.005  # coefficient of relaxation to equilibrium
+    relax_u: float = -0.12
+    mu_u: float = 5.61
 
     num_simulation: int = 2  # number of runs for Monte Carlo simulation
     num_proc: int = 5  # number of processes to be used in parallelization

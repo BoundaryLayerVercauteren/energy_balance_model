@@ -8,11 +8,12 @@ import os
 import time
 import json
 import ast
+import dataclasses
 
 from DomeC import process_dome_c_data
 from one_D_model.utils import plot_output as plot, parse_command_line_input
 from one_D_model.model import run_SDE_model as run_1D_SDE_model
-from one_D_model.model import parameters, solve_ODE, make_bifurcation_analysis, solve_SDEs, solve_SDE_stoch_stab_function
+from one_D_model.model import parameters, solve_ODE, make_bifurcation_analysis, solve_SDEs, solve_SDE_stoch_stab_function, compare_stability_functions
 
 
 def save_parameters_in_file(params):
@@ -42,17 +43,25 @@ save_parameters_in_file(param)
 # -----------------------------------------------------------------------------------------
 if make_plot:
     # Process Dome C data and plot it
-    process_dome_c_data.main(param)
-    # -------------------------------------------------------------------------------------
-    # Solve deterministic ODE
-    ODE_sol = solve_ODE.solve_deterministic_ODE(param)
-    # Plot solution of deterministic model
-    plot.make_2D_plot(param, ODE_sol.t.flatten(), ODE_sol.y.flatten(), 'ODE_sol.png')
-    # Plot potential
-    plot.plot_potentials(param)
+    # process_dome_c_data.main(param)
+    # # -------------------------------------------------------------------------------------
+    # # Solve deterministic ODE
+    # ODE_sol = solve_ODE.solve_deterministic_ODE(param)
+    # # Plot solution of deterministic model
+    # plot.make_2D_plot(param, ODE_sol.t.flatten(), ODE_sol.y.flatten(), 'ODE_sol.png')
+    # Plot stability functions
+    #compare_stability_functions.make_comparison(param)
     # -------------------------------------------------------------------------------------
     # Make bifurcation plots
-    make_bifurcation_analysis.make_bifurcation_analysis(param)
+    # copy dataclass to prevent overwriting original
+    param_copy = dataclasses.replace(param)
+    param_copy.sol_directory_path = param.sol_directory_path
+    param_copy.stab_func_type = 'short_tail'
+    make_bifurcation_analysis.make_bifurcation_analysis(param_copy)
+    param_copy.stab_func_type = 'long_tail'
+    make_bifurcation_analysis.make_bifurcation_analysis(param_copy)
+    # Plot potential
+    #plot.plot_potentials(param)
 # -----------------------------------------------------------------------------------------
 # Run 1D model (with randomizations)
 if function:
