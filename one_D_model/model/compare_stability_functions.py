@@ -45,27 +45,32 @@ def define_SDE_stoch_stab_function(phi_stoch, Ri):
 def solve_SDE_stoch_stab_function(Ri_span):
     phi_0 = 1 / define_vandewiel_short_tail_stab_function(Ri_span[0])
 
-    # Define functions for SDE
-    def _f(X, t):
-        return define_SDE_stoch_stab_function(X, t)
+    t_span = np.linspace(0.0, 1.0, 2)
 
-    def _G(X, t):
-        return (1 / np.sqrt(3600)) * (stoch_stab_function.sigma(t) * X)
+    solution = np.zeros((len(Ri_span),1))
 
-    return sdeint.itoint(_f, _G, phi_0, Ri_span)
+    for idx, Ri in enumerate(Ri_span):
+        # Define functions for SDE
+        _f = lambda phi, t: define_SDE_stoch_stab_function(phi, Ri)
+        _G = lambda phi, t: (1 / np.sqrt(3600)) * (stoch_stab_function.sigma(Ri) * phi)
+        print(idx)
+        print(sdeint.itoint(_f, _G, phi_0, t_span).flatten())
+        solution[idx,0] = sdeint.itoint(_f, _G, phi_0, t_span)[1]
+
+    return solution
 
 
 def make_comparison(params):
-    richardson_num = np.linspace(0.001, 0.5, 100)
+    richardson_num = np.linspace(0.001, 2, 100)
 
     vec_vandewiel_short_tail_stab_func = np.vectorize(define_vandewiel_short_tail_stab_function)
     vec_vandewiel_long_tail_stab_func = np.vectorize(define_vandewiel_long_tail_stab_function)
     #vec_vandewiel_cutoff_stab_func = np.vectorize(define_vandewiel_cutoff_stab_function)
 
-    stoch_stab_function_val = 1/solve_SDE_stoch_stab_function(richardson_num)
-    print(stoch_stab_function_val)
+    #stoch_stab_function_val = 1/solve_SDE_stoch_stab_function(richardson_num)
+
     # Create plot
-    color = matplotlib.cm.get_cmap('cmc.batlow', 3).colors
+    color = matplotlib.cm.get_cmap('cmc.batlow', 6).colors
     markers = ['v', '*', '^', 's', 'p', '.']
 
     fig = plt.figure(figsize=(5, 5))
@@ -77,8 +82,11 @@ def make_comparison(params):
              color=color[1], marker=markers[1], markevery=10)
     # ax1.plot(richardson_num, vec_vandewiel_cutoff_stab_func(richardson_num), label='cutoff',
     #          color=color[2], marker=markers[2], markevery=100)
-    ax1.plot(richardson_num, stoch_stab_function_val, label='stochastic',
-             color=color[2], marker=markers[3], markevery=100)
+    ax1.plot(richardson_num, 1/solve_SDE_stoch_stab_function(richardson_num), label='1/stochastic', color=color[2], marker=markers[2], markevery=100)
+    ax1.plot(richardson_num, 0.5*1/solve_SDE_stoch_stab_function(richardson_num), label='0.5*1/stochastic', color=color[3], marker=markers[3],
+             markevery=100)
+    ax1.plot(richardson_num, 2*1/solve_SDE_stoch_stab_function(richardson_num), label='2*1/stochastic', color=color[4], marker=markers[4],
+             markevery=100)
 
     ax1.set_xlabel('Ri')
     ax1.set_ylabel(r'$f$')

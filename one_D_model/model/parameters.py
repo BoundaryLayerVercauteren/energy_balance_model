@@ -37,10 +37,11 @@ class Parameters:
     sigma_lambda: float = 0.05  # sigma for lambda noise term
     sigma_z0: float = 0.1  # sigma for z0 noise term
     mu_z0: float = 0.001  # mu for z0 noise term
+    sigma_s: float = -0.1
 
     relax: float = -0.005  # coefficient of relaxation to equilibrium
     relax_u: float = -0.005
     mu_u: float = 5.6
 
-    num_simulation: int = 2  # number of runs for Monte Carlo simulation
-    num_proc: int = 5  # number of processes to be used in parallelization
+    num_simulation: int = 1000  # number of runs for Monte Carlo simulation
+    num_proc: int = 10  # number of processes to be used in parallelization

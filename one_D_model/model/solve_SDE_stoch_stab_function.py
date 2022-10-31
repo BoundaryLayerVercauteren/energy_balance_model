@@ -22,12 +22,12 @@ def upsilon(x):
     return Upsilon
 
 
-def sigma(x):
+def sigma(x, sigma_s):
     # Coefficients of the Sigma function
     aS = 0.8069
     bS = 0.6044
     cS = 0.8368
-    dS = 0.0
+    dS = sigma_s
     Sigma = 10 ** (aS * np.tanh(bS * np.log10(x) - cS) + dS)
     return Sigma
 
@@ -56,6 +56,6 @@ def solve_SDE_with_stoch_stab_function(param):
 
     def _G(X, t):
         Ri = solve_ODE.calculate_richardson_number(param, param.delta_T_0, param.U)
-        return np.diag([0.0, (1 / np.sqrt(3600)) * (sigma(Ri) * X[1])])
+        return np.diag([0.0, (1 / np.sqrt(3600)) * (sigma(Ri, param.sigma_s) * X[1])])
 
     return sdeint.itoint(_f, _G, initial_cond, param.t_span)
