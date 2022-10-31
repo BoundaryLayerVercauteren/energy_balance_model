@@ -1,6 +1,6 @@
-import sdeint
 import numpy as np
 import scipy
+import sdeint
 
 from one_D_model.model import solve_ODE
 
@@ -12,7 +12,8 @@ def define_noise_term(delta_T, t, sigma):
 def solve_SDE(param):
     """Original model by van de Wiel with additive noise term"""
     # Note: itoint(f, G, y0, tspan) for Ito equation dy = f(y,t)dt + G(y,t)dW
-    f = lambda delta_T, t: solve_ODE.define_deterministic_ODE(t, delta_T, param.U, param.Lambda, param.Q_i, param.z0, param)
+    f = lambda delta_T, t: solve_ODE.define_deterministic_ODE(t, delta_T, param.U, param.Lambda, param.Q_i, param.z0,
+                                                              param)
     G = lambda delta_T, t: define_noise_term(delta_T, t, param.sigma_delta_T)
     return sdeint.itoint(f, G, param.delta_T_0, param.t_span)
 
@@ -24,7 +25,8 @@ def solve_SDE_with_stoch_u(param):
 
     # Define functions for 2D SDE
     def _f(X, t):
-        return np.array([solve_ODE.define_deterministic_ODE(t, X[0], X[1], param.Lambda, param.Q_i, param.z0, param), param.relax_u * (X[1] - param.mu_u)])
+        return np.array([solve_ODE.define_deterministic_ODE(t, X[0], X[1], param.Lambda, param.Q_i, param.z0, param),
+                         param.relax_u * (X[1] - param.mu_u)])
 
     def _G(X, t):
         return np.diag([0.0, define_noise_term(X[0], t, param.sigma_u)])
@@ -39,7 +41,8 @@ def solve_SDE_with_stoch_Qi(param):
 
     # Define functions for 2D SDE
     def _f(X, t):
-        return np.array([solve_ODE.define_deterministic_ODE(t, X[0], param.U, param.Lambda, X[1], param.z0, param), param.relax * (X[1] - param.Q_i)])
+        return np.array([solve_ODE.define_deterministic_ODE(t, X[0], param.U, param.Lambda, X[1], param.z0, param),
+                         param.relax * (X[1] - param.Q_i)])
 
     def _G(X, t):
         return np.diag([0.0, define_noise_term(X[0], t, param.sigma_Q_i)])
@@ -54,7 +57,8 @@ def solve_SDE_with_stoch_lambda(param):
 
     # Define functions for 2D SDE
     def _f(X, t):
-        return np.array([solve_ODE.define_deterministic_ODE(t, X[0], param.U, X[1], param.Q_i, param.z0, param), param.relax * (X[1] - param.Lambda)])
+        return np.array([solve_ODE.define_deterministic_ODE(t, X[0], param.U, X[1], param.Q_i, param.z0, param),
+                         param.relax * (X[1] - param.Lambda)])
 
     def _G(X, t):
         return np.diag([0.0, define_noise_term(X[0], t, param.sigma_lambda)])
@@ -65,21 +69,32 @@ def solve_SDE_with_stoch_lambda(param):
 def solve_SDE_with_stoch_z0(_, param):
     """Original model by van de Wiel with stochastic roughness length equation"""
 
-    z0_list = []
-    def _z0(t):
-        z_0 = scipy.stats.lognorm.rvs(s=param.sigma_z0, loc=param.mu_z0, scale=param.sigma_z0)
-        z0_list.append([t,z_0])
-        return z_0
+    z0 = scipy.stats.lognorm.rvs(s=param.sigma_z0, loc=param.mu_z0, scale=param.sigma_z0, size=param.num_steps+1)
+    delta_T_list = [param.delta_T_0]
+    # def _z0(t):
+    #     z_0 = scipy.stats.lognorm.rvs(s=param.sigma_z0, loc=param.mu_z0, scale=param.sigma_z0)
+    #     z0_list.append([t,z_0])
+    #     return z_0
+    #
+    # # Define SDE
+    # def _define_SDE(t, delta_T):
+    #     f_stab = solve_ODE.calculate_stability_function(param, delta_T, param.U)
+    #     c_D = (param.kappa / np.math.log(param.zr / _z0(t))) ** 2
+    #     return (1 / param.cv) * (param.Q_i - param.Lambda * delta_T - param.rho * param.cp * c_D * param.U * delta_T * f_stab)
+    #
+    # try:
+    #     result = scipy.integrate.solve_ivp(_define_SDE, [param.t_start, param.t_end], [param.delta_T_0], t_eval=param.t_span)
+    #     return result.t.flatten(), result.y.flatten(), z0_list
+    # except Exception:
+    #     return np.nan, np.nan, np.nan
 
-    # Define SDE
-    def _define_SDE(t, delta_T):
-        f_stab = solve_ODE.calculate_stability_function(param, delta_T, param.U)
-        c_D = (param.kappa / np.math.log(param.zr / _z0(t))) ** 2
-        return (1 / param.cv) * (param.Q_i - param.Lambda * delta_T - param.rho * param.cp * c_D * param.U * delta_T * f_stab)
+    delta_T_n = param.delta_T_0
+    for idx, step in enumerate(range(param.num_steps)):
+        c_D = (param.kappa / np.math.log(param.zr / z0[idx])) ** 2
+        f_stab = solve_ODE.calculate_stability_function(param, delta_T_n, param.U)
+        delta_T_np1 = delta_T_n + (1 / param.cv) * (
+                    param.Q_i - param.Lambda * delta_T_n - param.rho * param.cp * c_D * param.U * delta_T_n * f_stab)
+        delta_T_list.append(delta_T_np1)
+        delta_T_n = delta_T_np1
 
-    try:
-        result = scipy.integrate.solve_ivp(_define_SDE, [param.t_start, param.t_end], [param.delta_T_0], t_eval=param.t_span)
-        return result.t.flatten(), result.y.flatten(), z0_list
-    except Exception:
-        return np.nan, np.nan, np.nan
-
+    return delta_T_list, z0

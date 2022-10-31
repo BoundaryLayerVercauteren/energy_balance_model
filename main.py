@@ -88,4 +88,5 @@ if stab_function:
     run_1D_SDE_model.solve_model_with_randomized_parameter(param, function_name, sol_file_name)
 
 if z0:
-    run_1D_SDE_model.solve_model_with_randomized_parameter_z0(param)
+    sol_file_name = 'SDE_z0_sol'
+    run_1D_SDE_model.solve_model_with_randomized_parameter_z0(param, sol_file_name)

@@ -35,7 +35,7 @@ class Parameters:
     sigma_u: float = 0.08  # sigma for u noise term
     sigma_Q_i: float = 0.7  # sigma for Q_i noise term
     sigma_lambda: float = 0.05  # sigma for lambda noise term
-    sigma_z0: float = 0.1  # sigma for z0 noise term
+    sigma_z0: float = 0.05  # sigma for z0 noise term
     mu_z0: float = 0.001  # mu for z0 noise term
     sigma_s: float = -0.1
 
@@ -44,4 +44,4 @@ class Parameters:
     mu_u: float = 5.6
 
     num_simulation: int = 1000  # number of runs for Monte Carlo simulation
-    num_proc: int = 10  # number of processes to be used in parallelization
+    num_proc: int = 5  # number of processes to be used in parallelization
