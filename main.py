@@ -1,8 +1,5 @@
 """
-Script to run randomized version of model by van de Wiel et al.
-
-Van de Wiel, B. J. H., and Coauthors, 2017: Regime transitions in near-surface temperature inversions:
-A conceptual model. Journal of the Atmospheric Sciences, 74, 1057–1073, https://doi.org/10.1175/JAS-D-16-0180.1.
+Main script to run energy balance model (with perturbations).
 """
 import os
 import time
@@ -45,13 +42,13 @@ if not os.path.exists(param.sol_directory_path):
 if make_plot:
     # Process Dome C data and plot it
     data_domec = process_dome_c_data.main(param)
-    # # -------------------------------------------------------------------------------------
-    # # Solve deterministic ODE
-    # ODE_sol = solve_ODE.solve_deterministic_ODE(param)
-    # # Plot solution of deterministic model
-    # plot.make_2D_plot(param, ODE_sol.t.flatten(), ODE_sol.y.flatten(), 'ODE_sol.png')
+    # -------------------------------------------------------------------------------------
+    # Solve deterministic ODE
+    ODE_sol = solve_ODE.solve_deterministic_ODE(param)
+    # Plot solution of deterministic model
+    plot.make_2D_plot(param, ODE_sol.t.flatten(), ODE_sol.y.flatten(), 'ODE_sol.png')
     # Plot stability functions
-    #compare_stability_functions.make_comparison(param)
+    compare_stability_functions.make_comparison(param)
     # -------------------------------------------------------------------------------------
     # Make bifurcation plots
     # copy dataclass to prevent overwriting original
@@ -62,7 +59,7 @@ if make_plot:
     param_copy.stab_func_type = 'long_tail'
     make_bifurcation_analysis.make_bifurcation_analysis(param_copy, data_domec)
     # Plot potential
-    #plot.plot_potentials(param)
+    plot.plot_potentials(param)
 # -----------------------------------------------------------------------------------------
 # Run 1D model (with randomizations)
 if function:
