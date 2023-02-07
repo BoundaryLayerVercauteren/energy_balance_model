@@ -22,9 +22,9 @@ class Parameters:
     stab_func_type: str = 'short_tail'  # stability function type [short_tail, long_tail]
 
     t_start: float = 0.0  # simulation start time
-    t_end_h: float = 24.0  # simulation end time [hours]
+    t_end_h: float = 7*24.0  # simulation end time [hours]
     t_end: float = t_end_h * 3600  # simulation end time [seconds]
-    dt: float = 1  # size of time steps [seconds]
+    dt: float = 1800  # size of time steps [seconds]
     num_steps: float = int(t_end / dt)  # number of steps in time
     t_span: np.ndarray = np.linspace(t_start, t_end, num_steps)
     t_span_h: np.ndarray = np.linspace(t_start, t_end_h, num_steps)
@@ -32,16 +32,16 @@ class Parameters:
     delta_T_0: float = 24  # initial condition for delta T
 
     sigma_delta_T: float = 0.3  # sigma for delta T noise term
-    sigma_u: float = 0.08  # sigma for u noise term
+    sigma_u: float = 0.66  # sigma for u noise term
     sigma_Q_i: float = 0.7  # sigma for Q_i noise term
     sigma_lambda: float = 0.05  # sigma for lambda noise term
-    sigma_z0: float = 0.05  # sigma for z0 noise term
+    sigma_z0: float = 0.1  # sigma for z0 noise term
     mu_z0: float = 0.001  # mu for z0 noise term
     sigma_s: float = -0.1
 
     relax: float = -0.005  # coefficient of relaxation to equilibrium
-    relax_u: float = -0.005
-    mu_u: float = 5.6
+    relax_u: float = -0.12
+    mu_u: float = 5.61
 
-    num_simulation: int = 1000  # number of runs for Monte Carlo simulation
-    num_proc: int = 5  # number of processes to be used in parallelization
+    num_simulation: int = 100  # number of runs for Monte Carlo simulation
+    num_proc: int = 4  # number of processes to be used in parallelization

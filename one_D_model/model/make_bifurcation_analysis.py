@@ -6,7 +6,7 @@ import numpy as np
 from matplotlib import pyplot as plt
 
 
-def make_bifurcation_analysis(param):
+def make_bifurcation_analysis(param, data=None):
     # name of the model
     DSargs = dst.args(name='temperature inversion strength model')
 
@@ -52,22 +52,46 @@ def make_bifurcation_analysis(param):
     # plt.savefig(param.sol_directory_path + 'sol_trajectories.png', bbox_inches='tight', dpi=300)
 
     # -----------------------------------------------------------------------
+    # Plot bifurcation diagram for different parameters
+    # fig, ax = plt.subplots(1, 3, figsize=(15, 5))
+    # make_bifurcation_diagram(DSargs, [1.0, 2.0, 3.0], 'Lambda', r'$\lambda = $', ax[0], 'a)')
+    # DSargs.pars['Lambda'] = param.Lambda
+    # make_bifurcation_diagram(DSargs, [20, 50, 80], 'Q_i', r'$Q_i = $', ax[1], 'b)')
+    # DSargs.pars['Q_i'] = param.Q_i
+    # make_bifurcation_diagram(DSargs, [0.001, 0.01, 0.1], 'z_0', r'$z_0 = $', ax[2], 'c)')
+    #
+    # plt.savefig(param.sol_directory_path + 'bifurcation_diagram_' + param.stab_func_type + '.png', bbox_inches='tight', dpi=300)
+
     # Plot bifurcation diagram
-    fig, ax = plt.subplots(1, 3, figsize=(15, 5))
-    make_bifurcation_diagram(DSargs, [1.0, 2.0, 3.0], 'Lambda', r'$\lambda = $', ax[0], 'a)')
-    DSargs.pars['Lambda'] = param.Lambda
-    make_bifurcation_diagram(DSargs, [20, 50, 80], 'Q_i', r'$Q_i = $', ax[1], 'b)')
-    DSargs.pars['Q_i'] = param.Q_i
-    make_bifurcation_diagram(DSargs, [0.001, 0.01, 0.1], 'z_0', r'$z_0 = $', ax[2], 'c)')
+    fig, ax = plt.subplots(1, 1, figsize=(5, 5))
+    if 'short' in param.stab_func_type:
+        fig_label = 'a)'
+    else:
+        fig_label = 'b)'
+    make_bifurcation_diagram(DSargs, [np.nan], 'none', 'none', ax, fig_label)
 
-    plt.savefig(param.sol_directory_path + 'bifurcation_diagram_' + param.stab_func_type + '.png', bbox_inches='tight', dpi=300)
+    plt.savefig(param.sol_directory_path + 'bifurcation_diagram_single_' + param.stab_func_type + '.png',
+                bbox_inches='tight', dpi=300)
+
+    if data is not None:
+        # Plot bifurcation diagram
+        fig, ax = plt.subplots(1, 1, figsize=(5, 5))
+        if 'short' in param.stab_func_type:
+            fig_label = 'a)'
+        else:
+            fig_label = 'b)'
+        make_bifurcation_diagram(DSargs, [np.nan], 'none', 'none', ax, fig_label, data)
+
+        plt.savefig(param.sol_directory_path + 'bifurcation_diagram_domeC_' + param.stab_func_type + '.png',
+                    bbox_inches='tight', dpi=300)
 
 
-def make_bifurcation_diagram(DSargs, val_list, val_name, label, ax, title):
+def make_bifurcation_diagram(DSargs, val_list, val_name, label, ax, title, data_val=None):
     color = matplotlib.cm.get_cmap('cmc.batlow', len(val_list) + 1).colors
 
     for idx, val in enumerate(val_list):
-        DSargs.pars[val_name] = val
+        if val_name != 'none':
+            DSargs.pars[val_name] = val
         ode = dst.Generator.Vode_ODEsystem(DSargs)
         ode.set(pars={'U': 0.01})  # Lower bound of the control parameter 'U'
         ode.set(ics={'x': 23.3})
@@ -94,20 +118,31 @@ def make_bifurcation_diagram(DSargs, val_list, val_name, label, ax, title):
             u_values = PC['EQ1'].sol['U']
             x_values = PC['EQ1'].sol['x']
 
-            stable_points_idx = np.sort(np.concatenate((np.where(u_values == bif_point_1[0]), np.where(u_values == bif_point_2[0]))).flatten())
+            stable_points_idx = np.sort(
+                np.concatenate((np.where(u_values == bif_point_1[0]), np.where(u_values == bif_point_2[0]))).flatten())
 
-            ax.plot(u_values[:stable_points_idx[0]], x_values[:stable_points_idx[0]], label=label + str(val), color=color[idx])
+            if data_val is not None:
+                plt.scatter(data_val['U2[m s-1]'], data_val['tempInv [K]'], s=5, c='orange')
+
+            if val_name != 'none':
+                ax.plot(u_values[:stable_points_idx[0]], x_values[:stable_points_idx[0]], label=label + str(val),
+                        color=color[idx])
+            else:
+                ax.plot(u_values[:stable_points_idx[0]], x_values[:stable_points_idx[0]], color=color[idx])
+
             ax.plot(u_values[stable_points_idx[1]:], x_values[stable_points_idx[1]:], color=color[idx])
-            ax.plot(u_values[stable_points_idx[0]:stable_points_idx[1]], x_values[stable_points_idx[0]:stable_points_idx[1]], linestyle='--', color=color[idx])
+            ax.plot(u_values[stable_points_idx[0]:stable_points_idx[1]],
+                    x_values[stable_points_idx[0]:stable_points_idx[1]], linestyle='--', color=color[idx])
             ax.plot(bif_point_1[0], bif_point_1[1], marker="o", markersize=5, color=color[idx])
             ax.plot(bif_point_2[0], bif_point_2[1], marker="o", markersize=5, color=color[idx])
-            if idx == 2:
-                ax.axvline(x=5.6, color='r', label='u=5.6')
+            if idx == 0 and data_val is None:
+                ax.axvspan(u_values[stable_points_idx][0], u_values[stable_points_idx][1], alpha=0.3, color='red',
+                           label='transition region')
 
             print('For ' + val_name + '=' + str(val) + ' the unstable u region is: ' + str(u_values[stable_points_idx]))
 
             # Find equilibria for u=5.6
-            equilibria = x_values[np.argwhere(np.around(u_values,1)==5.6)]
+            equilibria = x_values[np.argwhere(np.around(u_values, 1) == 5.6)]
             print('The equilibria for u=5.6 are: ' + str(equilibria))
 
         except Exception:

@@ -102,16 +102,18 @@ def plot_potentials(param_class):
 
     ax[0].set_xlabel('$\Delta T$ [K]')
     ax[0].set_ylabel('V [$K^2$/s]')
+    #ax[0].set_ylim(-0.25, 0.15)
     ax[0].legend()
     ax[0].set_title('a)', loc='left')
 
     for idx, u_elem in enumerate(u_list_lt):
         param_copy.stab_func_type = 'long_tail'
         potential_lt = solve_ODE.calculate_potential(delta_T_range, u_elem, param_copy)
-        ax[1].plot(delta_T_range, - potential_lt, label='u = ' + str(u_elem), color=color[idx], marker=markers[idx], markevery=5)
+        ax[1].plot(delta_T_range[8:44], - potential_lt[8:44], label='u = ' + str(u_elem), color=color[idx], marker=markers[idx], markevery=5)
 
     ax[1].set_xlabel('$\Delta T$ [K]')
     ax[1].set_ylabel('V [$K^2$/s]')
+    #ax[1].set_ylim(-0.25/2, 0.15/2)
     ax[1].legend()
     ax[1].set_title('b)', loc='left')
 

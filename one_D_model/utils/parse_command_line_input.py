@@ -6,10 +6,10 @@ from one_D_model import __version__
 def command_line_parser():
     """parse command line input"""
     # Parser for command line options
-    parser = argparse.ArgumentParser(description="Run the 1D ABL model.")
+    parser = argparse.ArgumentParser(description="Run the energy balance model.")
     # Add arguments
     parser.add_argument("-pl", "--plot", help="Make potential, bifurcation, ... plots.", action="store_true", default=False)
-    parser.add_argument('-V', '--version', action='version', version=f'ABL 1D model version: {__version__}')
+    parser.add_argument('-V', '--version', action='version', version=f'ABL energy balance model version: {__version__}')
     parser.add_argument('-f', '--function', help='Randomize the model function itself.', action="store_true",
                         default=False)
     parser.add_argument('-sf', '--stab_function', help='Randomize the stability function.', action="store_true",
@@ -24,6 +24,8 @@ def command_line_parser():
                         default=False)
     parser.add_argument('-a', '--all', help='Run model with all randomizations.', action="store_true",
                         default=False)
+    parser.add_argument('-obs_u', '--observed_u', help='Run model with wind speed given by observations.',
+                        action="store_true", default=False)
 
     return parser.parse_args()
 
@@ -46,5 +48,6 @@ def read_command_line_input():
         Lambda = args.Lambda
         z0 = args.z0
         u = args.u
+        obs_u = args.observed_u
 
-    return function, stab_function, Qi, Lambda, z0, u, args.plot
+    return function, stab_function, Qi, Lambda, z0, u, args.plot, obs_u
