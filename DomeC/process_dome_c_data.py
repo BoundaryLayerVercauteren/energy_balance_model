@@ -46,7 +46,7 @@ def calculate_temp_inv(values):
 def prepare_dome_c_data():
     """prepare data so that it can be used."""
     # load data
-    input_file = 'DomeC/DC_2017_10min.ascii'
+    input_file = 'DomeC/data/DC_2017_10min.ascii'
     data = load_data(input_file)
     # convert column content to correct format
     for i in data.columns[1:]:
