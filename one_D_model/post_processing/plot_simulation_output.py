@@ -6,7 +6,7 @@ import os
 from one_D_model.utils import plot_output as plot
 
 # Define directory where simulation output is saved
-output_directory = 'output/20221221_0817_50/'
+output_directory = 'output/1000_sim_short_tail/simulations/'
 
 # Load data
 # SDE_sol_delta_T = np.load(output_directory + 'SDE_sol_delta_T.npy')
@@ -37,6 +37,18 @@ class Parameters:
     dt: float
     num_steps: float
     num_simulation: int
+    stab_func_type: str
+    Lambda: float
+    Q_i: float
+    z0: float
+    zr: float
+    grav: float
+    Tr: float
+    alpha: float
+    kappa: float
+    cv: float
+    rho: float
+    cp: float
 
 
 with open(output_directory + 'parameters.json', 'r') as file:
@@ -54,8 +66,8 @@ if not os.path.exists(params.sol_directory_path + 'visualizations/'):
 # Make distribution plots
 # plot.make_distribution_plot(np.array(SDE_sol_delta_T).flatten(), params, 'visualizations/SDE_sol_delta_T_distribution.png',
 #                             r'$\Delta T$ [K]')
-plot.make_distribution_plot(SDE_u_sol_delta_T.flatten(), params, 'visualizations/SDE_u_sol_delta_T_distribution.png',
-                            r'$\Delta T$ [K]')
+# plot.make_distribution_plot(SDE_u_sol_delta_T.flatten(), params, 'visualizations/SDE_u_sol_delta_T_distribution.png',
+#                             r'$\Delta T$ [K]')
 # plot.make_distribution_plot(SDE_Qi_sol_delta_T.flatten(), params, 'visualizations/SDE_Qi_sol_delta_T_distribution.png',
 #                             r'$\Delta T$ [K]')
 # plot.make_distribution_plot(SDE_lambda_sol_delta_T.flatten(), params, 'visualizations/SDE_lambda_sol_delta_T_distribution.png',
@@ -65,6 +77,9 @@ plot.make_distribution_plot(SDE_u_sol_delta_T.flatten(), params, 'visualizations
 # plot.make_distribution_plot(SDE_z0_sol_delta_T.flatten(), params, 'visualizations/SDE_z0_sol_delta_T_distribution.png',
 #                             r'$\Delta T$ [K]')
 
+# Overlay potential plot with distribution plot
+plot.plot_potentials_and_output_distribution(params, SDE_u_sol_delta_T.flatten())
+exit()
 # Plot ten time series for every simulation type
 if params.num_simulation >= 10:
     vis_idx = np.linspace(0, params.num_simulation - 1, 10).astype(int)
