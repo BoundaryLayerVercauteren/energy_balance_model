@@ -39,17 +39,18 @@ if not os.path.exists(param.sol_directory_path):
     os.makedirs(param.sol_directory_path)
     os.makedirs(param.sol_directory_path + 'temporary/')
 # -----------------------------------------------------------------------------------------
+# If command line flag is given make plots
 if make_plot:
     # Process Dome C data and plot it
     data_domec = process_dome_c_data.main(param)
-    # -------------------------------------------------------------------------------------
-    # Solve deterministic ODE
-    ODE_sol = solve_ODE.solve_deterministic_ODE(param)
-    # Plot solution of deterministic model
-    plot.make_2D_plot(param, ODE_sol.t.flatten(), ODE_sol.y.flatten(), 'ODE_sol.png')
+    # # -------------------------------------------------------------------------------------
+    # # Solve deterministic ODE
+    # ODE_sol = solve_ODE.solve_deterministic_ODE(param)
+    # # Plot solution of deterministic model
+    # plot.make_2D_plot(param, ODE_sol.t.flatten(), ODE_sol.y.flatten(), 'ODE_sol.png')
     # Plot stability functions
-    compare_stability_functions.make_comparison(param)
-    # -------------------------------------------------------------------------------------
+    # compare_stability_functions.make_comparison(param)
+    # # -------------------------------------------------------------------------------------
     # Make bifurcation plots
     # copy dataclass to prevent overwriting original
     param_copy = dataclasses.replace(param)
@@ -58,10 +59,11 @@ if make_plot:
     make_bifurcation_analysis.make_bifurcation_analysis(param_copy, data_domec)
     param_copy.stab_func_type = 'long_tail'
     make_bifurcation_analysis.make_bifurcation_analysis(param_copy, data_domec)
-    # Plot potential
-    plot.plot_potentials(param)
+    # # Plot potential
+    # plot.plot_potentials(param)
 # -----------------------------------------------------------------------------------------
-# Run 1D model (with randomizations)
+# Run model with randomizations
+# Which parameters are parameterized is specified by the command line flags
 if function:
     run_1D_SDE_model.solve_randomized_model(param)
 
@@ -88,11 +90,12 @@ if stab_function:
 if z0:
     sol_file_name = 'SDE_z0_sol'
     run_1D_SDE_model.solve_model_with_randomized_parameter_z0(param, sol_file_name)
-
+# -----------------------------------------------------------------------------------------
+# Run model with u given by observations
 if obs_u:
     # Load data (10 min averaged)
-    observed_u = np.loadtxt('u_values.txt')
-    observed_delta_theta = np.loadtxt('delta_theta_values.txt')
+    observed_u = np.loadtxt('DomeC/u_values.txt')
+    observed_delta_theta = np.loadtxt('DomeC/delta_theta_values.txt')
     # Set parameters such that they fit with input data
     param.delta_T_0 = observed_delta_theta[0]
     param.t_end_h = int(len(observed_u) / 6)
