@@ -8,4 +8,3 @@ SciencePlots==1.0.9
 scipy==1.9.2
 sdeint==0.3.0
 seaborn==0.12.0
-Python==3.9.7

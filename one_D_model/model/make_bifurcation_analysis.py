@@ -4,7 +4,22 @@ import PyDSTool as dst
 import matplotlib
 import numpy as np
 from matplotlib import pyplot as plt
+from matplotlib.offsetbox import AnchoredOffsetbox, TextArea, HPacker, VPacker
 
+plt.style.use('science')
+
+# set font sizes for plots
+SMALL_SIZE = 11
+MEDIUM_SIZE = 12
+BIGGER_SIZE = 15
+
+plt.rc('font', size=SMALL_SIZE)  # controls default text sizes
+plt.rc('axes', titlesize=SMALL_SIZE)  # fontsize of the axes title
+plt.rc('axes', labelsize=MEDIUM_SIZE)  # fontsize of the x and y labels
+plt.rc('xtick', labelsize=SMALL_SIZE)  # fontsize of the tick labels
+plt.rc('ytick', labelsize=SMALL_SIZE)  # fontsize of the tick labels
+plt.rc('legend', fontsize=SMALL_SIZE)  # legend fontsize
+plt.rc('figure', titlesize=BIGGER_SIZE)  # fontsize of the figure title
 
 def make_bifurcation_analysis(param, data=None):
     # name of the model
@@ -73,17 +88,17 @@ def make_bifurcation_analysis(param, data=None):
     plt.savefig(param.sol_directory_path + 'bifurcation_diagram_single_' + param.stab_func_type + '.png',
                 bbox_inches='tight', dpi=300)
 
-    if data is not None:
-        # Plot bifurcation diagram
-        fig, ax = plt.subplots(1, 1, figsize=(5, 5))
-        if 'short' in param.stab_func_type:
-            fig_label = 'a)'
-        else:
-            fig_label = 'b)'
-        make_bifurcation_diagram(DSargs, [np.nan], 'none', 'none', ax, fig_label, data)
-
-        plt.savefig(param.sol_directory_path + 'bifurcation_diagram_domeC_' + param.stab_func_type + '.png',
-                    bbox_inches='tight', dpi=300)
+    # if data is not None:
+    #     # Plot bifurcation diagram
+    #     fig, ax = plt.subplots(1, 1, figsize=(5, 5))
+    #     if 'short' in param.stab_func_type:
+    #         fig_label = 'a)'
+    #     else:
+    #         fig_label = 'b)'
+    #     make_bifurcation_diagram(DSargs, [np.nan], 'none', 'none', ax, fig_label, data)
+    #
+    #     plt.savefig(param.sol_directory_path + 'bifurcation_diagram_domeC_' + param.stab_func_type + '.png',
+    #                 bbox_inches='tight', dpi=300)
 
 
 def make_bifurcation_diagram(DSargs, val_list, val_name, label, ax, title, data_val=None):
@@ -149,16 +164,25 @@ def make_bifurcation_diagram(DSargs, val_list, val_name, label, ax, title, data_
             print(traceback.format_exc())
             pass
 
-        # PC.display(['U', 'x'], stability=True, figure=3)
-
-        # # Get information about the bifurcation points LP1 and LP2:
-        # print(str(val_name) + '=' + str(val))
-        # print(PC['EQ1'].getSpecialPoint('LP1'))
-        # print(PC['EQ1'].getSpecialPoint('LP2'))
-
     ax.set_xlim((0, 10))
     ax.set_ylim((0, 26))
-    ax.set_xlabel('u [m/s]')
-    ax.set_ylabel(r'$\Delta T_{eq}$ [K]')
+    if data_val is not None:
+        # y axes labels
+        ybox3 = TextArea(r'$\Delta T_{eq}$, ', textprops=dict(color=color[0], size=MEDIUM_SIZE, rotation=90, ha='left', va='bottom'))
+        ybox2 = TextArea(r'$T_{9.4m}-T_s$ ', textprops=dict(color='orange', size=MEDIUM_SIZE, rotation=90, ha='left', va='bottom'))
+        ybox1 = TextArea('[K]', textprops=dict(color="black", size=MEDIUM_SIZE, rotation=90, ha='left', va='bottom'))
+        ybox = VPacker(children=[ybox1, ybox2, ybox3], align="bottom", pad=0, sep=5)
+        anchored_ybox = AnchoredOffsetbox(loc='center', child=ybox, pad=0., frameon=False, bbox_transform=ax.transAxes, borderpad=0., bbox_to_anchor=(-0.08, 0.5))
+        ax.add_artist(anchored_ybox)
+        # x axes labels
+        xbox1 = TextArea(r'$u$, ', textprops=dict(color=color[0], size=MEDIUM_SIZE, ha='left', va='bottom'))
+        xbox2 = TextArea(r'$u_{8m}$ ', textprops=dict(color='orange', size=MEDIUM_SIZE, ha='left', va='bottom'))
+        xbox3 = TextArea('[m/s]', textprops=dict(color="black", size=MEDIUM_SIZE, ha='left', va='bottom'))
+        xbox = HPacker(children=[xbox1, xbox2, xbox3], align="center", pad=0, sep=5)
+        anchored_xbox = AnchoredOffsetbox(loc='center', child=xbox, pad=0, frameon=False, bbox_transform=ax.transAxes, borderpad=0., bbox_to_anchor=(0.5, -0.09))
+        ax.add_artist(anchored_xbox)
+    else:
+        ax.set_xlabel('u [m/s]')
+        ax.set_ylabel(r'$\Delta T_{eq}$ [K]')
     ax.legend()
     ax.set_title(title, loc='left')

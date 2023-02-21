@@ -37,7 +37,7 @@ class Parameters:
     sigma_lambda: float = 0.05  # sigma for lambda noise term
     sigma_z0: float = 0.1  # sigma for z0 noise term
     mu_z0: float = 0.001  # mu for z0 noise term
-    sigma_s: float = -0.1
+    sigma_s: float = 0.0
 
     relax: float = -0.005  # coefficient of relaxation to equilibrium
     relax_u: float = -0.12

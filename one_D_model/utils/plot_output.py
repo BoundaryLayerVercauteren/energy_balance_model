@@ -140,23 +140,29 @@ def plot_potentials_and_output_distribution(param_class, delta_T_data):
     ax2 = ax1.twinx()
 
     if param_copy.stab_func_type == 'short_tail':
-        p0 = ax2.hist(delta_T_data, 100, color=color[1], alpha=0.5)
+        p0 = ax2.hist(delta_T_data, 100, color=color[1], alpha=0.5, zorder=0)
         for idx, u_elem in enumerate(u_list_st):
             potential_st = solve_ODE.calculate_potential(delta_T_range, u_elem, param_copy)
             p1, = ax1.plot(delta_T_range, - potential_st, label='u = ' + str(u_elem), color=color[idx],
-                           marker=markers[idx], markevery=5)
+                           marker=markers[idx], markevery=5, zorder=10)
+        title = 'a)'
 
     elif param_copy.stab_func_type == 'long_tail':
-        p2 = ax2.hist(delta_T_data, 100, color=color[1], alpha=0.5)
+        p2 = ax2.hist(delta_T_data, 100, color=color[1], alpha=0.5, zorder=0)
         for idx, u_elem in enumerate(u_list_lt):
             potential_lt = solve_ODE.calculate_potential(delta_T_range, u_elem, param_copy)
             p3, = ax1.plot(delta_T_range, - potential_lt, label='u = ' + str(u_elem), color=color[idx],
-                           marker=markers[idx], markevery=5)
+                           marker=markers[idx], markevery=5, zorder=10)
+        title = 'b)'
 
-        ax1.set_xlabel('$\Delta T$ [K]')
-        ax1.set_ylabel('V [$K^2$/s]')
-        ax2.set_ylabel(r'Density of $\Delta T$', color=color[1])
-        ax2.tick_params(axis="y", labelcolor=color[1])
+    ax1.set_xlabel(r'$\Delta T$ [K]')
+    ax1.set_ylabel('V [$K^2$/s]')
+    ax2.set_ylabel(r'Density of $\Delta T$', color=color[1], alpha=1)
+    ax2.tick_params(axis="y", labelcolor=color[1])
+
+    ax2.set_ylim((0.0, 4.5*10**6))
+    ax1.set_title(title, loc='left')
+    ax1.legend()
 
     plt.savefig(param_class.sol_directory_path + 'data_dist_potentials_' + param_copy.stab_func_type + '.png',
                 bbox_inches='tight', dpi=300)
