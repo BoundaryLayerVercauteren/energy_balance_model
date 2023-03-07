@@ -3,6 +3,7 @@
 Main script to run energy balance model (with perturbations).
 """
 import os
+import sys
 import time
 import json
 import ast
@@ -12,6 +13,9 @@ import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib
 import seaborn as sns
+
+# To be able to run this script on fox
+sys.path.append(os.getcwd())
 
 from DomeC import process_dome_c_data
 from one_D_model.utils import plot_output as plot, parse_command_line_input
