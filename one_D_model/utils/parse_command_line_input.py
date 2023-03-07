@@ -24,8 +24,6 @@ def command_line_parser():
                         default=False)
     parser.add_argument('-a', '--all', help='Run model with all randomizations.', action="store_true",
                         default=False)
-    parser.add_argument('-obs_u', '--observed_u', help='Run model with wind speed given by observations.',
-                        action="store_true", default=False)
 
     return parser.parse_args()
 
@@ -48,6 +46,5 @@ def read_command_line_input():
         Lambda = args.Lambda
         z0 = args.z0
         u = args.u
-        obs_u = args.observed_u
 
-    return function, stab_function, Qi, Lambda, z0, u, args.plot, obs_u
+    return function, stab_function, Qi, Lambda, z0, u, args.plot

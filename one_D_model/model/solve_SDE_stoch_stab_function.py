@@ -33,7 +33,7 @@ def sigma(x, sigma_s):
 
 
 def define_SDE(t, delta_T, phi_stoch, param):
-    f_stab = 0.5 * 1 / phi_stoch
+    f_stab = 1 / phi_stoch
     c_D = (param.kappa / np.math.log(param.zr / param.z0)) ** 2
     return (1 / param.cv) * (
                 param.Q_i - param.Lambda * delta_T - param.rho * param.cp * c_D * param.U * delta_T * f_stab)

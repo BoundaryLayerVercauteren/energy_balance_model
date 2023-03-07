@@ -1,6 +1,4 @@
 import pandas as pd
-import numpy as np
-#import one_D_model.utils.plot_output as plot
 
 
 def load_data(file_name):
@@ -109,10 +107,6 @@ def prepare_dome_c_data():
 def main():
     # Prepare data
     data_season = prepare_dome_c_data()
-    # Plot temperature inversion over time
-    #plot.make_2D_plot(params, data_day['Local Time (UTC+8h)'], data_day['tempInv [K]'], 'dome_c_day.png', xlabel='t [d]', ylabel=r'$\Delta T$ [K]')
-    # Plot distribution for whole season
-    #plot.make_distribution_plot(data_season['tempInv [K]'], params, 'dome_c_season_distribution.png', r'$\Delta T$ [K]')
 
     return data_season
 

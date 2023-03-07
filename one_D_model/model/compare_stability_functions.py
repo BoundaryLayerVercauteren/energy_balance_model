@@ -2,6 +2,7 @@ import matplotlib
 import matplotlib.pyplot as plt
 import numpy as np
 import sdeint
+from scipy.stats import norm
 
 import one_D_model.model.solve_SDE_stoch_stab_function as stoch_stab_function
 
@@ -74,7 +75,7 @@ def define_vandewiel_cutoff_stab_function(Ri, alpha=5):
 
 
 def define_SDE_stoch_stab_function(phi_stoch, Ri):
-    return (1 / 3600) * (
+    return  (
             1 + stoch_stab_function.kappa(Ri) * phi_stoch - stoch_stab_function.upsilon(Ri) * phi_stoch ** 2)
 
 
@@ -92,10 +93,10 @@ def solve_SDE_stoch_stab_function(Ri_span):
         for sim_idx in sim_span:
             # Define functions for SDE
             _f = lambda phi, t: define_SDE_stoch_stab_function(phi, Ri)
-            _G = lambda phi, t: (1 / np.sqrt(3600)) * (stoch_stab_function.sigma(Ri, 0) * phi)
+            _G = lambda phi, t: (stoch_stab_function.sigma(Ri, 0) * phi)
             solution[sim_idx, :] = 1/sdeint.itoint(_f, _G, phi_0, t_span).flatten()
         #pdf[Ri_idx, :] = norm.pdf(solution)
-        expected_value[Ri_idx, :] = np.min(solution, axis=0)
+        expected_value[Ri_idx, :] = np.mean(solution, axis=0)
 
     return expected_value, t_span
 
@@ -148,4 +149,4 @@ def make_comparison(params):
     ax.set_ylabel('time')
     ax.set_zlabel(r'$\phi$')
 
-    plt.savefig(params.sol_directory_path + 'stoch_stability_function_min.png', bbox_inches='tight', dpi=300)
+    plt.savefig(params.sol_directory_path + 'stoch_stability_function_mean.png', bbox_inches='tight', dpi=300)
