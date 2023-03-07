@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 """
 Main script to run energy balance model (with perturbations).
 """
