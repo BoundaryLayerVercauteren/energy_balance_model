@@ -43,6 +43,8 @@ def solve_model_with_randomized_parameter(params, function_name, sol_file_name):
         for idx, res in enumerate(pool.imap_unordered(
                 partial(solve_SDEs_wrapper, func_name=function_name, param=params),
                 range(params.num_simulation))):
+            print(res)
+            print(np.shape(res))
             np.save(params.sol_directory_path + 'temporary/' + sol_file_name + '_delta_T_' + str(idx) + '.npy',
                     res[0][:])
             np.save(params.sol_directory_path + 'temporary/' + sol_file_name + '_param_' + str(idx) + '.npy', res[1][:])
@@ -54,7 +56,6 @@ def solve_model_with_randomized_parameter(params, function_name, sol_file_name):
 
 # Very slow!
 def solve_model_with_randomized_parameter_z0(params, sol_file_name):
-    SDE_z0_sol = []
     with multiprocessing.Pool(processes=params.num_proc) as pool:
         for idx, res in enumerate(pool.imap_unordered(
                 partial(solve_SDEs.solve_SDE_with_stoch_z0, param=params), range(params.num_simulation))):

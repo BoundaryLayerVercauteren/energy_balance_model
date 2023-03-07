@@ -43,22 +43,22 @@ if not os.path.exists(param.sol_directory_path):
 # -----------------------------------------------------------------------------------------
 # If command line flag is given make plots
 if make_plot:
-    # Process Dome C data and plot it
-    data_domec = process_dome_c_data.main()
+    # # Process Dome C data and plot it
+    # data_domec = process_dome_c_data.main()
     # # -------------------------------------------------------------------------------------
     # # Solve deterministic ODE
     # ODE_sol = solve_ODE.solve_deterministic_ODE(param)
     # # Plot solution of deterministic model
     # plot.make_2D_plot(param, ODE_sol.t.flatten(), ODE_sol.y.flatten(), 'ODE_sol.png')
     # Plot stability functions
-    # compare_stability_functions.make_comparison(param)
+    compare_stability_functions.make_comparison(param)
     # # -------------------------------------------------------------------------------------
-    # Make bifurcation plots
-    # copy dataclass to prevent overwriting original
-    param_copy = dataclasses.replace(param)
-    param_copy.sol_directory_path = param.sol_directory_path
-    param_copy.stab_func_type = 'short_tail'
-    make_bifurcation_analysis.make_bifurcation_analysis(param_copy, data_domec)
+    # # Make bifurcation plots
+    # # copy dataclass to prevent overwriting original
+    # param_copy = dataclasses.replace(param)
+    # param_copy.sol_directory_path = param.sol_directory_path
+    # param_copy.stab_func_type = 'short_tail'
+    # make_bifurcation_analysis.make_bifurcation_analysis(param_copy, data_domec)
     # param_copy.stab_func_type = 'long_tail'
     # make_bifurcation_analysis.make_bifurcation_analysis(param_copy, data_domec)
     # # Plot potential

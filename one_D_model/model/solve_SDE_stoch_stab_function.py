@@ -33,10 +33,11 @@ def sigma(x, sigma_s):
 
 
 def define_SDE(t, delta_T, phi_stoch, param):
+    # phi = 1/ regular stability function
     f_stab = 1 / phi_stoch
     c_D = (param.kappa / np.math.log(param.zr / param.z0)) ** 2
     return (1 / param.cv) * (
-                param.Q_i - param.Lambda * delta_T - param.rho * param.cp * c_D * param.U * delta_T * f_stab)
+            param.Q_i - param.Lambda * delta_T - param.rho * param.cp * c_D * param.U * delta_T * f_stab)
 
 
 def define_stoch_stab_function(delta_T, phi_stoch, t, param):
@@ -58,4 +59,9 @@ def solve_SDE_with_stoch_stab_function(param):
         Ri = solve_ODE.calculate_richardson_number(param, param.delta_T_0, param.U)
         return np.diag([0.0, (1 / np.sqrt(3600)) * (sigma(Ri, param.sigma_s) * X[1])])
 
-    return sdeint.itoint(_f, _G, initial_cond, param.t_span)
+    result = sdeint.itoint(_f, _G, initial_cond, param.t_span)
+
+    # phi = 1/ regular stability function
+    result[:, 1] = 1 / result[:, 1]
+
+    return result

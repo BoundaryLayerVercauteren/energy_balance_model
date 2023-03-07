@@ -75,8 +75,8 @@ def define_vandewiel_cutoff_stab_function(Ri, alpha=5):
 
 
 def define_SDE_stoch_stab_function(phi_stoch, Ri):
-    return  (
-            1 + stoch_stab_function.kappa(Ri) * phi_stoch - stoch_stab_function.upsilon(Ri) * phi_stoch ** 2)
+    return (1 / 3600) * (
+                1 + stoch_stab_function.kappa(Ri) * phi_stoch - stoch_stab_function.upsilon(Ri) * phi_stoch ** 2)
 
 
 def solve_SDE_stoch_stab_function(Ri_span):
@@ -87,15 +87,14 @@ def solve_SDE_stoch_stab_function(Ri_span):
 
     solution = np.empty((len(sim_span), len(t_span)))
     expected_value = np.empty((len(Ri_span), len(t_span)))
-    pdf = np.empty((len(Ri_span), len(t_span)))
 
     for Ri_idx, Ri in enumerate(Ri_span):
         for sim_idx in sim_span:
             # Define functions for SDE
             _f = lambda phi, t: define_SDE_stoch_stab_function(phi, Ri)
-            _G = lambda phi, t: (stoch_stab_function.sigma(Ri, 0) * phi)
-            solution[sim_idx, :] = 1/sdeint.itoint(_f, _G, phi_0, t_span).flatten()
-        #pdf[Ri_idx, :] = norm.pdf(solution)
+            _G = lambda phi, t: (1 / np.sqrt(3600)) * (stoch_stab_function.sigma(Ri, 0) * phi)
+            solution[sim_idx, :] = 1/sdeint.itoint(_f, _G, phi_0, t_span)[:, 0]
+
         expected_value[Ri_idx, :] = np.mean(solution, axis=0)
 
     return expected_value, t_span

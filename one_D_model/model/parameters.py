@@ -22,9 +22,9 @@ class Parameters:
     stab_func_type: str = 'short_tail'  # stability function type [short_tail, long_tail]
 
     t_start: float = 0.0  # simulation start time
-    t_end_h: float = 7*24.0  # simulation end time [hours]
+    t_end_h: float = 1*24.0  # simulation end time [hours]
     t_end: float = t_end_h * 3600  # simulation end time [seconds]
-    dt: float = 1800  # size of time steps [seconds]
+    dt: float = 1  # size of time steps [seconds]
     num_steps: float = int(t_end / dt)  # number of steps in time
     t_span: np.ndarray = np.linspace(t_start, t_end, num_steps)
     t_span_h: np.ndarray = np.linspace(t_start, t_end_h, num_steps)
@@ -43,5 +43,5 @@ class Parameters:
     relax_u: float = -0.12
     mu_u: float = 5.61
 
-    num_simulation: int = 100  # number of runs for Monte Carlo simulation
-    num_proc: int = 4  # number of processes to be used in parallelization
+    num_simulation: int = 1000  # number of runs for Monte Carlo simulation
+    num_proc: int = 50  # number of processes to be used in parallelization
