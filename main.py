@@ -35,7 +35,7 @@ def save_parameters_in_file(params):
 
 
 # Read command line input
-function, stab_function, Qi, Lambda, z0, u, make_plot = parse_command_line_input.read_command_line_input()
+function, stab_function, Qi, Lambda, z0, u, make_plot, stab_function_poisson = parse_command_line_input.read_command_line_input()
 # -----------------------------------------------------------------------------------------
 # Load Parameters
 param = parameters.Parameters()
@@ -97,6 +97,11 @@ if stab_function:
 if z0:
     sol_file_name = 'SDE_z0_sol'
     run_1D_SDE_model.solve_model_with_randomized_parameter_z0(param, sol_file_name)
+
+if stab_function_poisson:
+    function_name = solve_SDE_stoch_stab_function.solve_ODE_with_stoch_stab_func_poisson
+    sol_file_name = 'SDE_stab_func_poisson_sol'
+    run_1D_SDE_model.solve_model_with_randomized_parameter(param, function_name, sol_file_name)
 # -----------------------------------------------------------------------------------------
 # Save parameters
 save_parameters_in_file(param)

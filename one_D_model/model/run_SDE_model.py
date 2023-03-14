@@ -43,15 +43,18 @@ def solve_model_with_randomized_parameter(params, function_name, sol_file_name):
         for idx, res in enumerate(pool.imap_unordered(
                 partial(solve_SDEs_wrapper, func_name=function_name, param=params),
                 range(params.num_simulation))):
-            print(res)
-            print(np.shape(res))
-            np.save(params.sol_directory_path + 'temporary/' + sol_file_name + '_delta_T_' + str(idx) + '.npy',
-                    res[0][:])
-            np.save(params.sol_directory_path + 'temporary/' + sol_file_name + '_param_' + str(idx) + '.npy', res[1][:])
+            if np.shape(res)[1] > 1:
+                np.save(params.sol_directory_path + 'temporary/' + sol_file_name + '_delta_T_' + str(idx) + '.npy',
+                        res[0][:])
+                np.save(params.sol_directory_path + 'temporary/' + sol_file_name + '_param_' + str(idx) + '.npy', res[1][:])
+            else:
+                np.save(params.sol_directory_path + 'temporary/' + sol_file_name + '_delta_T_' + str(idx) + '.npy',
+                        res.flatten())
 
     # Combine solution files into a single one and delete single files
     combine_npy_files(params.num_simulation, params.sol_directory_path, sol_file_name + '_delta_T')
-    combine_npy_files(params.num_simulation, params.sol_directory_path, sol_file_name + '_param')
+    if np.shape(res)[1] > 1:
+        combine_npy_files(params.num_simulation, params.sol_directory_path, sol_file_name + '_param')
 
 
 # Very slow!

@@ -43,5 +43,5 @@ class Parameters:
     relax_u: float = -0.005
     mu_u: float = U
 
-    num_simulation: int = 1000  # number of runs for Monte Carlo simulation
-    num_proc: int = 100  # number of processes to be used in parallelization
+    num_simulation: int = 2  # number of runs for Monte Carlo simulation
+    num_proc: int = 2  # number of processes to be used in parallelization
