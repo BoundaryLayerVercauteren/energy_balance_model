@@ -1,5 +1,6 @@
 import numpy as np
 import sdeint
+
 from one_D_model.model import solve_ODE
 from scipy.integrate import solve_ivp
 
@@ -69,6 +70,7 @@ def solve_SDE_with_stoch_stab_function(param):
 
 
 def define_poisson_stab_function(params, delta_T_val, U_val, critical_Ri=0.25):
+    np.random.seed()
     # Define Poisson random variable
     poisson_rv = np.random.poisson(lam=1.0, size=1) * 0.1
     # Calculate Richardson number
