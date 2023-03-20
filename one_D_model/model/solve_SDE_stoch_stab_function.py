@@ -72,7 +72,7 @@ def solve_SDE_with_stoch_stab_function(param):
 def define_poisson_stab_function(params, delta_T_val, U_val, critical_Ri=0.25):
     np.random.seed()
     # Define Poisson random variable
-    poisson_rv = np.random.poisson(lam=1.0, size=1) * 0.1
+    poisson_rv = np.random.poisson(lam=params.poisson_lambda, size=1) * 0.1
     # Calculate Richardson number
     Ri_val = solve_ODE.calculate_richardson_number(params, delta_T_val, U_val)
     # Calculate stochastic stability function for given Richardson
