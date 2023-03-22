@@ -31,6 +31,8 @@ class Parameters:
 
     delta_T_0: float = 24  # initial condition for delta T
 
+    Ri_c: float = 0.25  # critical Richardson number
+
     sigma_delta_T: float = 0.2  # sigma for delta T noise term
     sigma_u: float = 0.08  # sigma for u noise term
     sigma_Q_i: float = 0.7  # sigma for Q_i noise term
@@ -45,4 +47,4 @@ class Parameters:
     mu_u: float = U
 
     num_simulation: int = 1000  # number of runs for Monte Carlo simulation
-    num_proc: int = 3  # number of processes to be used in parallelization
+    num_proc: int = 100  # number of processes to be used in parallelization
