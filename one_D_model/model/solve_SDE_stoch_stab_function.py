@@ -46,7 +46,7 @@ def define_stoch_stab_function(delta_T, phi_stoch, t, param):
 
 
 def solve_SDE_with_stoch_stab_function(param):
-    """Original model by van de Wiel with stochastic stability function given by Boyko et. al, 2023."""
+    """Original model by van de Wiel with stochastic stability function given by Boyko et al., 2023."""
     # Combine initial conditions for
     phi_0 = 1 / solve_ODE.calculate_stability_function(param, param.delta_T_0, param.U)
     initial_cond = np.array([param.delta_T_0, phi_0])
@@ -88,7 +88,7 @@ def calculate_d_delta_T_d_t_with_poisson_stab_func(t, delta_T_val, param):
     Ri_val = solve_ODE.calculate_richardson_number(param, delta_T_val, param.U)
     # Calculate stochastic stability function for given Richardson number
     # If the Richardson number is smaller than the critical one use one of the stability functions given by
-    # van de Wiel et. al.
+    # van de Wiel et al.
     if Ri_val <= param.Ri_c:
         stab_function = solve_ODE.calculate_stability_function(param, delta_T_val, param.U)
     # else use the stochasticly modified one
@@ -100,13 +100,14 @@ def calculate_d_delta_T_d_t_with_poisson_stab_func(t, delta_T_val, param):
             param.Q_i - param.Lambda * delta_T_val - param.rho * param.cp * c_D * param.U * delta_T_val * stab_function)
 
 
-def define_runge_kutta_solver(t0, delta_T_0, params):
+def define_runge_kutta_solver(t0, delta_T_0, params, d_delta_T_d_t=calculate_d_delta_T_d_t_with_poisson_stab_func):
     """Define Runge Kutta 4 solver to solve energy balance model.
 
     Args:
         t0 (float): first time value at which ODE is solved
         delta_T_0 (float): initial value for delta T
         params (class): parameter class which is defined in parameters.py
+        d_delta_T_d_t (function): name of function which defines the ODE that will be solved
 
     Returns:
         numpy array: solution of ODE, i.e. of the energy balance model
@@ -114,24 +115,25 @@ def define_runge_kutta_solver(t0, delta_T_0, params):
     # Define step size for time steps at which the ODE is solved
     h = params.dt
     # Create empty array to store solution of ODE
-    delta_T = np.zeros((int(params.t_end),1))
+    delta_T = np.zeros(params.num_steps)
     # Store initial value of delta T
-    delta_T[0,:] = delta_T_0
+    delta_T[0] = delta_T_0
     # Set first time value to t0
     t = t0
     # Solve ODE for all time steps > t0 with Runge Kutta 4 algorithm
-    for i in range(1, int(params.t_end)):
-        k1 = h * calculate_d_delta_T_d_t_with_poisson_stab_func(t, delta_T[i - 1,:], params)
-        k2 = h * calculate_d_delta_T_d_t_with_poisson_stab_func(t + 0.5 * h, delta_T[i - 1,:] + 0.5 * k1, params)
-        k3 = h * calculate_d_delta_T_d_t_with_poisson_stab_func(t + 0.5 * h, delta_T[i - 1,:] + 0.5 * k2, params)
-        k4 = h * calculate_d_delta_T_d_t_with_poisson_stab_func(t + h, delta_T[i - 1,:] + k3, params)
+    for idx in range(0, params.num_steps-1):
+        k1 = d_delta_T_d_t(t, delta_T[idx], params)
+        k2 = d_delta_T_d_t(t + 0.5 * h, delta_T[idx] + 0.5 * k1 * h, params)
+        k3 = d_delta_T_d_t(t + 0.5 * h, delta_T[idx] + 0.5 * k2 * h, params)
+        k4 = d_delta_T_d_t(t + h, delta_T[idx] + k3 * h, params)
 
         # Update next value of y
-        delta_T[i,:] = delta_T[i - 1,:] + (1.0 / 6.0) * (k1 + 2 * k2 + 2 * k3 + k4)
+        delta_T[idx + 1] = delta_T[idx] + h * (1.0 / 6.0) * (k1 + 2 * k2 + 2 * k3 + k4)
 
         # Update time value
         t = t + h
-    return delta_T
+
+    return delta_T.flatten()
 
 
 def solve_ODE_with_stoch_stab_func_poisson(param):
