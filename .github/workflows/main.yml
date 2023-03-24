@@ -1,4 +1,4 @@
-name: Python package
+name: Pylinter and Pytest
 
 on: [push]
 
