@@ -1,8 +1,10 @@
 import matplotlib
 import matplotlib.pyplot as plt
 import numpy as np
+import pandas as pd
 import sdeint
 from scipy.stats import norm
+import seaborn as sns
 
 import one_D_model.model.solve_SDE_stoch_stab_function as stoch_stab_function
 
@@ -102,6 +104,65 @@ def solve_SDE_stoch_stab_function(Ri_span):
     return expected_value, t_span
 
 
+def define_stability_function_with_multiplicative_noise(Ri, param, t_span=np.linspace(0.0, 1000.0, 100)):
+    phi_0 = 1
+
+    # Define deterministic part
+    def _f(X, t):
+        return param.relax_phi * (X - define_vandewiel_short_tail_stab_function(Ri))
+
+    # Define stochastic part
+    def _G(X, t):
+        if Ri > param.Ri_c:
+            sigma = param.sigma_phi
+        else:
+            sigma = 0
+        return sigma * X
+
+    return sdeint.itoint(_f, _G, phi_0, t_span)[-1, 0]
+
+
+def plot_stoch_stability_function_with_multiplicative_noise(params, Ri_values, num_sim=1000):
+    num_Ri = len(Ri_values)
+    stab_func_values = np.zeros((num_sim * num_Ri, 2))
+    fig, ax = plt.subplots(figsize=(5, 5))
+    row_counter = 0
+
+    color = matplotlib.cm.get_cmap('cmc.batlow', int(num_sim / 100) + 1).colors
+
+    for sim_idx in np.arange(0, num_sim):
+        sol = []
+        for Ri in Ri_values:
+            sol.append(define_stability_function_with_multiplicative_noise(Ri, params))
+        for idx, elem in enumerate(sol):
+            if elem > 1:
+                sol[idx] = 1
+
+        # Plot every 100th solution
+        if sim_idx % 100 == 0:
+            sns.lineplot(x=Ri_values, y=sol, ax=ax, color=color[int(sim_idx / 100)])
+
+        stab_func_values[row_counter:row_counter + num_Ri, 0] = sol
+        stab_func_values[row_counter:row_counter + num_Ri, 1] = Ri_values
+        row_counter += num_Ri
+
+    stab_df = pd.DataFrame(data=stab_func_values, columns=['phi', 'ri'])
+
+    colors = 'Blues'
+    sns.kdeplot(x=stab_df.ri, y=stab_df.phi, cmap=colors, fill=True, bw_adjust=.5, ax=ax)
+
+    vec_vandewiel_short_tail_stab_func = np.vectorize(define_vandewiel_short_tail_stab_function)
+    sns.lineplot(x=Ri_values, y=vec_vandewiel_short_tail_stab_func(Ri_values), ax=ax, label='short-tail', color='r')
+
+    ax.set_xlabel(r'$R_b$')
+    ax.set_ylabel(r'$\phi$')
+    # ax.set_ylim(-1, 2.0)
+    plt.legend()
+
+    plt.savefig(params.sol_directory_path + 'stoch_stability_function_dist_multi_noise.png', bbox_inches='tight',
+                dpi=300)
+
+
 def define_poisson_stab_function(Ri_range, critical_Ri=0.25):
     # Define Poisson process
     poisson_process = np.random.poisson(lam=1.0, size=len(Ri_range)) * 0.1
@@ -120,9 +181,44 @@ def define_poisson_stab_function(Ri_range, critical_Ri=0.25):
     return stab_function
 
 
-def make_comparison(params):
-    richardson_num = np.linspace(10 ** (-5), 10 ** (1), 100)
+def make_kde_plot_stoch_stab_func(params, Ri_values, num_sim=1000):
+    num_Ri = len(Ri_values)
+    stab_func_values = np.zeros((num_sim * num_Ri, 2))
 
+    row_counter = 0
+    for _ in np.arange(0, num_sim):
+        stab_func_values[row_counter:row_counter + num_Ri, 0] = define_poisson_stab_function(Ri_values)
+        stab_func_values[row_counter:row_counter + num_Ri, 1] = Ri_values
+        row_counter += num_Ri
+
+    stab_df = pd.DataFrame(data=stab_func_values, columns=['phi', 'ri'])
+
+    fig, ax = plt.subplots(figsize=(5, 5))
+    colors = 'Blues'  # matplotlib.cm.get_cmap('cmc.grayC')
+    sns.kdeplot(x=stab_df.ri, y=stab_df.phi, cmap=colors, fill=True, bw_adjust=.5, ax=ax)
+
+    # mean_stab_df = stab_df.groupby('ri').mean()
+    # sns.lineplot(x=mean_stab_df.index, y=mean_stab_df.phi, ax=ax, label='mean', color='r', linestyle='--')
+
+    sns.lineplot(x=Ri_values, y=define_poisson_stab_function(Ri_values), ax=ax, label='one sim.', color='b',
+                 linestyle='--')
+
+    vec_vandewiel_short_tail_stab_func = np.vectorize(define_vandewiel_short_tail_stab_function)
+    sns.lineplot(x=Ri_values, y=vec_vandewiel_short_tail_stab_func(Ri_values), ax=ax, label='short-tail', color='r')
+
+    ax.set_xlabel(r'$R_b$')
+    ax.set_ylabel(r'$\phi$')
+    plt.legend()
+
+    plt.savefig(params.sol_directory_path + 'stoch_stability_function_dist_poisson.png', bbox_inches='tight', dpi=300)
+
+
+def make_comparison(params):
+    richardson_num = np.round(np.linspace(0, 10, 200), 4)
+    plot_stoch_stability_function_with_multiplicative_noise(params, richardson_num)
+    exit()
+    make_kde_plot_stoch_stab_func(params, richardson_num)
+    exit()
     # vec_vandewiel_short_tail_stab_func = np.vectorize(define_vandewiel_short_tail_stab_function)
     # vec_vandewiel_long_tail_stab_func = np.vectorize(define_vandewiel_long_tail_stab_function)
     # #vec_vandewiel_cutoff_stab_func = np.vectorize(define_vandewiel_cutoff_stab_function)
@@ -189,7 +285,7 @@ def make_comparison(params):
     fig, ax = plt.subplots(figsize=(10, 5))
     ax.plot(richardson_num, vec_vandewiel_short_tail_stab_func(richardson_num), label='short tail')
     ax.plot(richardson_num, define_poisson_stab_function(richardson_num), label='stoch. stab. function')
-    #ax.set_xscale('log')
+    # ax.set_xscale('log')
     plt.legend()
     ax.set_xlabel('Ri')
     plt.savefig(params.sol_directory_path + 'stoch_stability_function_poisson.png', bbox_inches='tight', dpi=300)
@@ -197,8 +293,8 @@ def make_comparison(params):
     # Get mean over several simulations of stab. function
     num_sim = 1000
     stoch_stab_res = np.zeros((num_sim, len(richardson_num)))
-    for sim_idx in range(0,num_sim):
-        stoch_stab_res[sim_idx,:] = define_poisson_stab_function(richardson_num)
+    for sim_idx in range(0, num_sim):
+        stoch_stab_res[sim_idx, :] = define_poisson_stab_function(richardson_num)
 
     fig, ax = plt.subplots(figsize=(5, 5))
     ax.hist(stoch_stab_res.flatten())
