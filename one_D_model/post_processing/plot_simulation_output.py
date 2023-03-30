@@ -6,7 +6,14 @@ import os
 from one_D_model.utils import plot_output as plot
 
 # Define directory where simulation output is saved
-output_directory = 'output/1000_sim_short_tail_stab_func/very_weakly/sigma_s_1_0/simulations/'
+output_directory = 'output/20230330_1121_22/'
+#
+# from one_D_model.model import run_SDE_model
+# import os
+#
+# _, _, files = next(os.walk(output_directory+ 'temporary/'))
+# num_sim = len(files)
+# run_SDE_model.combine_npy_files(num_sim, 'output/20230322_1422_31/', 'SDE_stab_func_poisson_sol_delta_T')
 
 # Load data
 # SDE_sol_delta_T = np.load(output_directory + 'SDE_sol_delta_T.npy')
@@ -20,11 +27,16 @@ output_directory = 'output/1000_sim_short_tail_stab_func/very_weakly/sigma_s_1_0
 # SDE_lambda_sol_delta_T = np.load(output_directory + 'SDE_lambda_sol_delta_T.npy')
 # SDE_lambda_sol_lambda = np.load(output_directory + 'SDE_lambda_sol_param.npy')
 #
-SDE_stab_func_sol_delta_T = np.load(output_directory + 'SDE_stab_func_sol_delta_T.npy')
-SDE_stab_func_sol_sf = np.load(output_directory + 'SDE_stab_func_sol_param.npy')
+# SDE_stab_func_sol_delta_T = np.load(output_directory + 'SDE_stab_func_sol_delta_T.npy')
+# SDE_stab_func_sol_sf = np.load(output_directory + 'SDE_stab_func_sol_param.npy')
+#
+# SDE_stab_func_sol_poisson_delta_T = np.load(output_directory + 'SDE_stab_func_poisson_sol_delta_T.npy')
 
 # SDE_z0_sol_delta_T = np.load(output_directory + 'SDE_z0_sol_delta_T.npy', allow_pickle=True)
 # SDE_z0_sol_z0 = np.load(output_directory + 'SDE_z0_sol_param.npy', allow_pickle=True)
+
+SDE_stab_func_sol_delta_T = np.load(output_directory + 'SDE_stab_func_multi_noise_sol_delta_T.npy')
+SDE_stab_func_sol_sf = np.load(output_directory + 'SDE_stab_func_multi_noise_sol_param.npy')
 
 
 # Load parameters
@@ -74,15 +86,17 @@ if not os.path.exists(params.sol_directory_path + 'visualizations/'):
 #                             r'$\Delta T$ [K]')
 plot.make_distribution_plot(SDE_stab_func_sol_delta_T.flatten(), params, 'visualizations/SDE_stab_func_sol_delta_T_distribution.png',
                             r'$\Delta T$ [K]')
+# plot.make_distribution_plot(SDE_stab_func_sol_poisson_delta_T.flatten(), params, 'visualizations/SDE_stab_func_sol_delta_T_distribution.png',
+#                             r'$\Delta T$ [K]')
 # plot.make_distribution_plot(SDE_z0_sol_delta_T.flatten(), params, 'visualizations/SDE_z0_sol_delta_T_distribution.png',
 #                             r'$\Delta T$ [K]')
 
 # Overlay potential plot with distribution plot
 # plot.plot_potentials_and_output_distribution(params, SDE_sol_delta_T.flatten())
-
+# exit()
 # Plot ten time series for every simulation type
-if params.num_simulation >= 10:
-    vis_idx = np.linspace(0, params.num_simulation - 1, 10).astype(int)
+if params.num_simulation >= 1:
+    vis_idx = np.linspace(0, params.num_simulation - 1, 1).astype(int)
     for idx in vis_idx:
         # plot.make_2D_plot(params, params.t_span_h, SDE_sol_delta_T[idx][:].flatten(),
         #                   'visualizations/SDE_sol_delta_T_over_time_sim' + str(idx) + '.png', xlabel='t [h]',
@@ -114,6 +128,11 @@ if params.num_simulation >= 10:
                                      'visualizations/SDE_stab_func_sol_sf_delta_T_over_time_sim' + str(idx) + '.png',
                                      xlabel='t [h]',
                                      ylabel=r'$\Delta T$ [K]')
+        #
+        # plot.make_2D_plot(params, params.t_span_h, SDE_stab_func_sol_poisson_delta_T[idx][:].flatten(),
+        #                   'visualizations/SDE_sol_delta_T_over_time_sim' + str(idx) + '.png', xlabel='t [h]',
+        #                   ylabel=r'$\Delta T$ [K]')
+
         # plot.make_2D_multi_line_plot(params, params.t_span_h,
         #                              np.array([SDE_z0_sol_delta_T[idx, 1:], 100*SDE_z0_sol_z0[idx, 1:]]).T,
         #                              [r'$\Delta T$', r'$100*z_0$'],

@@ -1,9 +1,7 @@
 import multiprocessing
 import os
 from functools import partial
-
 import numpy as np
-import time
 
 from one_D_model.model import solve_SDEs
 
