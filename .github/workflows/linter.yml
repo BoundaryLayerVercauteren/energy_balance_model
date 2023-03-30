@@ -1,0 +1,32 @@
+---
+# this action runs the super linter. It is a simple combination of
+# various linters, written in bash, to help validate the source code
+# of this repository.
+name: linter
+
+# this linter will run on pushes to the main branch and
+# pull requests for the main branch
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Super-Linter
+        uses: github/super-linter/slim@v4
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          VALIDATE_PYTHON_PYLINT: false
+          VALIDATE_PYTHON_BLACK: false
+          VALIDATE_ALL_CODEBASE: false
+          VALIDATE_JSCPD: false
+          VALIDATE_MARKDOWN: false
+          VALIDATE_PYTHON_ISORT: false
+          VALIDATE_PYTHON_MYPY: false
+          VALIDATE_BASH_EXEC: false
