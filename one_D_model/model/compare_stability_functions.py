@@ -128,7 +128,7 @@ def plot_stoch_stability_function_with_multiplicative_noise(params, Ri_values, n
     fig, ax = plt.subplots(figsize=(5, 5))
     row_counter = 0
 
-    color = matplotlib.cm.get_cmap('cmc.batlow', int(num_sim / 100) + 1).colors
+    color = matplotlib.cm.get_cmap('cmc.batlow', int(num_sim / 10) + 1).colors
 
     for sim_idx in np.arange(0, num_sim):
         sol = []
@@ -139,8 +139,8 @@ def plot_stoch_stability_function_with_multiplicative_noise(params, Ri_values, n
                 sol[idx] = 1
 
         # Plot every 100th solution
-        if sim_idx % 100 == 0:
-            sns.lineplot(x=Ri_values, y=sol, ax=ax, color=color[int(sim_idx / 100)])
+        if sim_idx % 10 == 0:
+            sns.lineplot(x=Ri_values, y=sol, ax=ax, color=color[int(sim_idx / 10)-1])
 
         stab_func_values[row_counter:row_counter + num_Ri, 0] = sol
         stab_func_values[row_counter:row_counter + num_Ri, 1] = Ri_values

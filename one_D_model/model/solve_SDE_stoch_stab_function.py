@@ -30,8 +30,7 @@ def sigma(x, sigma_s):
     return 10 ** (s1 * np.tanh(s2 * np.log10(x) - s3) + sigma_s)
 
 
-def define_SDE(t, delta_T, phi_stoch, param):
-    f_stab = 1 / phi_stoch
+def define_SDE(t, delta_T, f_stab, param):
     c_D = calculate_neutral_drag_coefficient(param)
     return (1 / param.cv) * (
             param.Q_i - param.Lambda * delta_T - param.rho * param.cp * c_D * param.U * delta_T * f_stab)
@@ -50,7 +49,7 @@ def solve_SDE_with_stoch_stab_function(param):
 
     # Define functions for 2D SDE
     def _f(X, t):
-        return np.array([define_SDE(t, X[0], X[1], param), define_stoch_stab_function(X[0], X[1], t, param)])
+        return np.array([define_SDE(t, X[0], 1/X[1], param), define_stoch_stab_function(X[0], X[1], t, param)])
 
     def _G(X, t):
         Ri = solve_ODE.calculate_richardson_number(param, param.delta_T_0, param.U)
@@ -148,9 +147,9 @@ def solve_ODE_with_stoch_stab_func_poisson(param):
 
 
 def solve_SDE_with_stoch_stab_function_multi_noise(param):
-    """Original model by van de Wiel with multiplicative noise in stochastic stability function."""
+    """Energy balance model with multiplicative noise in stochastic stability function."""
     # Combine initial conditions for
-    phi_0 = 1.0
+    phi_0 = calculate_stability_function(param, param.delta_T_0, param.U)
     initial_cond = np.array([param.delta_T_0, phi_0])
 
     # Define functions for 2D SDE
