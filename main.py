@@ -35,7 +35,7 @@ def save_parameters_in_file(params):
 
 
 def run_model(param, function=False, stab_function=False, Qi=False, Lambda=False, u=False, make_plot=False,
-              stab_function_multi_noise=False):
+              stab_function_multi_noise=False, u_and_function=False):
     # If command line flag is given make plots
     if make_plot:
         # # Process Dome C data and plot it
@@ -88,6 +88,12 @@ def run_model(param, function=False, stab_function=False, Qi=False, Lambda=False
         function_name = solve_SDE_stoch_stab_function.solve_SDE_with_stoch_stab_function_multi_noise
         sol_file_name = 'SDE_stab_func_multi_noise_sol'
         run_1D_SDE_model.solve_model_with_randomized_parameter(param, function_name, sol_file_name)
+
+    if u_and_function:
+        function_name = solve_SDEs.solve_SDE_with_stoch_u_and_internal_var
+        sol_file_name = 'SDE_u_internal_var_sol'
+        run_1D_SDE_model.solve_model_with_randomized_parameter(param, function_name, sol_file_name)
+
     # -----------------------------------------------------------------------------------------
     # Save parameters
     save_parameters_in_file(param)
@@ -95,7 +101,7 @@ def run_model(param, function=False, stab_function=False, Qi=False, Lambda=False
 
 if __name__ == "__main__":
     # Read command line input
-    f, sf, Q_i, Lam, wind, mp, sfmn = parse_command_line_input.read_command_line_input()
+    f, sf, Q_i, Lam, wind, mp, sfmn, uf = parse_command_line_input.read_command_line_input()
     # -----------------------------------------------------------------------------------------
     # Load Parameters
     params = parameters.Parameters()
@@ -107,4 +113,4 @@ if __name__ == "__main__":
         os.makedirs(params.sol_directory_path + 'temporary/')
     # -----------------------------------------------------------------------------------------
     # Run model and save output
-    run_model(params, f, sf, Q_i, Lam, wind, mp, sfmn)
+    run_model(params, f, sf, Q_i, Lam, wind, mp, sfmn, uf)
