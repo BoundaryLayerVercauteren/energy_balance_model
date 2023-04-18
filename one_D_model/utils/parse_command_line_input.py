@@ -48,6 +48,6 @@ def read_command_line_input():
         Qi = args.Qi
         Lambda = args.Lambda
         u = args.u
-        uf = args.uf
+        uf = args.u_and_function
 
     return function, stab_function, Qi, Lambda, u, args.plot, stab_function_multi_noise, uf
