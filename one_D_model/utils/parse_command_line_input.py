@@ -14,8 +14,6 @@ def command_line_parser():
                         default=False)
     parser.add_argument('-sf', '--stab_function', help='Randomize the stability function.', action="store_true",
                         default=False)
-    parser.add_argument('-sfp', '--stab_function_poisson', help='Randomize the stability function.', action="store_true",
-                        default=False)
     parser.add_argument('-sfmn', '--stab_function_multi_noise', help='Randomize the stability function.',
                         action="store_true", default=False)
     parser.add_argument('-qi', '--Qi', help='Randomize the model parameter Qi.', action="store_true",
@@ -43,10 +41,9 @@ def read_command_line_input():
     else:
         function = args.function
         stab_function = args.stab_function
-        stab_function_poisson = args.stab_function_poisson
         stab_function_multi_noise = args.stab_function_multi_noise
         Qi = args.Qi
         Lambda = args.Lambda
         u = args.u
 
-    return function, stab_function, Qi, Lambda, u, args.plot, stab_function_poisson, stab_function_multi_noise
+    return function, stab_function, Qi, Lambda, u, args.plot, stab_function_multi_noise

@@ -149,19 +149,20 @@ def plot_stoch_stability_function_with_multiplicative_noise(params, Ri_values, n
     stab_df = pd.DataFrame(data=stab_func_values, columns=['phi', 'ri'])
 
     colors = 'Blues'
-    sns.kdeplot(x=stab_df.ri, y=stab_df.phi, cmap=colors, fill=True, bw_adjust=.5, ax=ax)
+    sns.kdeplot(x=stab_df.ri, y=stab_df.phi, cmap=colors, fill=True, bw_adjust=.5, ax=ax, zorder=500, alpha=0.5)
 
     vec_vandewiel_short_tail_stab_func = np.vectorize(define_vandewiel_short_tail_stab_function)
-    sns.lineplot(x=Ri_values, y=vec_vandewiel_short_tail_stab_func(Ri_values), ax=ax, label='short-tail', color='r')
+    sns.lineplot(x=Ri_values, y=vec_vandewiel_short_tail_stab_func(Ri_values), ax=ax, label='short-tail', color='r', zorder=1000)
 
     ax.set_xlabel(r'$R_b$')
     ax.set_ylabel(r'$\phi$')
-    # ax.set_ylim(-1, 2.0)
     plt.legend()
 
     plt.savefig(params.sol_directory_path + 'stoch_stability_function_dist_multi_noise.png', bbox_inches='tight',
                 dpi=300)
 
+    print(f"mean = {stab_df[stab_df.ri > 0.25, 'phi'].mean()}")
+    print(f"max = {stab_df[stab_df.ri > 0.25, 'phi'].max()}")
 
 def define_poisson_stab_function(Ri_range, critical_Ri=0.25):
     # Define Poisson process
