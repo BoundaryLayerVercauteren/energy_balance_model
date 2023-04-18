@@ -62,3 +62,20 @@ def solve_SDE_with_stoch_lambda(param):
         return np.diag([0.0, define_noise_term(X[0], t, param.sigma_lambda)])
 
     return sdeint.itoint(_f, _G, initial_cond, param.t_span)
+
+
+def solve_SDE_with_stoch_u_and_internal_var(param):
+    """Energy balance model with Ornstein Uhlenbeck process to account for random wind and additive noise
+    for internal variability."""
+    # Define initial conditions
+    initial_cond = np.array([param.delta_T_0, param.U])
+
+    # Define functions for 2D SDE
+    def _f(X, t):
+        return np.array([solve_ODE.define_deterministic_ODE(t, X[0], X[1], param.Lambda, param.Q_i, param),
+                         param.relax_u * (X[1] - param.mu_u)])
+
+    def _G(X, t):
+        return np.diag([param.sigma_delta_T, param.sigma_u])
+
+    return sdeint.itoint(_f, _G, initial_cond, param.t_span)

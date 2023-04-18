@@ -22,6 +22,8 @@ def command_line_parser():
                         default=False)
     parser.add_argument('-u', '--u', help='Randomize the model parameter u.', action="store_true",
                         default=False)
+    parser.add_argument('-uf', '--u_and_function', help='Randomize the model parameter u and the model itself.',
+                        action="store_true", default=False)
     parser.add_argument('-a', '--all', help='Run model with all randomizations.', action="store_true",
                         default=False)
 
@@ -38,6 +40,7 @@ def read_command_line_input():
         Qi = True
         Lambda = True
         u = True
+        uf = True
     else:
         function = args.function
         stab_function = args.stab_function
@@ -45,5 +48,6 @@ def read_command_line_input():
         Qi = args.Qi
         Lambda = args.Lambda
         u = args.u
+        uf = args.uf
 
-    return function, stab_function, Qi, Lambda, u, args.plot, stab_function_multi_noise
+    return function, stab_function, Qi, Lambda, u, args.plot, stab_function_multi_noise, uf

@@ -105,3 +105,22 @@ def test_successful_run_stab_function_multi_noise():
     except Exception as exc:
         shutil.rmtree(param.sol_directory_path)
         assert False, f"Model run with stochastic stab_function_multi_noise raised an exception: {exc}"
+
+
+def test_successful_run_u_and_function():
+    # Load Parameters
+    param = parameters.Parameters()
+    param.num_simulation = 2
+    param.num_proc = 1
+    # Make directory for output
+    param.sol_directory_path = 'output/test/'
+    if not os.path.exists(param.sol_directory_path):
+        os.makedirs(param.sol_directory_path)
+        os.makedirs(param.sol_directory_path + 'temporary/')
+    # Test if model can be run for stochastic u
+    try:
+        main.run_model(param, u_and_function=True)
+        shutil.rmtree(param.sol_directory_path)
+    except Exception as exc:
+        shutil.rmtree(param.sol_directory_path)
+        assert False, f"Model run with stochastic u_and_function raised an exception: {exc}"
