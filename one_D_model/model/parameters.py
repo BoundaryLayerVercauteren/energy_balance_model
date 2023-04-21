@@ -41,12 +41,14 @@ class Parameters:
     mu_z0: float = 0.001  # mu for z0 noise term
     sigma_s: float = -0.1
     sigma_phi: float = 0.03
-    poisson_lambda: float = 1.0  # lambda for poisson process, stability function
 
     relax: float = -0.005  # coefficient of relaxation to equilibrium
     relax_u: float = -0.005
     relax_phi: float = -0.005
     mu_u: float = U
 
-    num_simulation: int = 1000  # number of runs for Monte Carlo simulation
-    num_proc: int = 100  # number of processes to be used in parallelization
+    u_range: np.ndarray = np.concatenate((np.repeat(8, 3600 / dt), np.linspace(8, 3, int(len(t_span) - (3600 / dt)))),
+                                         axis=0)  # values of u for SDE if u is time dependent
+
+    num_simulation: int = 1  # number of runs for Monte Carlo simulation
+    num_proc: int = 1  # number of processes to be used in parallelization

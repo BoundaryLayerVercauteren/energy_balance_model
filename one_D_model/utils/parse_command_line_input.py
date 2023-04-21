@@ -24,6 +24,9 @@ def command_line_parser():
                         default=False)
     parser.add_argument('-uf', '--u_and_function', help='Randomize the model parameter u and the model itself.',
                         action="store_true", default=False)
+    parser.add_argument('-sfu', '--stab_function_multi_noise_u_td', help='Randomize the stability function and u is time'
+                                                                         'dependent.', action="store_true",
+                        default=False)
     parser.add_argument('-a', '--all', help='Run model with all randomizations.', action="store_true",
                         default=False)
 
@@ -49,5 +52,6 @@ def read_command_line_input():
         Lambda = args.Lambda
         u = args.u
         uf = args.u_and_function
+        sfu = args.stab_function_multi_noise_u_td
 
-    return function, stab_function, Qi, Lambda, u, args.plot, stab_function_multi_noise, uf
+    return function, stab_function, Qi, Lambda, u, args.plot, stab_function_multi_noise, uf, sfu
