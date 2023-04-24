@@ -34,6 +34,17 @@ def save_parameters_in_file(params):
         json.dump(ast.literal_eval(params_json), file)
 
 
+def create_u_range(params):
+    # Define values for u range
+    num_u_steps = 50
+    u_values = np.round(np.linspace(params.u_range_start, params.u_range_end, num_u_steps), 1)
+    # Calculate how often each u value will be repeated
+    num_repeat = int(params.num_steps / num_u_steps)
+    # Define u _range
+    u = np.array([np.repeat(u_values[idx], num_repeat) for idx in np.arange(0, num_u_steps)])
+    return u.flatten()
+
+
 def run_model(param, function=False, stab_function=False, Qi=False, Lambda=False, u=False, make_plot=False,
               stab_function_multi_noise=False, u_and_function=False, stab_function_multi_noise_u_td=False):
     # If command line flag is given make plots
@@ -95,6 +106,9 @@ def run_model(param, function=False, stab_function=False, Qi=False, Lambda=False
         run_1D_SDE_model.solve_model_with_randomized_parameter(param, function_name, sol_file_name)
 
     if stab_function_multi_noise_u_td:
+        # Calculate u range and save it
+        param.u_range = create_u_range(param)
+        np.savetxt(str(params.sol_directory_path) + 'u_range.txt', param.u_range)
         function_name = solve_SDE_stoch_stab_function.solve_SDE_with_stoch_stab_function_multi_noise_time_dependent_u
         sol_file_name = 'SDE_stab_func_multi_noise_sol'
         run_1D_SDE_model.solve_model_with_randomized_parameter(param, function_name, sol_file_name)
