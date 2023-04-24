@@ -56,7 +56,10 @@ def count_how_many_sim_crashed(values):
 
 
 def split_into_consecutive_ts(val, stepsize=1):
-    return np.split(val, np.where(np.diff(val) != stepsize)[0] + 1)
+    array = np.split(val, np.where(np.diff(val) != stepsize)[0] + 1)
+    if len(array) == 1:
+        array = array[0]
+    return array
 
 
 def get_time_series_with_most_transitions(values):
@@ -64,6 +67,7 @@ def get_time_series_with_most_transitions(values):
     start_very_stable = []
     start_weakly_stable = []
     for idx, row in enumerate(values):
+
         idx_very_stable = np.where(row > location_unstable_eq)[0]
         idx_weakly_stable = np.where(row < location_unstable_eq)[0]
 
@@ -71,29 +75,54 @@ def get_time_series_with_most_transitions(values):
         cons_idx_in_weakly_stable = split_into_consecutive_ts(idx_weakly_stable)
 
         if row[0] > location_unstable_eq:
-            cons_idx_in_very_stable.pop(0)
+            cons_idx_in_very_stable = cons_idx_in_very_stable[1:]
 
-        if cons_idx_in_very_stable:
-            start_very_stable = [elem[0] for elem in cons_idx_in_very_stable]
+        if len(cons_idx_in_very_stable) > 0:
+            # Check if the first element is a list
+            if isinstance(cons_idx_in_very_stable[0], np.ndarray):
+                start_very_stable = [elem[0] for elem in cons_idx_in_very_stable]
+            else:
+                start_very_stable = [cons_idx_in_very_stable[0]]
 
-        if cons_idx_in_weakly_stable:
-            if len(cons_idx_in_weakly_stable) > 1:
+        if len(cons_idx_in_weakly_stable) > 0:
+            # Check if the first element is a list
+            if isinstance(cons_idx_in_weakly_stable[0], np.ndarray):
                 start_weakly_stable = [elem[0] for elem in cons_idx_in_weakly_stable]
             else:
-                start_weakly_stable = [elem for elem in cons_idx_in_weakly_stable]
-        # print(start_weakly_stable)
-        # print(start_very_stable)
-        # fig, ax = plt.subplots(figsize=(15, 5))
-        # ax.plot(row, color='black')
-        # ax.axhline(y=12, color='blue')
-        # ax.scatter(start_weakly_stable, row[start_weakly_stable], color='red')
-        # ax.scatter(start_very_stable, row[start_very_stable], color='green')
-        # ax.set_xlim(3500, 3750)
-        # fig.savefig(output_directory + f'{idx}_test.png', bbox_inches='tight', dpi=300)
-        # print('---')
-        # exit()
-        # if idx > 10:
-        #     exit()
+                start_weakly_stable = [cons_idx_in_weakly_stable[0]]
+
+        # Make sure that at least 1 hour is between transitions
+        # Small bumps during a transition should not count
+        elem_to_be_removed_weakly = []
+        elem_to_be_removed_very = []
+        for elem_idx in np.arange(0, len(start_weakly_stable)-1):
+            if start_weakly_stable[elem_idx+1] - start_weakly_stable[elem_idx] < 360:
+                elem_to_be_removed_weakly.append(start_weakly_stable[elem_idx])
+                for elem_v in start_very_stable:
+                    if elem_v < start_weakly_stable[elem_idx+1] and elem_v > start_weakly_stable[elem_idx]:
+                        elem_to_be_removed_very.append(elem_v)
+        start_weakly_stable = [elem for elem in start_weakly_stable if elem not in elem_to_be_removed_weakly]
+
+        for elem_idx in np.arange(0, len(start_very_stable)-1):
+            if start_very_stable[elem_idx+1] - start_very_stable[elem_idx] < 360:
+                elem_to_be_removed_very.append(start_very_stable[elem_idx])
+        start_very_stable = [elem for elem in start_very_stable if elem not in elem_to_be_removed_very]
+
+        # if len(idx_weakly_stable) != 0:
+        #     try:
+        #         fig, ax = plt.subplots(figsize=(15, 5))
+        #         ax.plot(row, color='black')
+        #         ax.axhline(y=12, color='blue')
+        #         ax.scatter(start_weakly_stable, row[start_weakly_stable], color='red')
+        #         ax.scatter(start_very_stable, row[start_very_stable], color='green')
+        #         #ax.set_xlim(27000,30000)
+        #         fig.savefig(output_directory + f'{idx}_test.png', bbox_inches='tight', dpi=300)
+        #         plt.cla()  # Clear the current axes.
+        #         plt.clf()  # Clear the current figure.
+        #         plt.close('all')  # Closes all the figure windows.
+        #         #exit()
+        #     except Exception:
+        #         pass
 
         if start_weakly_stable or start_very_stable:
             num_trans = len(start_weakly_stable) + len(start_very_stable) - 1
@@ -102,6 +131,7 @@ def get_time_series_with_most_transitions(values):
 
         number_trans.append(num_trans)
 
+    print(np.nanmax(number_trans))
     return np.nanargmax(number_trans), np.nanmean(number_trans)
 
 
@@ -130,13 +160,15 @@ def get_transition_statistics(data_values):
 # output_directory = 'output/1000_sim_short_tail_stab_func/very_weakly/'
 # output_directory = 'output/1000_sim_short_tail_u/'
 # output_directory = 'output/1000_sim_short_tail_internal_var/'
-output_directory = 'output/1000_sim_short_tail_poisson_stab_func/'
+# output_directory = 'output/1000_sim_short_tail_poisson_stab_func/'
+output_directory = 'output/1000_sim_st_stab_func_multi_noise_48h/'#'output/1000_sim_short_tail_stab_func_multi_noise/'
 
 # Get all result files in given directory
 # deltaT_file_name = '/SDE_stab_func_sol_delta_T.npy'
 # deltaT_file_name = '/SDE_u_sol_delta_T.npy'
 # deltaT_file_name = '/SDE_sol_delta_T.npy'
-deltaT_file_name = '/SDE_stab_func_poisson_sol_delta_T.npy'
+# deltaT_file_name = '/SDE_stab_func_poisson_sol_delta_T.npy'
+deltaT_file_name = '/SDE_stab_func_multi_noise_sol_delta_T.npy'
 
 u_file_name = 'SDE_u_sol_param.npy'
 
@@ -146,8 +178,10 @@ perturbations_labels = {'sigma_s_2_0': 2.0, 'sigma_s_1_5': 1.5, 'sigma_s_0_0': 0
                         'sigma_s_minus_0_07': -0.07, 'sigma_s_minus_0_1': -0.1, 'sigma_s_minus_1_0': -1.0,
                         'sigma_0_1': 0.1, 'sigma_0_2': 0.2, 'sigma_0_3': 0.3, 'sigma_0_4': 0.4, 'sigma_0_5': 0.5,
                         'sigma_0_6': 0.6, 'sigma_0_7': 0.7, 'sigma_0_8': 0.8, 'sigma_0_9': 0.9, 'sigma_1_0': 1.0,
-                        'sigma_0_08': 0.08, 'lambda_0_1': 0.1, 'lambda_0_2': 0.2, 'lambda_0_3': 0.3, 'lambda_0_4': 0.4,
-                        'lambda_0_5': 0.5, 'lambda_0_6': 0.6, 'lambda_0_7': 0.7}
+                        'sigma_0_01': 0.01, 'sigma_0_001': 0.001, 'sigma_0_02': 0.02, 'sigma_0_03': 0.03,
+                        'sigma_1_0': 1.0, 'sigma_2_0': 2.0, 'sigma_3_0': 3.0, 'sigma_4_0': 4.0, 'sigma_5_0': 5.0,
+                        'sigma_0_005': 0.005, 'sigma_0_08': 0.08, 'lambda_0_1': 0.1, 'lambda_0_2': 0.2,
+                        'lambda_0_3': 0.3, 'lambda_0_4': 0.4, 'lambda_0_5': 0.5, 'lambda_0_6': 0.6, 'lambda_0_7': 0.7}
 
 # Define empty dictionary to store results
 mean_time_weakly = {}
@@ -160,16 +194,16 @@ num_ts_in_weakly = {}
 num_crashes_per_sim = {}
 mean_trans_per_sim = {}
 
-fig1, ax1 = plt.subplots(3, 4, figsize=(20, 15))
+fig1, ax1 = plt.subplots(3, 5, figsize=(25, 15))
 axes1 = ax1.ravel()
-fig2, ax2 = plt.subplots(3, 4, figsize=(20, 15))
+fig2, ax2 = plt.subplots(3, 5, figsize=(25, 15))
 axs2 = ax2.ravel()
 
 fig3, ax3 = plt.subplots(figsize=(5, 5))
 xtick_lab = []
 
-DomeC_statistics = analyze_dome_c_data.get_Dome_C_statistics(2013)
-ax3.errorbar(0, DomeC_statistics[0], DomeC_statistics[1], linestyle='None', capsize=3, marker='o', lw=3, color='orange')
+# DomeC_statistics = analyze_dome_c_data.get_Dome_C_statistics(2013)
+# ax3.errorbar(0, DomeC_statistics[0], DomeC_statistics[1], linestyle='None', capsize=3, marker='o', lw=3, color='orange')
 xtick_lab.append('Dome C')
 
 for idx, file in enumerate(output_files):
@@ -189,6 +223,7 @@ for idx, file in enumerate(output_files):
         chosen_data = data
     elif perturb_strength == '0.2' and '_u_' not in file:
         chosen_data = data
+
     # Get transition statistics for current simulation
     mean_time_weakly[perturb_strength], max_time_weakly[perturb_strength], mean_time_very[perturb_strength], \
     max_time_very[perturb_strength], idx_max, num_ts_in_very[perturb_strength], num_ts_in_weakly[perturb_strength], \
@@ -205,16 +240,16 @@ for idx, file in enumerate(output_files):
         axes1[idx].set_xlabel('time [s]')
         axes1[idx].set_ylabel(r'$\Delta T$')
 
-        if '_u_' in file:
-            data_u = np.load(file.rsplit('/', 1)[0] + '/' + u_file_name)
-            axes1[idx].plot(data_u[idx_max_transitions, :], color='g')
-
-            curr_mean = np.nanmean(data_u.flatten())
-            ax3.errorbar(idx + 1, curr_mean, np.nanstd(data_u.flatten()), linestyle='None',
-                         capsize=3, marker='o', lw=3, color='black')
-            erb_dome_c = ax3.errorbar(idx + 1, curr_mean, DomeC_statistics[1], capsize=3, color='orange')
-            erb_dome_c[-1][0].set_linestyle('dashed')
-            xtick_lab.append(perturb_strength)
+        # if '_u_' in file:
+        #     data_u = np.load(file.rsplit('/', 1)[0] + '/' + u_file_name)
+        #     axes1[idx].plot(data_u[idx_max_transitions, :], color='g')
+        #
+        #     curr_mean = np.nanmean(data_u.flatten())
+        #     ax3.errorbar(idx + 1, curr_mean, np.nanstd(data_u.flatten()), linestyle='None',
+        #                  capsize=3, marker='o', lw=3, color='black')
+        #     erb_dome_c = ax3.errorbar(idx + 1, curr_mean, DomeC_statistics[1], capsize=3, color='orange')
+        #     erb_dome_c[-1][0].set_linestyle('dashed')
+        #     xtick_lab.append(perturb_strength)
 
     # Plot histogram of
     axs2[idx].hist(data.flatten(), 100)
@@ -245,35 +280,35 @@ plt.close('all')  # Closes all the figure windows.
 # Plot statistics
 num_time_steps = np.shape(data)[1]
 
-fig, ax = plt.subplots(1, 2, figsize=(10, 5))
-axes = ax.ravel()
-box1 = axes[0].boxplot((chosen_data < location_unstable_eq).sum(axis=1) / num_time_steps * 100, positions=[0],
-                       patch_artist=True)
-box1['boxes'][0].set(facecolor='green', alpha=0.5)
-box1['medians'][0].set_color('black')
-box2 = axes[0].boxplot((chosen_data > location_unstable_eq).sum(axis=1) / num_time_steps * 100, positions=[1],
-                       patch_artist=True)
-box2['boxes'][0].set(facecolor='orange', alpha=0.5)
-box2['medians'][0].set_color('black')
-
-axes[0].set_xticks([0, 1], ['weakly', 'very'])
-axes[0].set_ylabel('% of time spend in regime')
-axes[0].set_title('a)', loc='left')
-
-axes[1].axvspan(chosen_data.min(), 12, facecolor='green', alpha=0.5)
-axes[1].axvspan(12, chosen_data.max(), facecolor='orange', alpha=0.5)
-axes[1].hist(chosen_data.flatten(), 100, color='black')
-axes[1].set_xlim(chosen_data.min(), chosen_data.max())
-axes[1].set_xlabel(r'$\Delta T$')
-axes[1].set_ylabel(r'Density of $\Delta T$')
-axes[1].axvline(x=24, color='r')
-axes[1].axvline(x=4, color='r')
-axes[1].axvline(x=12, color='r', linestyle='--')
-axes[1].set_title('b)', loc='left')
-
-plt.tight_layout()
-
-plt.savefig(output_directory + 'time_in_regime.png', bbox_inches='tight', dpi=300)
+# fig, ax = plt.subplots(1, 2, figsize=(10, 5))
+# axes = ax.ravel()
+# box1 = axes[0].boxplot((chosen_data < location_unstable_eq).sum(axis=1) / num_time_steps * 100, positions=[0],
+#                        patch_artist=True)
+# box1['boxes'][0].set(facecolor='green', alpha=0.5)
+# box1['medians'][0].set_color('black')
+# box2 = axes[0].boxplot((chosen_data > location_unstable_eq).sum(axis=1) / num_time_steps * 100, positions=[1],
+#                        patch_artist=True)
+# box2['boxes'][0].set(facecolor='orange', alpha=0.5)
+# box2['medians'][0].set_color('black')
+#
+# axes[0].set_xticks([0, 1], ['weakly', 'very'])
+# axes[0].set_ylabel('% of time spend in regime')
+# axes[0].set_title('a)', loc='left')
+#
+# axes[1].axvspan(chosen_data.min(), 12, facecolor='green', alpha=0.5)
+# axes[1].axvspan(12, chosen_data.max(), facecolor='orange', alpha=0.5)
+# axes[1].hist(chosen_data.flatten(), 100, color='black')
+# axes[1].set_xlim(chosen_data.min(), chosen_data.max())
+# axes[1].set_xlabel(r'$\Delta T$')
+# axes[1].set_ylabel(r'Density of $\Delta T$')
+# axes[1].axvline(x=24, color='r')
+# axes[1].axvline(x=4, color='r')
+# axes[1].axvline(x=12, color='r', linestyle='--')
+# axes[1].set_title('b)', loc='left')
+#
+# plt.tight_layout()
+#
+# plt.savefig(output_directory + 'time_in_regime.png', bbox_inches='tight', dpi=300)
 
 # Transform values to percentages
 num_sim = np.shape(data)[0]

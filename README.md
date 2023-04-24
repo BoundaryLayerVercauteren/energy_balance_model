@@ -28,25 +28,33 @@ Output files can be found in output/ directory with current data and time.
 ### Command-line options for running the model
 
 ```bash
-usage: main.py [-h] [-pl] [-V] [-f] [-sf] [-qi] [-l] [-z] [-u] [-a] [-obs_u]
-
-Run the energy balance model.
-
-optional arguments:
-  -h, --help            show this help message and exit
-  -pl, --plot           Make potential, bifurcation, ... plots.
-  -V, --version         Show program's version number and exit
-  -f, --function        Randomize the model function itself.
-  -sf, --stab_function  Randomize the stability function.
+usage: main.py [-h] [-pl] [-V] [-f] [-sf] [-sfmn] [-qi] [-l] [-u] [-uf] [-sfu] [-a]
+                                                                                   
+Run the energy balance model.                                                      
+                                                                                   
+optional arguments:                                                                
+  -h, --help            show this help message and exit                            
+  -pl, --plot           Make potential, bifurcation, ... plots.                    
+  -V, --version         show program's version number and exit                     
+  -f, --function        Randomize the model function itself.                       
+  -sf, --stab_function  Randomize the stability function.                          
+  -sfmn, --stab_function_multi_noise
+                        Randomize the stability function.
   -qi, --Qi             Randomize the model parameter Qi.
   -l, --Lambda          Randomize the model parameter lambda.
-  -z, --z0              Randomize the model parameter z0.
   -u, --u               Randomize the model parameter u.
+  -uf, --u_and_function
+                        Randomize the model parameter u and the model itself.
+  -sfu, --stab_function_multi_noise_u_td
+                        Randomize the stability function and u is timedependent.
   -a, --all             Run model with all randomizations.
-  -obs_u, --observed_u  Run model with wind speed given by observations.
+
 ```
 ## Disclaimer
-This code has been set up to run on Ubuntu 20.04. There is no guarantee that it runs on any other operating system.
+This code has been set up to run on Ubuntu 20.04. 
+Only the python versions 3.8 and 3.9 have been used to run the code.
+
+There is no guarantee that the code runs on any other operating system or with a different python version.
 
 ## References
 [1] van de Wiel, B. J. H., Vignon, E., Baas, P., van Hooijdonk, I. G. S., van der Linden, S. J. A., Antoon van Hooft, J., Bosveld, F. C., de Roode,

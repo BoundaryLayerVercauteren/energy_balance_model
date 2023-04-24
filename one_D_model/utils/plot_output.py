@@ -10,9 +10,9 @@ from one_D_model.model import solve_ODE
 plt.style.use('science')
 
 # set font sizes for plots
-SMALL_SIZE = 11
-MEDIUM_SIZE = 12
-BIGGER_SIZE = 15
+SMALL_SIZE = 16
+MEDIUM_SIZE = 18
+BIGGER_SIZE = 20
 
 plt.rc('font', size=SMALL_SIZE)  # controls default text sizes
 plt.rc('axes', titlesize=SMALL_SIZE)  # fontsize of the axes title
@@ -44,22 +44,34 @@ def make_2D_plot(params, x, y, file_name, xlabel='t [h]', ylabel=r'$\Delta T$ [K
 
 
 def make_2D_multi_line_plot(params, x, y_array, labels, file_name, xlabel='u [m/s]', ylabel=r'$\Delta T_{eq}$ [K]',
-                            ylim=(0, 30)):
+                            ylim=(0, 30), ylabel2='u [m/s]'):
     color = matplotlib.cm.get_cmap('cmc.batlow', np.shape(y_array)[1] + 1).colors
-    fig = plt.figure(figsize=(15, 5))
-    ax1 = fig.add_subplot(1, 1, 1)
+    fig, ax1 = plt.subplots(figsize=(15, 5))
+    ax2 = ax1.twinx()
 
-    ax1.axhline(y=24, color='r')
-    ax1.axhline(y=4, color='r')
-    ax1.axhline(y=12, color='r', linestyle='--')
+    ax1.axhline(y=24, color='r', lw=2)
+    ax1.axhline(y=4, color='r', lw=2)
+    ax1.axhline(y=12, color='r', linestyle=':', lw=2)
 
-    for idx in range(np.shape(y_array)[1]):
-        ax1.plot(x, y_array[:, idx], label=labels[idx], color=color[idx])
+    ax1.plot(x, y_array[:, 0], label=labels[0], color=color[0], lw=2)
+    ax2.plot(x, y_array[:, 1], label=labels[1], color=color[1], alpha=0.6)
+    average_time = 600
+    ax2.plot(x[average_time - 1:], np.convolve(y_array[:, 1], np.ones(average_time), 'valid') / average_time,
+             label=labels[1], color=color[1], alpha=1, lw=2)
+
+    ax1.set_zorder(2)
+    ax2.set_zorder(1)
+    ax1.patch.set_visible(False)
 
     ax1.set_ylim(ylim)
     ax1.set_xlabel(xlabel)
-    ax1.set_ylabel(ylabel)
-    plt.legend()
+    ax1.set_ylabel(ylabel, color=color[0])
+    ax1.tick_params(axis="y", labelcolor=color[0])
+
+    ax2.set_ylabel(ylabel2, color=color[1])
+    ax2.tick_params(axis="y", labelcolor=color[1])
+
+    # plt.legend()
     plt.savefig(params.sol_directory_path + file_name, bbox_inches='tight', dpi=300)
     # To clear memory
     plt.cla()  # Clear the current axes.
@@ -160,7 +172,7 @@ def plot_potentials_and_output_distribution(param_class, delta_T_data):
     ax2.set_ylabel(r'Density of $\Delta T$', color=color[1], alpha=1)
     ax2.tick_params(axis="y", labelcolor=color[1])
 
-    ax2.set_ylim((0.0, 4.5*10**6))
+    ax2.set_ylim((0.0, 4.5 * 10 ** 6))
     ax1.set_title(title, loc='left')
     ax1.legend()
 
