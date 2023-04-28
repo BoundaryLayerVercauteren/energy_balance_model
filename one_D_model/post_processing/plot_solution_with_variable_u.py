@@ -18,7 +18,7 @@ plt.rc('legend', fontsize=SMALL_SIZE)  # legend fontsize
 plt.rc('figure', titlesize=BIGGER_SIZE)  # fontsize of the figure title
 
 # Define directory where simulation output is saved
-output_directory = 'output/20230424_1052_08/'
+output_directory = 'output/1000_sim_short_tail_stab_func_multi_noise_var_u/sigma_0_1/simulations/'
 
 # Load data
 SDE_stab_func_sol_delta_T = np.load(output_directory + 'SDE_stab_func_multi_noise_sol_delta_T.npy')
@@ -66,4 +66,4 @@ ax[2].legend(handles=[plt_sims_sf_all[0], plt_sims_sf_one[0], plt_sims_sf_mean[0
              frameon=True)
 
 fig.tight_layout()
-plt.savefig('solution_with_time_dependent_u.png', bbox_inches='tight', dpi=300)
+plt.savefig(output_directory + 'solution_with_time_dependent_u.png', bbox_inches='tight', dpi=300)

@@ -4,7 +4,7 @@ from one_D_model import __version__
 
 
 def command_line_parser():
-    """parse command line input"""
+    """Parse command line input"""
     # Parser for command line options
     parser = argparse.ArgumentParser(description="Run the energy balance model.")
     # Add arguments
@@ -14,8 +14,6 @@ def command_line_parser():
                         default=False)
     parser.add_argument('-sf', '--stab_function', help='Randomize the stability function.', action="store_true",
                         default=False)
-    parser.add_argument('-sfmn', '--stab_function_multi_noise', help='Randomize the stability function.',
-                        action="store_true", default=False)
     parser.add_argument('-qi', '--Qi', help='Randomize the model parameter Qi.', action="store_true",
                         default=False)
     parser.add_argument('-l', '--Lambda', help='Randomize the model parameter lambda.', action="store_true",
@@ -24,8 +22,8 @@ def command_line_parser():
                         default=False)
     parser.add_argument('-uf', '--u_and_function', help='Randomize the model parameter u and the model itself.',
                         action="store_true", default=False)
-    parser.add_argument('-sfu', '--stab_function_multi_noise_u_td', help='Randomize the stability function and u is time'
-                                                                         'dependent.', action="store_true",
+    parser.add_argument('-sfu', '--stab_function_and_time_dependent_u',
+                        help='Randomize the stability function and u is time dependent.', action="store_true",
                         default=False)
     parser.add_argument('-a', '--all', help='Run model with all randomizations.', action="store_true",
                         default=False)
@@ -36,7 +34,7 @@ def command_line_parser():
 def read_command_line_input():
     # Read command line input
     args = command_line_parser()
-
+    # Sett all to true when flag is 'all'
     if args.all:
         function = True
         stab_function = True
@@ -44,14 +42,14 @@ def read_command_line_input():
         Lambda = True
         u = True
         uf = True
+        sfu = True
     else:
         function = args.function
         stab_function = args.stab_function
-        stab_function_multi_noise = args.stab_function_multi_noise
         Qi = args.Qi
         Lambda = args.Lambda
         u = args.u
         uf = args.u_and_function
-        sfu = args.stab_function_multi_noise_u_td
+        sfu = args.stab_function_and_time_dependent_u
 
-    return function, stab_function, Qi, Lambda, u, args.plot, stab_function_multi_noise, uf, sfu
+    return function, stab_function, Qi, Lambda, u, args.plot, uf, sfu
