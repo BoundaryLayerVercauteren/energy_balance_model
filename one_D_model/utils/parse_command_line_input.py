@@ -25,6 +25,9 @@ def command_line_parser():
     parser.add_argument('-sfu', '--stab_function_and_time_dependent_u',
                         help='Randomize the stability function and u is time dependent.', action="store_true",
                         default=False)
+    parser.add_argument('-ss', '--sensitivity_study',
+                        help='Perform a sensitivity study.', action="store_true",
+                        default=False)
     parser.add_argument('-a', '--all', help='Run model with all randomizations.', action="store_true",
                         default=False)
 
@@ -51,5 +54,6 @@ def read_command_line_input():
         u = args.u
         uf = args.u_and_function
         sfu = args.stab_function_and_time_dependent_u
+        ss = args.sensitivity_study
 
-    return function, stab_function, Qi, Lambda, u, args.plot, uf, sfu
+    return function, stab_function, Qi, Lambda, u, args.plot, uf, sfu, ss

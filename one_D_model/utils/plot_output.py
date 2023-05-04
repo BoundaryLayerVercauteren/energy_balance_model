@@ -10,9 +10,9 @@ from one_D_model.model import solve_ODE
 plt.style.use('science')
 
 # set font sizes for plots
-SMALL_SIZE = 16
-MEDIUM_SIZE = 18
-BIGGER_SIZE = 20
+SMALL_SIZE = 11
+MEDIUM_SIZE = 12
+BIGGER_SIZE = 16
 
 plt.rc('font', size=SMALL_SIZE)  # controls default text sizes
 plt.rc('axes', titlesize=SMALL_SIZE)  # fontsize of the axes title
@@ -82,10 +82,12 @@ def make_2D_multi_line_plot(params, x, y_array, labels, file_name, xlabel='u [m/
 def make_distribution_plot(values, params, file_name, xlabel):
     fig = plt.figure(figsize=(5, 5))
 
+    color = matplotlib.cm.get_cmap('cmc.batlow', 1).colors
+
     plt.axvline(x=24, color='r')
     plt.axvline(x=4, color='r')
     plt.axvline(x=12, color='r', linestyle='--')
-    plt.hist(values, 100)
+    plt.hist(values, 100, color=color[0])
 
     plt.xlabel(xlabel)
     plt.ylabel(r'Density of $\Delta T$')
@@ -174,7 +176,7 @@ def plot_potentials_and_output_distribution(param_class, delta_T_data):
 
     ax2.set_ylim((0.0, 4.5 * 10 ** 6))
     ax1.set_title(title, loc='left')
-    ax1.legend()
+    ax1.legend()#loc='upper left')
 
     plt.savefig(param_class.sol_directory_path + 'data_dist_potentials_' + param_copy.stab_func_type + '.png',
                 bbox_inches='tight', dpi=300)
