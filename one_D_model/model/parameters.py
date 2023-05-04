@@ -49,7 +49,7 @@ class Parameters:
 
     # values of u for SDE if u is time dependent
     u_range_start: float = 3.0
-    u_range_end: float = 8.0
+    u_range_end: float = 4.0
 
     num_simulation: int = 1000  # number of runs for Monte Carlo simulation
-    num_proc: int = 100  # number of processes to be used in parallelization
+    num_proc: int = 200  # number of processes to be used in parallelization

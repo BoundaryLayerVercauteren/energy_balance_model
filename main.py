@@ -14,7 +14,7 @@ import numpy as np
 sys.path.append(os.getcwd())
 
 from DomeC import process_dome_c_data
-from one_D_model.utils import plot_output as plot, parse_command_line_input
+from one_D_model.utils import plot_output as plot, parse_command_line_input, set_plotting_style
 from one_D_model.model import run_SDE_model as run_1D_SDE_model
 from one_D_model.model import parameters, solve_ODE, make_bifurcation_analysis, solve_SDEs, \
     solve_SDE_stoch_stab_function, compare_stability_functions
@@ -30,21 +30,22 @@ def save_parameters_in_file(param_vals):
         json.dump(ast.literal_eval(params_json), file)
 
 
-def create_u_range(param_vals):
-    # Define values for u range
-    num_u_steps = 50
+def create_u_range(param_vals, num_u_steps=50):
+    # Define which values u can take
     u_values = np.round(np.linspace(param_vals.u_range_start, param_vals.u_range_end, num_u_steps), 1)
     # Calculate how often each u value will be repeated
     num_repeat = int(param_vals.num_steps / num_u_steps)
-    # Define u _range
+    # Define u_range
     u = np.array([np.repeat(u_values[idx], num_repeat) for idx in np.arange(0, num_u_steps)])
     return u.flatten()
 
 
 def run_model(param, function=False, stab_function=False, Qi=False, Lambda=False, u=False, make_plot=False,
-              u_and_function=False, stab_function_and_time_dependent_u=False):
+              u_and_function=False, stab_function_and_time_dependent_u=False, sensitivity_study=False):
     # If command line flag is given make plots
     if make_plot:
+        # Set plotting style and font sizes for figures
+        set_plotting_style.configure_plotting_style(figure_type='full_page_width')
         # Process Dome C data and plot it
         data_domec = process_dome_c_data.main()
         # -------------------------------------------------------------------------------------
@@ -69,6 +70,63 @@ def run_model(param, function=False, stab_function=False, Qi=False, Lambda=False
     # -----------------------------------------------------------------------------------------
     # Run model with randomizations
     # Which parameters are parameterized is specified by the command line flags
+
+    if sensitivity_study:
+        u_step_size = 0.1
+        u_range = np.round(np.arange(param.u_range_start, param.u_range_end + u_step_size, u_step_size), 3)
+        sigma_step_size = 0.01
+        sigma_range = np.round(np.arange(sigma_step_size, 1.0 + sigma_step_size, sigma_step_size), 3)
+        orig_sol_directory_path = params.sol_directory_path
+        for trans_type in ['weakly_very', 'very_weakly']:
+            cur_sol_directory_path = orig_sol_directory_path + f'{trans_type}/'
+            os.makedirs(cur_sol_directory_path)
+            if trans_type == 'weakly_very':
+                params.delta_T_0 = 4
+            else:
+                params.delta_T_0 = 24
+            if function:
+                for u_val in u_range:
+                    for sigma_val in sigma_range:
+                        params.sol_directory_path = cur_sol_directory_path + f"{str(u_val).replace('.', '_')}/{str(sigma_val).replace('.', '_')}/"
+                        os.makedirs(params.sol_directory_path)
+                        os.makedirs(params.sol_directory_path + 'temporary/')
+                        param.U = u_val
+                        param.sigma_delta_T = sigma_val
+                        run_1D_SDE_model.solve_randomized_model(param)
+                        # Save parameters
+                        save_parameters_in_file(param)
+            elif u:
+                for u_val in u_range:
+                    for sigma_val in sigma_range:
+                        params.sol_directory_path = cur_sol_directory_path + f"{str(u_val).replace('.', '_')}/{str(sigma_val).replace('.', '_')}/"
+                        os.makedirs(params.sol_directory_path)
+                        os.makedirs(params.sol_directory_path + 'temporary/')
+                        param.U = u_val
+                        param.sigma_u = sigma_val
+                        # Randomize wind velocity
+                        function_name = solve_SDEs.solve_SDE_with_stoch_u
+                        sol_file_name = 'SDE_u_sol'
+                        run_1D_SDE_model.solve_model_with_randomized_parameter(param, function_name, sol_file_name)
+                        # Save parameters
+                        save_parameters_in_file(param)
+            elif u_and_function:
+                for u_val in u_range:
+                    for sigma_deltaT_val in sigma_range:
+                        for sigma_u_val in sigma_range:
+                            params.sol_directory_path = cur_sol_directory_path + f"{str(u_val).replace('.', '_')}/{str(sigma_deltaT_val).replace('.', '_')}/{str(sigma_u_val).replace('.', '_')}/"
+                            os.makedirs(params.sol_directory_path)
+                            os.makedirs(params.sol_directory_path + 'temporary/')
+                            param.U = u_val
+                            param.sigma_u = sigma_u_val
+                            param.sigma_delta_T = sigma_deltaT_val
+                            # Randomize both wind velocity and the whole model
+                            function_name = solve_SDEs.solve_SDE_with_stoch_u_and_internal_var
+                            sol_file_name = 'SDE_u_internal_var_sol'
+                            run_1D_SDE_model.solve_model_with_randomized_parameter(param, function_name, sol_file_name)
+                            # Save parameters
+                            save_parameters_in_file(param)
+        return
+
     if function:
         # Randomize the whole model
         run_1D_SDE_model.solve_randomized_model(param)
@@ -119,7 +177,7 @@ def run_model(param, function=False, stab_function=False, Qi=False, Lambda=False
 
 if __name__ == "__main__":
     # Read command line input
-    f, sf, Q_i, Lam, wind, mp, uf, sfu = parse_command_line_input.read_command_line_input()
+    f, sf, Q_i, Lam, wind, mp, uf, sfu, ss = parse_command_line_input.read_command_line_input()
     # -----------------------------------------------------------------------------------------
     # Load Parameters
     params = parameters.Parameters()
@@ -131,4 +189,4 @@ if __name__ == "__main__":
         os.makedirs(params.sol_directory_path + 'temporary/')
     # -----------------------------------------------------------------------------------------
     # Run model and save output
-    run_model(params, f, sf, Q_i, Lam, wind, mp, uf, sfu)
+    run_model(params, f, sf, Q_i, Lam, wind, mp, uf, sfu, ss)
