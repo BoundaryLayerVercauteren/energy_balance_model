@@ -1,6 +1,8 @@
-import os
 import numpy as np
 import matplotlib.pyplot as plt
+import matplotlib
+
+import cmcrameri.cm as cmc
 
 import sys
 import os
@@ -95,16 +97,16 @@ def get_time_series_with_most_transitions(values):
         # Small bumps during a transition should not count
         elem_to_be_removed_weakly = []
         elem_to_be_removed_very = []
-        for elem_idx in np.arange(0, len(start_weakly_stable)-1):
-            if start_weakly_stable[elem_idx+1] - start_weakly_stable[elem_idx] < 360:
+        for elem_idx in np.arange(0, len(start_weakly_stable) - 1):
+            if start_weakly_stable[elem_idx + 1] - start_weakly_stable[elem_idx] < 360:
                 elem_to_be_removed_weakly.append(start_weakly_stable[elem_idx])
                 for elem_v in start_very_stable:
-                    if elem_v < start_weakly_stable[elem_idx+1] and elem_v > start_weakly_stable[elem_idx]:
+                    if elem_v < start_weakly_stable[elem_idx + 1] and elem_v > start_weakly_stable[elem_idx]:
                         elem_to_be_removed_very.append(elem_v)
         start_weakly_stable = [elem for elem in start_weakly_stable if elem not in elem_to_be_removed_weakly]
 
-        for elem_idx in np.arange(0, len(start_very_stable)-1):
-            if start_very_stable[elem_idx+1] - start_very_stable[elem_idx] < 360:
+        for elem_idx in np.arange(0, len(start_very_stable) - 1):
+            if start_very_stable[elem_idx + 1] - start_very_stable[elem_idx] < 360:
                 elem_to_be_removed_very.append(start_very_stable[elem_idx])
         start_very_stable = [elem for elem in start_very_stable if elem not in elem_to_be_removed_very]
 
@@ -159,16 +161,17 @@ def get_transition_statistics(data_values):
 # Define directory where simulation output is saved
 # output_directory = 'output/1000_sim_short_tail_stab_func/very_weakly/'
 # output_directory = 'output/1000_sim_short_tail_u/'
-# output_directory = 'output/1000_sim_short_tail_internal_var/'
-# output_directory = 'output/1000_sim_short_tail_poisson_stab_func/'
-output_directory = 'output/1000_sim_st_stab_func_multi_noise_48h/'#'output/1000_sim_short_tail_stab_func_multi_noise/'
+output_directory = 'output/1000_sim_short_tail_internal_var/sigma_0_2/'
+# output_directory = 'output/1000_sim_short_tail_stab_func_multi_noise/sigma_0_1/'
+# output_directory = 'output/1000_sim_short_stail_u_internal/sigma_u_0_015_sigma_i_0_12/'
 
 # Get all result files in given directory
 # deltaT_file_name = '/SDE_stab_func_sol_delta_T.npy'
 # deltaT_file_name = '/SDE_u_sol_delta_T.npy'
-# deltaT_file_name = '/SDE_sol_delta_T.npy'
+deltaT_file_name = '/SDE_sol_delta_T.npy'
 # deltaT_file_name = '/SDE_stab_func_poisson_sol_delta_T.npy'
-deltaT_file_name = '/SDE_stab_func_multi_noise_sol_delta_T.npy'
+# deltaT_file_name = '/SDE_stab_func_multi_noise_sol_delta_T.npy'
+# deltaT_file_name = '/SDE_u_internal_var_sol_delta_T.npy'
 
 u_file_name = 'SDE_u_sol_param.npy'
 
@@ -218,10 +221,14 @@ for idx, file in enumerate(output_files):
     for key in perturbations_labels:
         if key in file:
             perturb_strength = str(perturbations_labels[key])
+        else:
+            perturb_strength = str('nan')
 
     if perturb_strength == '0.08' and '_u_' in file:
         chosen_data = data
     elif perturb_strength == '0.2' and '_u_' not in file:
+        chosen_data = data
+    elif perturb_strength == 'nan':
         chosen_data = data
 
     # Get transition statistics for current simulation
@@ -280,36 +287,44 @@ plt.close('all')  # Closes all the figure windows.
 # Plot statistics
 num_time_steps = np.shape(data)[1]
 
-# fig, ax = plt.subplots(1, 2, figsize=(10, 5))
-# axes = ax.ravel()
-# box1 = axes[0].boxplot((chosen_data < location_unstable_eq).sum(axis=1) / num_time_steps * 100, positions=[0],
-#                        patch_artist=True)
-# box1['boxes'][0].set(facecolor='green', alpha=0.5)
-# box1['medians'][0].set_color('black')
-# box2 = axes[0].boxplot((chosen_data > location_unstable_eq).sum(axis=1) / num_time_steps * 100, positions=[1],
-#                        patch_artist=True)
-# box2['boxes'][0].set(facecolor='orange', alpha=0.5)
-# box2['medians'][0].set_color('black')
-#
-# axes[0].set_xticks([0, 1], ['weakly', 'very'])
-# axes[0].set_ylabel('% of time spend in regime')
-# axes[0].set_title('a)', loc='left')
-#
-# axes[1].axvspan(chosen_data.min(), 12, facecolor='green', alpha=0.5)
-# axes[1].axvspan(12, chosen_data.max(), facecolor='orange', alpha=0.5)
-# axes[1].hist(chosen_data.flatten(), 100, color='black')
-# axes[1].set_xlim(chosen_data.min(), chosen_data.max())
-# axes[1].set_xlabel(r'$\Delta T$')
-# axes[1].set_ylabel(r'Density of $\Delta T$')
-# axes[1].axvline(x=24, color='r')
-# axes[1].axvline(x=4, color='r')
-# axes[1].axvline(x=12, color='r', linestyle='--')
-# axes[1].set_title('b)', loc='left')
-#
-# plt.tight_layout()
-#
-# plt.savefig(output_directory + 'time_in_regime.png', bbox_inches='tight', dpi=300)
+color = matplotlib.cm.get_cmap('cmc.batlow', 4).colors
 
+fig, ax = plt.subplots(1, 2, figsize=(10, 5))
+axes = ax.ravel()
+box1 = axes[0].boxplot((chosen_data < location_unstable_eq).sum(axis=1) / num_time_steps * 100, positions=[0],
+                       patch_artist=True)
+box1['boxes'][0].set(facecolor=color[1])#, alpha=0.5)
+box1['medians'][0].set_color('black')
+box2 = axes[0].boxplot((chosen_data > location_unstable_eq).sum(axis=1) / num_time_steps * 100, positions=[1],
+                       patch_artist=True)
+box2['boxes'][0].set(facecolor=color[2])#, alpha=0.5)
+box2['medians'][0].set_color('black')
+
+axes[0].set_xticks([0, 1], ['weakly', 'very'])
+axes[0].set_ylabel('% of time spend in regime')
+axes[0].set_title('a)', loc='left')
+
+# colors = plt.cm.Greys(np.linspace(0, 0.6, np.shape(chosen_data)[0]))
+# ax[0].set_prop_cycle('color', colors)
+# ax[0].plot(np.linspace(0, 24, 24 * 3600), chosen_data.T)
+# ax[0].plot(np.linspace(0, 24, 24 * 3600), np.mean(chosen_data, axis=0), color='red')
+
+
+axes[1].axvspan(chosen_data.min(), 12, facecolor=color[1])#, alpha=0.5)
+axes[1].axvspan(12, chosen_data.max(), facecolor=color[2])#, alpha=0.5)
+axes[1].hist(chosen_data.flatten(), 100, color=color[0])
+axes[1].set_xlim(chosen_data.min(), chosen_data.max())
+axes[1].set_xlabel(r'$\Delta T$')
+axes[1].set_ylabel(r'Density of $\Delta T$')
+axes[1].axvline(x=24, color='r')
+axes[1].axvline(x=4, color='r')
+axes[1].axvline(x=12, color='r', linestyle='--')
+axes[1].set_title('b)', loc='left')
+
+plt.tight_layout()
+
+plt.savefig(output_directory + 'time_in_regime.png', bbox_inches='tight', dpi=300)
+exit()
 # Transform values to percentages
 num_sim = np.shape(data)[0]
 

@@ -18,6 +18,10 @@ virtualenv ebm_venv
 source ebm_venv/bin/activate
 pip install -r requirements.txt
 ```
+alternatively a Docker image can be build with
+```bash
+docker build . -t energy_balance_model 
+```
 
 3. Run the model
 ```bash

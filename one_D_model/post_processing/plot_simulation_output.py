@@ -6,7 +6,7 @@ import os
 from one_D_model.utils import plot_output as plot
 
 # Define directory where simulation output is saved
-output_directory = 'output/1000_sim_short_tail_stab_func_multi_noise/sigma_0_2/simulations/'
+output_directory = 'output/1000_sim_short_stail_u_internal/sigma_u_0_015_sigma_i_0_12/simulations/'
 #
 # from one_D_model.model import run_SDE_model
 # import os
@@ -16,12 +16,12 @@ output_directory = 'output/1000_sim_short_tail_stab_func_multi_noise/sigma_0_2/s
 # run_SDE_model.combine_npy_files(num_sim, 'output/20230322_1422_31/', 'SDE_stab_func_poisson_sol_delta_T')
 
 # Load data
-# SDE_sol_delta_T = np.load(output_directory + 'SDE_sol_delta_T.npy')
+#SDE_sol_delta_T = np.load(output_directory + 'SDE_sol_delta_T.npy')
 # #
 # SDE_u_sol_delta_T = np.load(output_directory + 'SDE_u_sol_delta_T.npy')
 # SDE_u_sol_u = np.load(output_directory + 'SDE_u_sol_param.npy')
-# SDE_u_sol_delta_T = np.load(output_directory + 'SDE_u_internal_var_sol_delta_T.npy')
-# SDE_u_sol_u = np.load(output_directory + 'SDE_u_internal_var_sol_param.npy')
+SDE_u_sol_delta_T = np.load(output_directory + 'SDE_u_internal_var_sol_delta_T.npy')
+SDE_u_sol_u = np.load(output_directory + 'SDE_u_internal_var_sol_param.npy')
 #
 # SDE_Qi_sol_delta_T = np.load(output_directory + 'SDE_Qi_sol_delta_T.npy')
 # SDE_Qi_sol_Qi = np.load(output_directory + 'SDE_Qi_sol_param.npy')
@@ -37,8 +37,8 @@ output_directory = 'output/1000_sim_short_tail_stab_func_multi_noise/sigma_0_2/s
 # SDE_z0_sol_delta_T = np.load(output_directory + 'SDE_z0_sol_delta_T.npy', allow_pickle=True)
 # SDE_z0_sol_z0 = np.load(output_directory + 'SDE_z0_sol_param.npy', allow_pickle=True)
 #
-SDE_stab_func_sol_delta_T = np.load(output_directory + 'SDE_stab_func_multi_noise_sol_delta_T.npy')
-SDE_stab_func_sol_sf = np.load(output_directory + 'SDE_stab_func_multi_noise_sol_param.npy')
+# SDE_stab_func_sol_delta_T = np.load(output_directory + 'SDE_stab_func_multi_noise_sol_delta_T.npy')
+# SDE_stab_func_sol_sf = np.load(output_directory + 'SDE_stab_func_multi_noise_sol_param.npy')
 
 
 # Load parameters
@@ -80,21 +80,21 @@ if not os.path.exists(params.sol_directory_path + 'visualizations/'):
 # Make distribution plots
 # plot.make_distribution_plot(np.array(SDE_sol_delta_T).flatten(), params, 'visualizations/SDE_sol_delta_T_distribution.png',
 #                             r'$\Delta T$ [K]')
-# plot.make_distribution_plot(SDE_u_sol_delta_T.flatten(), params, 'visualizations/SDE_u_sol_delta_T_distribution.png',
-#                             r'$\Delta T$ [K]')
+plot.make_distribution_plot(SDE_u_sol_delta_T.flatten(), params, 'visualizations/SDE_u_sol_delta_T_distribution.png',
+                            r'$\Delta T$ [K]')
 # plot.make_distribution_plot(SDE_Qi_sol_delta_T.flatten(), params, 'visualizations/SDE_Qi_sol_delta_T_distribution.png',
 #                             r'$\Delta T$ [K]')
 # plot.make_distribution_plot(SDE_lambda_sol_delta_T.flatten(), params, 'visualizations/SDE_lambda_sol_delta_T_distribution.png',
 #                             r'$\Delta T$ [K]')
-plot.make_distribution_plot(SDE_stab_func_sol_delta_T.flatten(), params, 'visualizations/SDE_stab_func_sol_delta_T_distribution.png',
-                            r'$\Delta T$ [K]')
+# plot.make_distribution_plot(SDE_stab_func_sol_delta_T.flatten(), params, 'visualizations/SDE_stab_func_sol_delta_T_distribution.png',
+#                             r'$\Delta T$ [K]')
 # plot.make_distribution_plot(SDE_stab_func_sol_poisson_delta_T.flatten(), params, 'visualizations/SDE_stab_func_sol_delta_T_distribution.png',
 #                             r'$\Delta T$ [K]')
 # plot.make_distribution_plot(SDE_z0_sol_delta_T.flatten(), params, 'visualizations/SDE_z0_sol_delta_T_distribution.png',
 #                             r'$\Delta T$ [K]')
-exit()
+
 # Overlay potential plot with distribution plot
-# plot.plot_potentials_and_output_distribution(params, SDE_sol_delta_T.flatten())
+#plot.plot_potentials_and_output_distribution(params, SDE_sol_delta_T.flatten())
 # exit()
 # Plot ten time series for every simulation type
 # if params.num_simulation >= 10:

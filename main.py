@@ -74,10 +74,10 @@ def run_model(param, function=False, stab_function=False, Qi=False, Lambda=False
     if sensitivity_study:
         u_step_size = 0.1
         u_range = np.round(np.arange(param.u_range_start, param.u_range_end + u_step_size, u_step_size), 3)
-        sigma_step_size = 0.01
+        sigma_step_size = 0.02
         sigma_range = np.round(np.arange(sigma_step_size, 1.0 + sigma_step_size, sigma_step_size), 3)
         orig_sol_directory_path = params.sol_directory_path
-        for trans_type in ['weakly_very', 'very_weakly']:
+        for trans_type in ['very_weakly']:# ['weakly_very', 'very_weakly']:
             cur_sol_directory_path = orig_sol_directory_path + f'{trans_type}/'
             os.makedirs(cur_sol_directory_path)
             if trans_type == 'weakly_very':
