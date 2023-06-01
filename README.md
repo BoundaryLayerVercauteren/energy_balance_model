@@ -13,10 +13,11 @@ cd energy_balance_model
 
 2. Create and activate environment
 ```bash
+module load Python/3.9.5-GCCcore-10.3.0 # depending on system set up
 pip install virtualenv # if you don't have virtualenv installed
 virtualenv ebm_venv
 source ebm_venv/bin/activate
-pip install -r requirements.txt
+pip install -r docker/requirements.txt
 ```
 alternatively a Docker image can be build with
 ```bash
