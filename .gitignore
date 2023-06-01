@@ -1,5 +1,4 @@
 output/*
-docker/*
 data/*
 DomeC/data/*
 figures/*
@@ -10,6 +9,8 @@ __pycache__/
 
 # C extensions
 *.so
+
+*.tar
 
 # Distribution / packaging
 .Python
