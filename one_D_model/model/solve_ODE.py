@@ -1,4 +1,5 @@
 import numpy as np
+import sdeint
 from scipy.integrate import quad, solve_ivp
 
 
@@ -72,10 +73,22 @@ def define_deterministic_ODE_var_u(t, delta_T, u_range, Lambda, Qi, param):
     c_D = calculate_neutral_drag_coefficient(param)
     return (1/param.cv) * (Qi - Lambda * delta_T - param.rho * param.cp * c_D * u * delta_T * f_stab)
 
-
 def solve_deterministic_ODE_var_u(param):
     return solve_ivp(define_deterministic_ODE_var_u, [param.t_start, param.t_end_h], [param.delta_T_0],
                      t_eval=param.t_span, args=(param.u_range, param.Lambda, param.Q_i, param))
+def solve_ODE_with_time_dependent_u(param):
+    # Define functions for 2D SDE
+    def _f(delta_T, t):
+        # Find index of time step in t_span which is closest to the time step at which the ODE is currently evaluated
+        idx = (np.abs(param.t_span - t)).argmin()
+        # Find corresponding u value
+        param.U = param.u_range[idx]
+        return define_deterministic_ODE(t, delta_T, param.U, param.Lambda, param.Q_i, param)
+
+    def _G(X, t):
+        return 0
+
+    return sdeint.itoint(_f, _G, param.delta_T_0, param.t_span)
 
 
 def calculate_potential(delta_T, u, param):

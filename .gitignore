@@ -1,4 +1,5 @@
 output/*
+docker/*
 data/*
 DomeC/data/*
 figures/*

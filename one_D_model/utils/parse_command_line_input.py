@@ -28,6 +28,9 @@ def command_line_parser():
     parser.add_argument('-ss', '--sensitivity_study',
                         help='Perform a sensitivity study.', action="store_true",
                         default=False)
+    parser.add_argument('-odeu', '--ode_with_var_u',
+                        help='Run ODE model with time dependent u.', action="store_true",
+                        default=False)
     parser.add_argument('-a', '--all', help='Run model with all randomizations.', action="store_true",
                         default=False)
 
@@ -55,5 +58,6 @@ def read_command_line_input():
         uf = args.u_and_function
         sfu = args.stab_function_and_time_dependent_u
         ss = args.sensitivity_study
+        odeu = args.ode_with_var_u
 
-    return function, stab_function, Qi, Lambda, u, args.plot, uf, sfu, ss
+    return function, stab_function, Qi, Lambda, u, args.plot, uf, sfu, ss, odeu

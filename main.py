@@ -41,7 +41,8 @@ def create_u_range(param_vals, num_u_steps=50):
 
 
 def run_model(param, function=False, stab_function=False, Qi=False, Lambda=False, u=False, make_plot=False,
-              u_and_function=False, stab_function_and_time_dependent_u=False, sensitivity_study=False):
+              u_and_function=False, stab_function_and_time_dependent_u=False, sensitivity_study=False,
+              ode_with_var_u=False):
     # If command line flag is given make plots
     if make_plot:
         # Set plotting style and font sizes for figures
@@ -67,6 +68,12 @@ def run_model(param, function=False, stab_function=False, Qi=False, Lambda=False
         # -------------------------------------------------------------------------------------
         # Plot potential
         plot.plot_potentials(param)
+    # -----------------------------------------------------------------------------------------
+    if ode_with_var_u:
+        param.u_range = create_u_range(param)
+        np.savetxt(params.sol_directory_path + 'u_range.txt', param.u_range)
+        ode_sol = solve_ODE.solve_ODE_with_time_dependent_u(param)
+        np.save(params.sol_directory_path + 'ODE_sol_delta_T.npy', ode_sol)
     # -----------------------------------------------------------------------------------------
     # Run model with randomizations
     # Which parameters are parameterized is specified by the command line flags
@@ -177,7 +184,7 @@ def run_model(param, function=False, stab_function=False, Qi=False, Lambda=False
 
 if __name__ == "__main__":
     # Read command line input
-    f, sf, Q_i, Lam, wind, mp, uf, sfu, ss = parse_command_line_input.read_command_line_input()
+    f, sf, Q_i, Lam, wind, mp, uf, sfu, ss, odeu = parse_command_line_input.read_command_line_input()
     # -----------------------------------------------------------------------------------------
     # Load Parameters
     params = parameters.Parameters()
@@ -189,4 +196,4 @@ if __name__ == "__main__":
         os.makedirs(params.sol_directory_path + 'temporary/')
     # -----------------------------------------------------------------------------------------
     # Run model and save output
-    run_model(params, f, sf, Q_i, Lam, wind, mp, uf, sfu, ss)
+    run_model(params, f, sf, Q_i, Lam, wind, mp, uf, sfu, ss, odeu)
