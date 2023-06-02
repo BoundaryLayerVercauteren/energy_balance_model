@@ -71,6 +71,8 @@ def run_model(param, function=False, stab_function=False, Qi=False, Lambda=False
     # -----------------------------------------------------------------------------------------
     if ode_with_var_u:
         param.u_range = create_u_range(param)
+        if param.delta_T_0 < 12:
+            param.u_range = param.u_range[::-1]
         np.savetxt(params.sol_directory_path + 'u_range.txt', param.u_range)
         ode_sol = solve_ODE.solve_ODE_with_time_dependent_u(param)
         np.save(params.sol_directory_path + 'ODE_sol_delta_T.npy', ode_sol)
