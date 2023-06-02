@@ -18,7 +18,7 @@ deltaT_file_name = '/SDE_sol_delta_T.npy'
 # Define where the unstable equilibrium is located
 location_unstable_eq = 12
 
-
+subset_size = 100
 # ---------------------------------------------------------------------------
 def split_into_consecutive_ts(val, stepsize=1):
     array = np.split(val, np.where(np.diff(val) != stepsize)[0] + 1)
@@ -49,7 +49,7 @@ def combine_info_about_simulation_type(file_name):
 
     # Take only a subset of the data
     if np.shape(data)[0] >= 1000:
-        idx = random.sample(range(0, np.shape(data)[0]), 100)
+        idx = random.sample(range(0, np.shape(data)[0]), subset_size)
         data = data[idx, :]
 
     # Extract u value for simulation from file path
@@ -88,5 +88,5 @@ with ProcessPoolExecutor(max_workers=50) as executor:
             parameter_comb.append(result)
 
 # Save calculated values in file
-with open(output_directory + 'average_transitions.json', 'w') as file:
+with open(f'{output_directory}average_transitions{subset_size}.json', 'w') as file:
     json.dump(parameter_comb, file)
