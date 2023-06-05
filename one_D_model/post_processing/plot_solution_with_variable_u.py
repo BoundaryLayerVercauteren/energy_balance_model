@@ -105,7 +105,7 @@ idx_end_perturbation_wv = -1
 # Make 3 panel plot
 fig, ax = plt.subplots(3, 2, figsize=(15, 10), sharex='col', sharey='row')
 # Remove horizontal space between axes
-fig.subplots_adjust(hspace=0, vspace=0)
+fig.subplots_adjust(hspace=0, wspace=0)
 # --------------------------------------------------------------------------------------------------
 # First panel: plot of the u velocity forcing
 ax1 = ax[0, 0].twinx()
