@@ -30,12 +30,19 @@ plt.rc('figure', titlesize=BIGGER_SIZE)  # fontsize of the figure title
 
 # Define directory where simulation output is saved
 output_directory = 'output/1000_sim_short_tail_stab_func_multi_noise_var_u/'
-sde_directory = output_directory + 'sigma_0_1/simulations/'
+sde_directory_vw = output_directory + 'sigma_0_1_start_very/simulations/'
+sde_directory_wv = output_directory + 'sigma_0_1_start_weakly/simulations/'
 
 # Load data
-SDE_stab_func_sol_delta_T = np.load(sde_directory + 'SDE_stab_func_multi_noise_sol_delta_T.npy')
-SDE_stab_func_sol_sf = np.load(sde_directory + 'SDE_stab_func_multi_noise_sol_param.npy')
-ode_data = np.load(output_directory + 'ode/ODE_sol_delta_T.npy').flatten()
+SDE_stab_func_sol_delta_T_vw = np.load(sde_directory_vw + 'SDE_stab_func_multi_noise_sol_delta_T.npy')
+SDE_stab_func_sol_sf_vw = np.load(sde_directory_vw + 'SDE_stab_func_multi_noise_sol_param.npy')
+
+SDE_stab_func_sol_delta_T_wv = np.load(sde_directory_wv + 'SDE_stab_func_multi_noise_sol_delta_T.npy')
+SDE_stab_func_sol_sf_wv = np.load(sde_directory_wv + 'SDE_stab_func_multi_noise_sol_param.npy')
+
+ode_data_vw = np.load(output_directory + 'ode_vw/ODE_sol_delta_T.npy').flatten()
+ode_data_wv = np.load(output_directory + 'ode_wv/ODE_sol_delta_T.npy').flatten()
+
 
 # Load Parameters from file
 @dataclass_json
@@ -61,86 +68,144 @@ class Parameters:
     cp: float
 
 
-with open(sde_directory + 'parameters.json', 'r') as file:
+with open(sde_directory_vw + 'parameters.json', 'r') as file:
     param_data = file.read()
 
 params = Parameters.from_json(param_data)
 params.t_span = np.linspace(params.t_start, params.t_end_h, params.num_steps)
 
 # Load wind velocity values
-params.u_range = np.loadtxt(sde_directory + 'u_range.txt')
-params.u_range_o = np.loadtxt(output_directory + 'ode/u_range.txt')
+params.u_range_vw = np.loadtxt(sde_directory_vw + 'u_range.txt')
+params.u_range_wv = np.loadtxt(sde_directory_wv + 'u_range.txt')
 
 # Find indices of transition region (for short tail)
-idx_start_trans_region = (np.abs(params.u_range - 5.6)).argmin()
-idx_end_trans_region = (np.abs(params.u_range - 5.9)).argmin()
+idx_start_trans_region_vw = (np.abs(params.u_range_vw - 5.6)).argmin()
+idx_end_trans_region_vw = (np.abs(params.u_range_vw - 5.9)).argmin()
+idx_start_trans_region_wv = (np.abs(params.u_range_wv - 5.6)).argmin()
+idx_end_trans_region_wv = (np.abs(params.u_range_wv - 5.9)).argmin()
 
 # Calculate richardson number for every time step
-Rb = params.zr * (params.grav / params.Tr) * (SDE_stab_func_sol_delta_T / (params.u_range ** 2))
+Rb_vw = params.zr * (params.grav / params.Tr) * (SDE_stab_func_sol_delta_T_vw / (params.u_range_vw ** 2))
+Rb_wv = params.zr * (params.grav / params.Tr) * (SDE_stab_func_sol_delta_T_wv / (params.u_range_wv ** 2))
 
 # Calculate region in which perturbation was added to phi for first simulations
-idx_start_perturbation = np.argmax(Rb[0, :] > 0.25)
-idx_end_perturbation = np.argmin(Rb[0, :] > 0.25)
+idx_start_perturbation_vw = 0
+idx_end_perturbation_vw = (np.abs(Rb_vw[0, :] - 0.25)).argmax()
+idx_start_perturbation_wv = (np.abs(Rb_vw[0, :] - 0.25)).argmin()
+idx_end_perturbation_wv = -1
 
 # Make 3 panel plot
-fig, ax = plt.subplots(3, 1, figsize=(10, 10))
+fig, ax = plt.subplots(3, 2, figsize=(15, 10), sharex='col', sharey='row')
 
+# --------------------------------------------------------------------------------------------------
 # First panel: plot of the u velocity forcing
-ax2 = ax[0].twinx()
+ax1 = ax[0, 0].twinx()
 
-plt_perturb_region = ax[0].axvspan(params.t_span[idx_start_perturbation], params.t_span[idx_end_perturbation],
-                                   alpha=0.3, color='blue')
-plt_trans_region = ax[0].axvspan(params.t_span[idx_start_trans_region], params.t_span[idx_end_trans_region], alpha=0.3,
-                                 color='green')
+plt_perturb_region = ax[0, 0].axvspan(params.t_span[idx_start_perturbation_vw], params.t_span[idx_end_perturbation_vw],
+                                      alpha=0.3, color='blue')
+plt_trans_region = ax[0, 0].axvspan(params.t_span[idx_start_trans_region_vw], params.t_span[idx_end_trans_region_vw],
+                                    alpha=0.3, color='green')
+plt_u = ax[0, 0].plot(params.t_span, params.u_range_vw, color='green')
 
-plt_u = ax[0].plot(params.t_span, params.u_range, color='green')
-ax[0].set_ylabel('u [m/s]', color='green')
-ax[0].set_xlabel('time [h]')
-ax[0].tick_params(axis="y", labelcolor='green')
+colors = plt.cm.Greys(np.linspace(0.1, 0.7, int(np.shape(SDE_stab_func_sol_delta_T_vw)[0] / 2)))
+ax1.set_prop_cycle('color', colors)
+plt_Rb_all_sim = ax1.plot(params.t_span, Rb_vw[::2, :].T)
 
-colors = plt.cm.Greys(np.linspace(0.1, 0.7, int(np.shape(SDE_stab_func_sol_delta_T)[0] / 2)))
+plt_Rb_one_sim = ax1.plot(params.t_span, Rb_vw[0, :], color='blue')
+
+ax[0, 0].set_ylabel('u [m/s]', color='green')
+# ax[0, 0].set_xlabel('time [h]')
+ax[0, 0].tick_params(axis="y", labelcolor='green')
+# ax2.set_ylabel(r'$R_b$', color='blue')
+# ax2.tick_params(axis="y", labelcolor='blue')
+
+ax[0, 0].set_title('a)', loc='left')
+
+# ----------------------------------
+
+ax2 = ax[0, 1].twinx()
+#ax2.get_shared_y_axes().join(ax1, ax2)
+
+plt_perturb_region = ax[0, 1].axvspan(params.t_span[idx_start_perturbation_wv], params.t_span[idx_end_perturbation_wv],
+                                      alpha=0.3, color='blue')
+plt_trans_region = ax[0, 1].axvspan(params.t_span[idx_start_trans_region_wv], params.t_span[idx_end_trans_region_wv],
+                                    alpha=0.3, color='green')
+plt_u = ax[0, 1].plot(params.t_span, params.u_range_wv, color='green')
+
 ax2.set_prop_cycle('color', colors)
-plt_Rb_all_sim = ax2.plot(params.t_span, Rb[::2, :].T)
+plt_Rb_all_sim = ax2.plot(params.t_span, Rb_wv[::2, :].T)
 
-plt_Rb_one_sim = ax2.plot(params.t_span, Rb[0, :], color='blue')
+plt_Rb_one_sim = ax2.plot(params.t_span, Rb_wv[0, :], color='blue')
+
+# ax[0, 1].set_ylabel('u [m/s]', color='green')
+# ax[0, 0].set_xlabel('time [h]')
+# ax[0, 1].tick_params(axis="y", labelcolor='green')
 ax2.set_ylabel(r'$R_b$', color='blue')
 ax2.tick_params(axis="y", labelcolor='blue')
 
-ax[0].legend(handles=[plt_perturb_region, plt_trans_region, plt_u[0], plt_Rb_all_sim[0], plt_Rb_one_sim[0]],
-             labels=['perturbation region', 'bistable region', 'forcing', r'$R_b$: 500 model runs',
-                     r'$R_b$: 1 model run'], facecolor='white', loc="upper right", edgecolor="black",
-             frameon=True)
-ax[0].get_legend().legendHandles[3].set_color('grey')
-ax[0].set_title('a)', loc='left')
-
+ax[0, 1].legend(handles=[plt_perturb_region, plt_trans_region, plt_u[0], plt_Rb_all_sim[0], plt_Rb_one_sim[0]],
+                labels=['perturbation region', 'bistable region', 'forcing', r'$R_b$: 500 model runs',
+                        r'$R_b$: 1 model run'], facecolor='white', edgecolor="black",
+                frameon=True, prop={'size': SMALL_SIZE / 2})
+ax[0, 1].get_legend().legendHandles[3].set_color('grey')
+ax[0, 1].set_title('d)', loc='left')
+# --------------------------------------------------------------------------------------------------
 # Second panel: plot of delta T over time
-ax[1].set_prop_cycle('color', colors)
-plt_sims_delta_T_all = ax[1].plot(params.t_span, SDE_stab_func_sol_delta_T[::2, :].T)
-plt_sims_delta_T_one = ax[1].plot(params.t_span, SDE_stab_func_sol_delta_T[0, :], color='blue', marker='v', markevery=0.05, markersize=3)
-plt_det_sol = ax[1].plot(params.t_span, ode_data, color='orange', marker='o', markevery=0.05, markersize=3)
-plt_sims_delta_T_mean = ax[1].plot(params.t_span, np.mean(SDE_stab_func_sol_delta_T, axis=0), color='red', marker='s', markevery=0.05, markersize=3)
+ax[1, 0].set_prop_cycle('color', colors)
+plt_sims_delta_T_all = ax[1, 0].plot(params.t_span, SDE_stab_func_sol_delta_T_vw[::2, :].T)
+plt_sims_delta_T_one = ax[1, 0].plot(params.t_span, SDE_stab_func_sol_delta_T_vw[0, :], color='blue', marker='v',
+                                     markevery=0.05, markersize=3)
+plt_det_sol = ax[1, 0].plot(params.t_span, ode_data_vw, color='orange', marker='o', markevery=0.05, markersize=3)
+plt_sims_delta_T_mean = ax[1, 0].plot(params.t_span, np.mean(SDE_stab_func_sol_delta_T_vw, axis=0), color='red',
+                                      marker='s', markevery=0.05, markersize=3)
 
-ax[1].set_ylabel(r'$\Delta T$ [K]')
-ax[1].set_xlabel('time [h]')
-ax[1].legend(handles=[plt_sims_delta_T_all[0], plt_sims_delta_T_one[0], plt_sims_delta_T_mean[0], plt_det_sol[0]],
-             labels=['500 model runs', '1 model run', 'mean', 'ODE'], facecolor='white',
-             loc="upper right", edgecolor="black", frameon=True)
-ax[1].get_legend().legendHandles[0].set_color('grey')
-ax[1].set_title('b)', loc='left')
+ax[1, 0].set_ylabel(r'$\Delta T$ [K]')
+# ax[1, 0].set_xlabel('time [h]')
+ax[1, 0].set_title('b)', loc='left')
+# -----------------------------------------------------
+ax[1, 1].set_prop_cycle('color', colors)
+plt_sims_delta_T_all = ax[1, 1].plot(params.t_span, SDE_stab_func_sol_delta_T_wv[::2, :].T)
+plt_sims_delta_T_one = ax[1, 1].plot(params.t_span, SDE_stab_func_sol_delta_T_wv[0, :], color='blue', marker='v',
+                                     markevery=0.05, markersize=3)
+plt_det_sol = ax[1, 1].plot(params.t_span, ode_data_wv, color='orange', marker='o', markevery=0.05, markersize=3)
+plt_sims_delta_T_mean = ax[1, 1].plot(params.t_span, np.mean(SDE_stab_func_sol_delta_T_wv, axis=0), color='red',
+                                      marker='s', markevery=0.05, markersize=3)
 
+# ax[1, 0].set_ylabel(r'$\Delta T$ [K]')
+# ax[1, 0].set_xlabel('time [h]')
+ax[1, 1].legend(handles=[plt_sims_delta_T_all[0], plt_sims_delta_T_one[0], plt_sims_delta_T_mean[0], plt_det_sol[0]],
+                labels=['500 model runs', '1 model run', 'mean', 'ODE'], facecolor='white',
+                edgecolor="black", frameon=True, prop={'size': SMALL_SIZE / 2})
+ax[1, 1].get_legend().legendHandles[0].set_color('grey')
+ax[1, 1].set_title('e)', loc='left')
+
+# --------------------------------------------------------------------------------------------------
 # Third panel: plot of perturbed stability function over time
-ax[2].set_prop_cycle('color', colors)
-plt_sims_sf_all = ax[2].plot(params.t_span, SDE_stab_func_sol_sf[::2, :].T)
-plt_sims_sf_one = ax[2].plot(params.t_span, SDE_stab_func_sol_sf[0, :], color='blue', marker='v', markevery=0.05, markersize=3)
-plt_sims_sf_mean = ax[2].plot(params.t_span, np.mean(SDE_stab_func_sol_sf, axis=0), color='red', marker='s', markevery=0.05, markersize=3)
-ax[2].set_ylabel(r'$\phi$')
-ax[2].set_xlabel('time [h]')
-ax[2].legend(handles=[plt_sims_sf_all[0], plt_sims_sf_one[0], plt_sims_sf_mean[0]],
-             labels=['500 model runs', '1 model run', 'mean'], facecolor='white', loc="upper right", edgecolor="black",
-             frameon=True)
-ax[2].get_legend().legendHandles[0].set_color('grey')
-ax[2].set_title('c)', loc='left')
-
+ax[2, 0].set_prop_cycle('color', colors)
+plt_sims_sf_all = ax[2, 0].plot(params.t_span, SDE_stab_func_sol_sf_vw[::2, :].T)
+plt_sims_sf_one = ax[2, 0].plot(params.t_span, SDE_stab_func_sol_sf_vw[0, :], color='blue', marker='v', markevery=0.05,
+                                markersize=3)
+plt_sims_sf_mean = ax[2, 0].plot(params.t_span, np.mean(SDE_stab_func_sol_sf_vw, axis=0), color='red', marker='s',
+                                 markevery=0.05, markersize=3)
+ax[2, 0].set_ylabel(r'$\phi$')
+ax[2, 0].set_xlabel('time [h]')
+ax[2, 0].set_title('c)', loc='left')
+# -----------------------------------------------------
+ax[2, 1].set_prop_cycle('color', colors)
+plt_sims_sf_all = ax[2, 1].plot(params.t_span, SDE_stab_func_sol_sf_wv[::2, :].T)
+plt_sims_sf_one = ax[2, 1].plot(params.t_span, SDE_stab_func_sol_sf_wv[0, :], color='blue', marker='v', markevery=0.05,
+                                markersize=3)
+plt_sims_sf_mean = ax[2, 1].plot(params.t_span, np.mean(SDE_stab_func_sol_sf_wv, axis=0), color='red', marker='s',
+                                 markevery=0.05, markersize=3)
+#ax[2, 0].set_ylabel(r'$\phi$')
+ax[2, 1].set_xlabel('time [h]')
+ax[2, 1].legend(handles=[plt_sims_sf_all[0], plt_sims_sf_one[0], plt_sims_sf_mean[0]],
+                labels=['500 model runs', '1 model run', 'mean'], facecolor='white',
+                edgecolor="black", frameon=True, prop={'size': SMALL_SIZE / 2})
+ax[2, 1].get_legend().legendHandles[0].set_color('grey')
+ax[2, 1].set_title('f)', loc='left')
+# --------------------------------------------------------------------------------------------------
+#plt.subplots_adjust(wspace=0, hspace=0)
 fig.tight_layout()
 plt.savefig(output_directory + 'solution_with_time_dependent_u.pdf', bbox_inches='tight', dpi=300)
 
