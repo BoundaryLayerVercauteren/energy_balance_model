@@ -118,6 +118,20 @@ def run_model(param, function=False, stab_function=False, Qi=False, Lambda=False
                         run_1D_SDE_model.solve_model_with_randomized_parameter(param, function_name, sol_file_name)
                         # Save parameters
                         save_parameters_in_file(param)
+            elif stab_function:
+                for u_val in u_range:
+                    for sigma_val in sigma_range:
+                        params.sol_directory_path = cur_sol_directory_path + f"{str(u_val).replace('.', '_')}/{str(sigma_val).replace('.', '_')}/"
+                        os.makedirs(params.sol_directory_path)
+                        os.makedirs(params.sol_directory_path + 'temporary/')
+                        param.U = u_val
+                        param.sigma_u = sigma_val
+                        # Randomize wind velocity
+                        function_name = solve_SDE_stoch_stab_function.solve_SDE_with_stoch_stab_function_multi_noise
+                        sol_file_name = 'SDE_stab_func_multi_noise_sol'
+                        run_1D_SDE_model.solve_model_with_randomized_parameter(param, function_name, sol_file_name)
+                        # Save parameters
+                        save_parameters_in_file(param)
             elif u_and_function:
                 for u_val in u_range:
                     for sigma_deltaT_val in sigma_range:
@@ -174,6 +188,8 @@ def run_model(param, function=False, stab_function=False, Qi=False, Lambda=False
         # Randomize stability function and make wind velocity time dependent rather than one fixed value
         # Calculate u range and save it
         param.u_range = create_u_range(param)
+        if param.delta_T_0 < 12:
+            param.u_range = param.u_range[::-1]
         np.savetxt(str(params.sol_directory_path) + 'u_range.txt', param.u_range)
         function_name = solve_SDE_stoch_stab_function.solve_SDE_with_stoch_stab_function_multi_noise_time_dependent_u
         sol_file_name = 'SDE_stab_func_multi_noise_sol'
