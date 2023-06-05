@@ -91,7 +91,7 @@ Rb_wv = params.zr * (params.grav / params.Tr) * (SDE_stab_func_sol_delta_T_wv / 
 # Calculate region in which perturbation was added to phi for first simulations
 idx_start_perturbation_vw = 0
 idx_end_perturbation_vw = (np.abs(Rb_vw[0, :] - 0.25)).argmax()
-idx_start_perturbation_wv = (np.abs(Rb_vw[0, :] - 0.25)).argmin()
+idx_start_perturbation_wv = (np.abs(Rb_wv[0, :] - 0.25)).argmin()
 idx_end_perturbation_wv = -1
 
 # Make 3 panel plot
