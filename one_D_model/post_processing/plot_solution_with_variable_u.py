@@ -118,7 +118,7 @@ plt_u = ax[0, 0].plot(params.t_span, params.u_range_vw, color='fuchsia')
 
 colors = plt.cm.Greys(np.linspace(0.1, 0.7, int(np.shape(SDE_stab_func_sol_delta_T_vw)[0] / 2)))
 ax1.set_prop_cycle('color', colors)
-plt_Rb_all_sim = ax1.plot(params.t_span, Rb_vw[::100, :].T)
+plt_Rb_all_sim = ax1.plot(params.t_span, Rb_vw[::2, :].T)
 
 plt_Rb_one_sim = ax1.plot(params.t_span, Rb_vw[0, :], color='blue')
 plt_Rb_mean = ax1.plot(params.t_span, np.mean(Rb_vw, axis=0), color='green')
@@ -143,7 +143,7 @@ plt_trans_region = ax[0, 1].axvspan(params.t_span[idx_start_trans_region_wv], pa
 plt_u = ax[0, 1].plot(params.t_span, params.u_range_wv, color='fuchsia')
 
 ax2.set_prop_cycle('color', colors)
-plt_Rb_all_sim = ax2.plot(params.t_span, Rb_wv[::100, :].T)
+plt_Rb_all_sim = ax2.plot(params.t_span, Rb_wv[::2, :].T)
 plt_Rb_one_sim = ax2.plot(params.t_span, Rb_wv[0, :], color='blue')
 plt_Rb_mean = ax2.plot(params.t_span, np.mean(Rb_wv, axis=0), color='green')
 
@@ -162,7 +162,7 @@ ax[0, 1].set_title('d)', loc='left')
 # --------------------------------------------------------------------------------------------------
 # Second panel: plot of delta T over time
 ax[1, 0].set_prop_cycle('color', colors)
-plt_sims_delta_T_all = ax[1, 0].plot(params.t_span, SDE_stab_func_sol_delta_T_vw[::100, :].T)
+plt_sims_delta_T_all = ax[1, 0].plot(params.t_span, SDE_stab_func_sol_delta_T_vw[::2, :].T)
 plt_sims_delta_T_one = ax[1, 0].plot(params.t_span, SDE_stab_func_sol_delta_T_vw[0, :], color='blue', marker='v',
                                      markevery=0.05, markersize=3)
 plt_det_sol = ax[1, 0].plot(params.t_span, ode_data_vw, color='orange', marker='o', markevery=0.05, markersize=3)
@@ -174,7 +174,7 @@ ax[1, 0].set_ylabel(r'$\Delta T$ [K]')
 ax[1, 0].set_title('b)', loc='left')
 # -----------------------------------------------------
 ax[1, 1].set_prop_cycle('color', colors)
-plt_sims_delta_T_all = ax[1, 1].plot(params.t_span, SDE_stab_func_sol_delta_T_wv[::100, :].T)
+plt_sims_delta_T_all = ax[1, 1].plot(params.t_span, SDE_stab_func_sol_delta_T_wv[::2, :].T)
 plt_sims_delta_T_one = ax[1, 1].plot(params.t_span, SDE_stab_func_sol_delta_T_wv[0, :], color='blue', marker='v',
                                      markevery=0.05, markersize=3)
 plt_det_sol = ax[1, 1].plot(params.t_span, ode_data_wv, color='orange', marker='o', markevery=0.05, markersize=3)
@@ -192,7 +192,7 @@ ax[1, 1].set_title('e)', loc='left')
 # --------------------------------------------------------------------------------------------------
 # Third panel: plot of perturbed stability function over time
 ax[2, 0].set_prop_cycle('color', colors)
-plt_sims_sf_all = ax[2, 0].plot(params.t_span, SDE_stab_func_sol_sf_vw[::100, :].T)
+plt_sims_sf_all = ax[2, 0].plot(params.t_span, SDE_stab_func_sol_sf_vw[::2, :].T)
 plt_sims_sf_one = ax[2, 0].plot(params.t_span, SDE_stab_func_sol_sf_vw[0, :], color='blue', marker='v', markevery=0.05,
                                 markersize=3)
 plt_sims_sf_mean = ax[2, 0].plot(params.t_span, np.mean(SDE_stab_func_sol_sf_vw, axis=0), color='green', marker='s',
@@ -202,7 +202,7 @@ ax[2, 0].set_xlabel('time [h]')
 ax[2, 0].set_title('c)', loc='left')
 # -----------------------------------------------------
 ax[2, 1].set_prop_cycle('color', colors)
-plt_sims_sf_all = ax[2, 1].plot(params.t_span, SDE_stab_func_sol_sf_wv[::100, :].T)
+plt_sims_sf_all = ax[2, 1].plot(params.t_span, SDE_stab_func_sol_sf_wv[::2, :].T)
 plt_sims_sf_one = ax[2, 1].plot(params.t_span, SDE_stab_func_sol_sf_wv[0, :], color='blue', marker='v', markevery=0.05,
                                 markersize=3)
 plt_sims_sf_mean = ax[2, 1].plot(params.t_span, np.mean(SDE_stab_func_sol_sf_wv, axis=0), color='green', marker='s',
