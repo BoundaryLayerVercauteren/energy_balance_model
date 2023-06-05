@@ -48,8 +48,8 @@ SDE_stab_func_sol_delta_T_vw[:3600, :] = np.nan
 SDE_stab_func_sol_sf_vw[:3600, :] = np.nan
 SDE_stab_func_sol_delta_T_wv[:3600, :] = np.nan
 SDE_stab_func_sol_sf_wv[:3600, :] = np.nan
-ode_data_vw[:3600, :] = np.nan
-ode_data_wv[:3600, :] = np.nan
+ode_data_vw[:3600] = np.nan
+ode_data_wv[:3600] = np.nan
 
 
 # Load Parameters from file
