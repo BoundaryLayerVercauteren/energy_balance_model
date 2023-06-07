@@ -107,7 +107,7 @@ plt_perturb_region = ax[0, 0].axvspan(params.t_span[idx_start_perturbation_vw], 
                                       alpha=0.3, color='gray')
 plt_u = ax[0, 0].plot(params.t_span, params.u_range_vw, color='green')
 
-colors = plt.cm.grays(np.linspace(0.1, 0.5, int(np.shape(SDE_stab_func_sol_delta_T_vw)[0] / 2)))
+colors = plt.cm.greys(np.linspace(0.1, 0.5, int(np.shape(SDE_stab_func_sol_delta_T_vw)[0] / 2)))
 ax1.set_prop_cycle('color', colors)
 plt_Rb_all_sim = ax1.plot(params.t_span, Rb_vw[::2, :].T)
 
