@@ -161,7 +161,7 @@ plt_det_sol = ax[1, 1].plot(params.t_span, ode_data_wv, color='orange')
 plt_sims_delta_T_mean = ax[1, 1].plot(params.t_span, np.mean(SDE_stab_func_sol_delta_T_wv[::2, :], axis=0), color='blue')
 
 ax[1, 1].legend(handles=[plt_sims_delta_T_all[0], plt_sims_delta_T_one[0], plt_sims_delta_T_mean[0], plt_det_sol[0]],
-                labels=['500 model runs', '1 model run', 'mean', 'ODE'], facecolor='white', edgecolor="black",
+                labels=['500 model runs', '1 model run', 'mean', 'deterministic model (eq. 2)'], facecolor='white', edgecolor="black",
                 frameon=True, prop={'size': SMALL_SIZE / 2})
 ax[1, 1].get_legend().legendHandles[0].set_color('gray')
 for line in ax[1, 1].get_legend().get_lines():
