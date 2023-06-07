@@ -20,6 +20,8 @@ def reduce_num_simulation(file_path):
         idx = random.sample(range(0, np.shape(data)[0]), subset_size)
         data = data[idx, :]
         np.save(file_path, data)
+    else:
+        return
 
 
 # Get all solution files
