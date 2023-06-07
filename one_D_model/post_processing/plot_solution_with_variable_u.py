@@ -111,11 +111,11 @@ colors = plt.cm.Greys(np.linspace(0.1, 0.5, int(np.shape(SDE_stab_func_sol_delta
 ax1.set_prop_cycle('color', colors)
 plt_Rb_all_sim = ax1.plot(params.t_span, Rb_vw[::2, :].T)
 
-plt_Rb_one_sim = ax1.plot(params.t_span, Rb_vw[0, :], color='black')
-plt_Rb_mean = ax1.plot(params.t_span, np.mean(Rb_vw, axis=0), color='red')
+plt_Rb_one_sim = ax1.plot(params.t_span, Rb_vw[0, :], color='black', marker='v', markevery=0.05, markersize=3)
+plt_Rb_mean = ax1.plot(params.t_span, np.mean(Rb_vw, axis=0), color='blue', marker='s', markevery=0.05, markersize=3)
 
-ax[0, 0].set_ylabel('u [m/s]', color='red')
-ax[0, 0].tick_params(axis="y", labelcolor='red')
+ax[0, 0].set_ylabel('u [m/s]', color='green')
+ax[0, 0].tick_params(axis="y", labelcolor='green')
 
 ax[0, 0].set_title('a)', loc='left')
 ax1.set_yticklabels([])
@@ -129,8 +129,9 @@ plt_u = ax[0, 1].plot(params.t_span, params.u_range_wv, color='green')
 
 ax2.set_prop_cycle('color', colors)
 plt_Rb_all_sim = ax2.plot(params.t_span, Rb_wv[::2, :].T)
-plt_Rb_one_sim = ax2.plot(params.t_span, Rb_wv[0, :], color='black')
-plt_Rb_mean = ax2.plot(params.t_span, np.mean(Rb_wv[::2, :], axis=0), color='red')
+plt_Rb_one_sim = ax2.plot(params.t_span, Rb_wv[0, :], color='black', marker='v', markevery=0.05, markersize=3)
+plt_Rb_mean = ax2.plot(params.t_span, np.mean(Rb_wv[::2, :], axis=0), color='blue', marker='s', markevery=0.05,
+                       markersize=3)
 
 ax2.set_ylabel(r'$R_b$', color='gray')
 ax2.tick_params(axis="y", labelcolor='gray')
@@ -140,6 +141,8 @@ ax[0, 1].legend(handles=[plt_perturb_region, plt_u[0], plt_Rb_all_sim[0], plt_Rb
                         r'$R_b$: 1 model run', r'$R_b$: mean'], facecolor='white', edgecolor="black", frameon=True,
                 prop={'size': SMALL_SIZE / 2})
 ax[0, 1].get_legend().legendHandles[2].set_color('gray')
+for line in ax[0, 1].get_legend().get_lines():
+    line.set_linewidth(2.0)
 ax[0, 1].set_title('d)', loc='left')
 # --------------------------------------------------------------------------------------------------
 # Second panel: plot of delta T over time
@@ -149,7 +152,7 @@ plt_sims_delta_T_one = ax[1, 0].plot(params.t_span, SDE_stab_func_sol_delta_T_vw
                                      markevery=0.05, markersize=3)
 plt_det_sol = ax[1, 0].plot(params.t_span, ode_data_vw, color='orange', marker='o', markevery=0.05, markersize=3)
 plt_sims_delta_T_mean = ax[1, 0].plot(params.t_span, np.mean(SDE_stab_func_sol_delta_T_vw[::2, :], axis=0),
-                                      color='red', marker='s', markevery=0.05, markersize=3)
+                                      color='blue', marker='s', markevery=0.05, markersize=3)
 
 ax[1, 0].set_ylabel(r'$\Delta T$ [K]')
 ax[1, 0].set_title('b)', loc='left')
@@ -160,12 +163,14 @@ plt_sims_delta_T_one = ax[1, 1].plot(params.t_span, SDE_stab_func_sol_delta_T_wv
                                      markevery=0.05, markersize=3)
 plt_det_sol = ax[1, 1].plot(params.t_span, ode_data_wv, color='orange', marker='o', markevery=0.05, markersize=3)
 plt_sims_delta_T_mean = ax[1, 1].plot(params.t_span, np.mean(SDE_stab_func_sol_delta_T_wv[::2, :], axis=0),
-                                      color='red', marker='s', markevery=0.05, markersize=3)
+                                      color='blue', marker='s', markevery=0.05, markersize=3)
 
 ax[1, 1].legend(handles=[plt_sims_delta_T_all[0], plt_sims_delta_T_one[0], plt_sims_delta_T_mean[0], plt_det_sol[0]],
                 labels=['500 model runs', '1 model run', 'mean', 'ODE'], facecolor='white', edgecolor="black",
                 frameon=True, prop={'size': SMALL_SIZE / 2})
 ax[1, 1].get_legend().legendHandles[0].set_color('gray')
+for line in ax[1, 1].get_legend().get_lines():
+    line.set_linewidth(2.0)
 ax[1, 1].set_title('e)', loc='left')
 
 # --------------------------------------------------------------------------------------------------
@@ -174,7 +179,7 @@ ax[2, 0].set_prop_cycle('color', colors)
 plt_sims_sf_all = ax[2, 0].plot(params.t_span, SDE_stab_func_sol_sf_vw[::2, :].T)
 plt_sims_sf_one = ax[2, 0].plot(params.t_span, SDE_stab_func_sol_sf_vw[0, :], color='black', marker='v', markevery=0.05,
                                 markersize=3)
-plt_sims_sf_mean = ax[2, 0].plot(params.t_span, np.mean(SDE_stab_func_sol_sf_vw[::2, :], axis=0), color='red',
+plt_sims_sf_mean = ax[2, 0].plot(params.t_span, np.mean(SDE_stab_func_sol_sf_vw[::2, :], axis=0), color='blue',
                                  marker='s', markevery=0.05, markersize=3)
 ax[2, 0].set_ylabel(r'$\phi$')
 ax[2, 0].set_xlabel('time [h]')
@@ -184,7 +189,7 @@ ax[2, 1].set_prop_cycle('color', colors)
 plt_sims_sf_all = ax[2, 1].plot(params.t_span, SDE_stab_func_sol_sf_wv[::2, :].T)
 plt_sims_sf_one = ax[2, 1].plot(params.t_span, SDE_stab_func_sol_sf_wv[0, :], color='black', marker='v', markevery=0.05,
                                 markersize=3)
-plt_sims_sf_mean = ax[2, 1].plot(params.t_span, np.mean(SDE_stab_func_sol_sf_wv[::2, :], axis=0), color='red',
+plt_sims_sf_mean = ax[2, 1].plot(params.t_span, np.mean(SDE_stab_func_sol_sf_wv[::2, :], axis=0), color='blue',
                                  marker='s', markevery=0.05, markersize=3)
 
 ax[2, 1].set_xlabel('time [h]')
@@ -192,6 +197,8 @@ ax[2, 1].legend(handles=[plt_sims_sf_all[0], plt_sims_sf_one[0], plt_sims_sf_mea
                 labels=['500 model runs', '1 model run', 'mean'], facecolor='white', edgecolor="black", frameon=True,
                 prop={'size': SMALL_SIZE / 2})
 ax[2, 1].get_legend().legendHandles[0].set_color('gray')
+for line in ax[2, 1].get_legend().get_lines():
+    line.set_linewidth(2.0)
 ax[2, 1].set_title('f)', loc='left')
 # --------------------------------------------------------------------------------------------------
 # plt.subplots_adjust(wspace=0, hspace=0)
