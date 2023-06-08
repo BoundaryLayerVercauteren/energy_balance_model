@@ -84,9 +84,9 @@ def run_model(param, function=False, stab_function=False, Qi=False, Lambda=False
         u_step_size = 0.1
         u_range = np.round(np.arange(param.u_range_start, param.u_range_end + u_step_size, u_step_size), 3)
         sigma_step_size = 0.02
-        sigma_range = np.round(np.arange(sigma_step_size, 1.0 + sigma_step_size, sigma_step_size), 3)
+        sigma_range = np.round(np.arange(sigma_step_size, .5 + sigma_step_size, sigma_step_size), 3)
         orig_sol_directory_path = params.sol_directory_path
-        for trans_type in ['very_weakly']:# ['weakly_very', 'very_weakly']:
+        for trans_type in ['weakly_very', 'very_weakly']:
             cur_sol_directory_path = orig_sol_directory_path + f'{trans_type}/'
             os.makedirs(cur_sol_directory_path)
             if trans_type == 'weakly_very':
@@ -104,20 +104,6 @@ def run_model(param, function=False, stab_function=False, Qi=False, Lambda=False
                         run_1D_SDE_model.solve_randomized_model(param)
                         # Save parameters
                         save_parameters_in_file(param)
-            elif u:
-                for u_val in u_range:
-                    for sigma_val in sigma_range:
-                        params.sol_directory_path = cur_sol_directory_path + f"{str(u_val).replace('.', '_')}/{str(sigma_val).replace('.', '_')}/"
-                        os.makedirs(params.sol_directory_path)
-                        os.makedirs(params.sol_directory_path + 'temporary/')
-                        param.U = u_val
-                        param.sigma_u = sigma_val
-                        # Randomize wind velocity
-                        function_name = solve_SDEs.solve_SDE_with_stoch_u
-                        sol_file_name = 'SDE_u_sol'
-                        run_1D_SDE_model.solve_model_with_randomized_parameter(param, function_name, sol_file_name)
-                        # Save parameters
-                        save_parameters_in_file(param)
             elif stab_function:
                 for u_val in u_range:
                     for sigma_val in sigma_range:
@@ -133,9 +119,11 @@ def run_model(param, function=False, stab_function=False, Qi=False, Lambda=False
                         # Save parameters
                         save_parameters_in_file(param)
             elif u_and_function:
+                sigma_u_range = np.array([0.01, 0.04])
+                sigma_range = np.insert(sigma_range, 0, 0, axis=0)
                 for u_val in u_range:
                     for sigma_deltaT_val in sigma_range:
-                        for sigma_u_val in sigma_range:
+                        for sigma_u_val in sigma_u_range:
                             params.sol_directory_path = cur_sol_directory_path + f"{str(u_val).replace('.', '_')}/{str(sigma_deltaT_val).replace('.', '_')}/{str(sigma_u_val).replace('.', '_')}/"
                             os.makedirs(params.sol_directory_path)
                             os.makedirs(params.sol_directory_path + 'temporary/')
