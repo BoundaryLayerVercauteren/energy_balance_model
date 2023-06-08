@@ -50,7 +50,7 @@ def make_bifurcation_analysis(param, data=None):
     # plt.xlabel('$t$ [s]')
     # plt.ylabel(r'$\Delta T$ [K]')
     # plt.title(ode.name + ' multi ICs')
-    # plt.savefig(param.sol_directory_path + 'sol_trajectories.png', bbox_inches='tight', dpi=300)
+    # plt.savefig(param.sol_directory_path + 'sol_trajectories.pdf', bbox_inches='tight', dpi=300)
 
     # -----------------------------------------------------------------------
     # Plot bifurcation diagram for different parameters
@@ -61,7 +61,7 @@ def make_bifurcation_analysis(param, data=None):
     # DSargs.pars['Q_i'] = param.Q_i
     # make_bifurcation_diagram(DSargs, [0.001, 0.01, 0.1], 'z_0', r'$z_0 = $', ax[2], 'c)')
     #
-    # plt.savefig(param.sol_directory_path + 'bifurcation_diagram_' + param.stab_func_type + '.png', bbox_inches='tight', dpi=300)
+    # plt.savefig(param.sol_directory_path + 'bifurcation_diagram_' + param.stab_func_type + '.pdf', bbox_inches='tight', dpi=300)
 
     # Plot bifurcation diagram
     fig, ax = plt.subplots(1, 1, figsize=(5, 5))
@@ -71,7 +71,7 @@ def make_bifurcation_analysis(param, data=None):
         fig_label = 'b)'
     make_bifurcation_diagram(DSargs, [np.nan], 'none', 'none', ax, fig_label)
 
-    plt.savefig(param.sol_directory_path + 'bifurcation_diagram_single_' + param.stab_func_type + '.png',
+    plt.savefig(param.sol_directory_path + 'bifurcation_diagram_single_' + param.stab_func_type + '.pdf',
                 bbox_inches='tight', dpi=300)
 
     if data is not None:
@@ -83,7 +83,7 @@ def make_bifurcation_analysis(param, data=None):
             fig_label = 'b)'
         make_bifurcation_diagram(DSargs, [np.nan], 'none', 'none', ax, fig_label, data)
 
-        plt.savefig(param.sol_directory_path + 'bifurcation_diagram_domeC_' + param.stab_func_type + '.png',
+        plt.savefig(param.sol_directory_path + 'bifurcation_diagram_domeC_' + param.stab_func_type + '.pdf',
                     bbox_inches='tight', dpi=300)
 
 

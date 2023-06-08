@@ -56,26 +56,14 @@ def calculate_stability_function(param, delta_T, U):
 def define_deterministic_ODE(t, delta_T, u, Lambda, Qi, param):
     f_stab = calculate_stability_function(param, delta_T, u)
     c_D = calculate_neutral_drag_coefficient(param)
-    return (1/param.cv) * (Qi - Lambda * delta_T - param.rho * param.cp * c_D * u * delta_T * f_stab)
+    return (1 / param.cv) * (Qi - Lambda * delta_T - param.rho * param.cp * c_D * u * delta_T * f_stab)
 
 
 def solve_deterministic_ODE(param):
     return solve_ivp(define_deterministic_ODE, [param.t_start, param.t_end], [param.delta_T_0], t_eval=param.t_span,
                      args=(param.U, param.Lambda, param.Q_i, param))
 
-def define_deterministic_ODE_var_u(t, delta_T, u_range, Lambda, Qi, param):
-    # Find index of time step in t_span which is closest to the time step at which the SDE is currently evaluated
-    idx = (np.abs(param.t_span - t)).argmin()
-    # Find corresponding u value
-    u = u_range[idx]
-    print(u)
-    f_stab = calculate_stability_function(param, delta_T, u)
-    c_D = calculate_neutral_drag_coefficient(param)
-    return (1/param.cv) * (Qi - Lambda * delta_T - param.rho * param.cp * c_D * u * delta_T * f_stab)
 
-def solve_deterministic_ODE_var_u(param):
-    return solve_ivp(define_deterministic_ODE_var_u, [param.t_start, param.t_end_h], [param.delta_T_0],
-                     t_eval=param.t_span, args=(param.u_range, param.Lambda, param.Q_i, param))
 def solve_ODE_with_time_dependent_u(param):
     # Define functions for 2D SDE
     def _f(delta_T, t):
@@ -92,7 +80,6 @@ def solve_ODE_with_time_dependent_u(param):
 
 
 def calculate_potential(delta_T, u, param):
-
     ode = lambda x: define_deterministic_ODE(0.0, x, u, param.Lambda, param.Q_i, param)
 
     potential = np.zeros_like(delta_T)
@@ -100,8 +87,3 @@ def calculate_potential(delta_T, u, param):
         y, _ = quad(ode, 0, val)
         potential[i] = y
     return potential
-
-
-
-
-

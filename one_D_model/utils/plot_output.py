@@ -43,18 +43,21 @@ def make_2D_plot(params, x, y, file_name, xlabel='t [h]', ylabel=r'$\Delta T$ [K
     plt.close('all')  # Closes all the figure windows.
 
 
-def make_2D_multi_line_plot(params, x, y_array, labels, file_name, xlabel='u [m/s]', ylabel=r'$\Delta T_{eq}$ [K]',
-                            ylim=(0, 30), ylabel2='u [m/s]'):
+def make_2D_multi_line_plot(params, x, y_array, labels, file_name, xlabel='U [m/s]', ylabel=r'$\Delta T_{eq}$ [K]',
+                            ylim=(0, 30), ylabel2='U [m/s]'):
     color = matplotlib.cm.get_cmap('cmc.batlow', np.shape(y_array)[1] + 1).colors
     fig, ax1 = plt.subplots(figsize=(15, 5))
     ax2 = ax1.twinx()
+
+    if 'U' in ylabel2:
+        ax2.axhspan(5.31, 5.89, alpha=0.1, color='green')
 
     ax1.axhline(y=24, color='r', lw=2)
     ax1.axhline(y=4, color='r', lw=2)
     ax1.axhline(y=12, color='r', linestyle=':', lw=2)
 
     ax1.plot(x, y_array[:, 0], label=labels[0], color=color[0], lw=2)
-    ax2.plot(x, y_array[:, 1], label=labels[1], color=color[1], alpha=0.6)
+    ax2.plot(x, y_array[:, 1], label=labels[1], color=color[1], alpha=0.4)
     average_time = 600
     ax2.plot(x[average_time - 1:], np.convolve(y_array[:, 1], np.ones(average_time), 'valid') / average_time,
              label=labels[1], color=color[1], alpha=1, lw=2)
@@ -134,7 +137,7 @@ def plot_potentials(param_class):
     ax[1].legend()
     ax[1].set_title('b)', loc='left')
 
-    plt.savefig(param_class.sol_directory_path + 'potentials.png', bbox_inches='tight', dpi=300)
+    plt.savefig(param_class.sol_directory_path + 'potentials.pdf', bbox_inches='tight', dpi=300)
 
 
 def plot_potentials_and_output_distribution(param_class, delta_T_data):
@@ -178,5 +181,5 @@ def plot_potentials_and_output_distribution(param_class, delta_T_data):
     ax1.set_title(title, loc='left')
     ax1.legend()#loc='upper left')
 
-    plt.savefig(param_class.sol_directory_path + 'data_dist_potentials_' + param_copy.stab_func_type + '.png',
+    plt.savefig(param_class.sol_directory_path + 'data_dist_potentials_' + param_copy.stab_func_type + '.pdf',
                 bbox_inches='tight', dpi=300)

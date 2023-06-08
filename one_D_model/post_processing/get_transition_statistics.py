@@ -118,7 +118,7 @@ def get_time_series_with_most_transitions(values):
         #         ax.scatter(start_weakly_stable, row[start_weakly_stable], color='red')
         #         ax.scatter(start_very_stable, row[start_very_stable], color='green')
         #         #ax.set_xlim(27000,30000)
-        #         fig.savefig(output_directory + f'{idx}_test.png', bbox_inches='tight', dpi=300)
+        #         fig.savefig(output_directory + f'{idx}_test.pdf', bbox_inches='tight', dpi=300)
         #         plt.cla()  # Clear the current axes.
         #         plt.clf()  # Clear the current figure.
         #         plt.close('all')  # Closes all the figure windows.
@@ -275,9 +275,9 @@ ax3.set_ylim(4.5, 7)
 ax3.set_xlabel(r'$\sigma_u$')
 ax3.set_ylabel('u [m/s]')
 
-fig1.savefig(output_directory + 'max_transitions.png', bbox_inches='tight', dpi=300)
-fig2.savefig(output_directory + 'distributions.png', bbox_inches='tight', dpi=300)
-fig3.savefig(output_directory + 'mean_variance.png', bbox_inches='tight', dpi=300)
+fig1.savefig(output_directory + 'max_transitions.pdf', bbox_inches='tight', dpi=300)
+fig2.savefig(output_directory + 'distributions.pdf', bbox_inches='tight', dpi=300)
+fig3.savefig(output_directory + 'mean_variance.pdf', bbox_inches='tight', dpi=300)
 
 # To clear memory
 plt.cla()  # Clear the current axes.
@@ -323,7 +323,7 @@ axes[1].set_title('b)', loc='left')
 
 plt.tight_layout()
 
-plt.savefig(output_directory + 'time_in_regime.png', bbox_inches='tight', dpi=300)
+plt.savefig(output_directory + 'time_in_regime.pdf', bbox_inches='tight', dpi=300)
 exit()
 # Transform values to percentages
 num_sim = np.shape(data)[0]
@@ -381,4 +381,4 @@ axs[8].bar(mean_trans_per_sim.keys(), mean_trans_per_sim.values(), color='orange
 axs[8].title.set_text('Average number of transitions')
 axs[8].set_xlabel('perturbation strength')
 
-plt.savefig(output_directory + 'transition_statistics.png', bbox_inches='tight', dpi=300)
+plt.savefig(output_directory + 'transition_statistics_0_8.pdf', bbox_inches='tight', dpi=300)

@@ -40,7 +40,7 @@ class Parameters:
     sigma_z0: float = 0.1  # sigma for z0 noise term
     mu_z0: float = 0.001  # mu for z0 noise term
     sigma_s: float = -0.1
-    sigma_phi: float = 0.2
+    sigma_phi: float = 0.1
 
     relax: float = -0.005  # coefficient of relaxation to equilibrium
     relax_u: float = -0.005
@@ -52,4 +52,4 @@ class Parameters:
     u_range_end: float = 8.0
 
     num_simulation: int = 1  # number of runs for Monte Carlo simulation
-    num_proc: int = 1  # number of processes to be used in parallelization
+    num_proc: int = 2  # number of processes to be used in parallelization

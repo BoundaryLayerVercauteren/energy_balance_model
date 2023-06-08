@@ -110,4 +110,4 @@ def make_comparison(sol_directory_path):
 
     plt.legend()
 
-    plt.savefig(sol_directory_path + 'stability_functions.png', bbox_inches='tight', dpi=300)
+    plt.savefig(sol_directory_path + 'stability_functions.pdf', bbox_inches='tight', dpi=300)
