@@ -80,7 +80,7 @@ ax.xaxis.set_major_locator(plt.MultipleLocator(0.1))
 ax.set_axisbelow(True)
 ax.grid()
 ax.legend(loc='upper right', facecolor='white', edgecolor="black", frameon=True)
-ax.set_xlabel(r'u [m/s]')
+ax.set_xlabel(r'U [m/s]')
 ax.set_ylabel(r'$\sigma_i$')
 
 fig.tight_layout()
