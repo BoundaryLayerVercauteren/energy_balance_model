@@ -23,7 +23,7 @@ plt.rc('figure', titlesize=BIGGER_SIZE)  # fontsize of the figure title
 output_directory = 'output/sensitivity_study/internal_variability/'
 subset_data_size = 500
 trans_percentage = 0.8
-index = 3
+index = ''
 
 # Load results from sensitivity analysis
 with open(f'{output_directory}very_weakly/average_transitions_{subset_data_size}_{index}.json') as file:
@@ -61,16 +61,13 @@ def get_minimal_sigma_with_trans_for_every_u(trans_statistics, u_range):
             first_sigma_with_enough_trans.append(trans_statistics[idx_first_sigma_with_enough_trans][1])
     return first_sigma_with_enough_trans
 
-# Calculate richardson number for every time step
-Rb_vw = 10.0 * (9.81 / 243.0) * (24 / (u_range_vw ** 2))
-Rb_wv = 10.0 * (9.81 / 243.0) * (4 / (u_range_vw ** 2))
 
 min_sigma_vw = get_minimal_sigma_with_trans_for_every_u(result_vw, u_range_vw)
 min_sigma_wv = get_minimal_sigma_with_trans_for_every_u(result_wv, u_range_wv)
 
 fig, ax = plt.subplots(1, 1, figsize=(10, 5))
 
-ax.axvspan(5.31, 5.89, alpha=0.3, color='red', label='transition region')
+ax.axvspan(5.31, 5.89, alpha=0.3, color='red', label='bistable region')
 ax.plot(u_range_vw, min_sigma_vw, color='blue')
 ax.scatter(u_range_vw, min_sigma_vw, color='blue', label='vSBL-wSBL')
 ax.plot(u_range_wv, min_sigma_wv, color='green')
@@ -81,26 +78,7 @@ ax.set_axisbelow(True)
 ax.grid()
 ax.legend(loc='upper right', facecolor='white', edgecolor="black", frameon=True)
 ax.set_xlabel(r'U [m/s]')
-ax.set_ylabel(r'$\sigma_i$')
+ax.set_ylabel(r'$\sigma_{i,min}$')
 
 fig.tight_layout()
 plt.savefig(f'{output_directory}transition_statistics_{trans_percentage}_{subset_data_size}_{index}.pdf', bbox_inches='tight', dpi=300)
-
-
-# fig, ax = plt.subplots(1, 1, figsize=(10, 5))
-#
-# ax.plot(u_range_vw, Rb_vw, color='blue', label=r'$R_b(\Delta T=24K$', lw=2)
-# ax.plot(u_range_vw, Rb_wv, color='red', label=r'$R_b(\Delta T=4K$', lw=2)
-#
-# ax.xaxis.set_major_locator(plt.MultipleLocator(0.1))
-#
-# ax.set_axisbelow(True)
-# ax.grid(axis='x')
-#
-# ax.legend(loc='upper right', facecolor='white', edgecolor="black", frameon=True)
-#
-# ax.set_xlabel(r'u [m/s]')
-# ax.set_ylabel(r'$R_b$')
-#
-# fig.tight_layout()
-# plt.savefig(f'{output_directory}richardson_number.pdf', bbox_inches='tight', dpi=300)
