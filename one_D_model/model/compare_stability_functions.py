@@ -83,7 +83,7 @@ def make_comparison(sol_directory_path):
         sol_directory_path (str): Path were figure should be saved.
     """
     # Define range of Richardson numbers at which function will be evaluated
-    richardson_num = np.round(np.linspace(0, 10, 200), 4)
+    richardson_num = np.round(np.linspace(0, 0.5, 100), 4)
 
     # Calculate stability function values for a range of Richardson numbers
     vec_vandewiel_short_tail_stab_func = np.vectorize(define_vandewiel_short_tail_stab_function)
@@ -91,7 +91,7 @@ def make_comparison(sol_directory_path):
     vec_vandewiel_cutoff_stab_func = np.vectorize(define_vandewiel_cutoff_stab_function)
 
     # Create plot
-    color = matplotlib.cm.get_cmap('cmc.batlow', 4).colors
+    color = matplotlib.cm.get_cmap('cmc.batlow', 3).colors
     markers = ['v', '*', '^']
 
     fig = plt.figure(figsize=(5, 5))
@@ -101,12 +101,12 @@ def make_comparison(sol_directory_path):
              color=color[0], marker=markers[0], markevery=10)
     ax1.plot(richardson_num, vec_vandewiel_long_tail_stab_func(richardson_num), label='long tail',
              color=color[1], marker=markers[1], markevery=10)
-    ax1.plot(richardson_num, vec_vandewiel_cutoff_stab_func(richardson_num), label='cutoff',
-             color=color[2], marker=markers[2], markevery=100)
+    # ax1.plot(richardson_num, vec_vandewiel_cutoff_stab_func(richardson_num), label='cutoff',
+    #          color=color[2], marker=markers[2], markevery=100)
 
-    ax1.set_xlabel('Ri')
+    ax1.set_xlabel(r'$R_b$')
     ax1.set_ylabel(r'$f_{stab}$')
-    ax1.set_xscale('log')
+    #ax1.set_xscale('log')
 
     plt.legend()
 

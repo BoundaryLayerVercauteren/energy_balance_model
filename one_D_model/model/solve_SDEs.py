@@ -24,7 +24,7 @@ def solve_SDE_with_stoch_u(param):
     # Define functions for 2D SDE
     def _f(X, t):
         return np.array([solve_ODE.define_deterministic_ODE(t, X[0], X[1], param.Lambda, param.Q_i, param),
-                         param.relax_u * (X[1] - param.mu_u)])
+                         param.relax_u * (X[1] - param.U)])
 
     def _G(X, t):
         return np.diag([0.0, define_noise_term(X[0], t, param.sigma_u)])

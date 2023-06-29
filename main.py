@@ -50,24 +50,25 @@ def run_model(param, function=False, stab_function=False, Qi=False, Lambda=False
         # Process Dome C data and plot it
         data_domec = process_dome_c_data.main()
         # -------------------------------------------------------------------------------------
-        # Solve deterministic ODE
-        ODE_sol = solve_ODE.solve_deterministic_ODE(param)
-        # Plot solution of deterministic model
-        plot.make_2D_plot(param, ODE_sol.t.flatten(), ODE_sol.y.flatten(), 'ODE_sol.png')
-        # Plot stability functions
-        compare_stability_functions.make_comparison(param.sol_directory_path)
+        # # Solve deterministic ODE
+        # ODE_sol = solve_ODE.solve_deterministic_ODE(param)
+        # # Plot solution of deterministic model
+        # plot.make_2D_plot(param, ODE_sol.t.flatten(), ODE_sol.y.flatten(), 'ODE_sol.png')
+        # # Plot stability functions
+        #compare_stability_functions.make_comparison(param.sol_directory_path)
+
         # -------------------------------------------------------------------------------------
         # Make bifurcation plots
         # copy dataclass to prevent overwriting original
         param_copy = dataclasses.replace(param)
         param_copy.sol_directory_path = param.sol_directory_path
         param_copy.stab_func_type = 'short_tail'
-        make_bifurcation_analysis.make_bifurcation_analysis(param_copy, data_domec)
+        make_bifurcation_analysis.make_bifurcation_analysis(param_copy, data_domec)#, save_values=True)
         param_copy.stab_func_type = 'long_tail'
-        make_bifurcation_analysis.make_bifurcation_analysis(param_copy, data_domec)
+        make_bifurcation_analysis.make_bifurcation_analysis(param_copy)#, data_domec)
         # -------------------------------------------------------------------------------------
         # Plot potential
-        plot.plot_potentials(param)
+        #plot.plot_potentials(param)
     # -----------------------------------------------------------------------------------------
     if ode_with_var_u:
         param.u_range = create_u_range(param)
@@ -111,7 +112,7 @@ def run_model(param, function=False, stab_function=False, Qi=False, Lambda=False
                         os.makedirs(params.sol_directory_path)
                         os.makedirs(params.sol_directory_path + 'temporary/')
                         param.U = u_val
-                        param.sigma_u = sigma_val
+                        param.sigma_phi = sigma_val
                         # Randomize wind velocity
                         function_name = solve_SDE_stoch_stab_function.solve_SDE_with_stoch_stab_function_multi_noise
                         sol_file_name = 'SDE_stab_func_multi_noise_sol'

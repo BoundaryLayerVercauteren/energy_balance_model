@@ -6,8 +6,20 @@ import numpy as np
 from matplotlib import pyplot as plt
 from matplotlib.offsetbox import AnchoredOffsetbox, TextArea, HPacker, VPacker
 
+# set font sizes for plots
+SMALL_SIZE = 13
+MEDIUM_SIZE = 15
+BIGGER_SIZE = 18
 
-def make_bifurcation_analysis(param, data=None):
+plt.rc('font', size=SMALL_SIZE)  # controls default text sizes
+plt.rc('axes', titlesize=SMALL_SIZE)  # fontsize of the axes title
+plt.rc('axes', labelsize=MEDIUM_SIZE)  # fontsize of the x and y labels
+plt.rc('xtick', labelsize=SMALL_SIZE)  # fontsize of the tick labels
+plt.rc('ytick', labelsize=SMALL_SIZE)  # fontsize of the tick labels
+plt.rc('legend', fontsize=SMALL_SIZE)  # legend fontsize
+plt.rc('figure', titlesize=BIGGER_SIZE)  # fontsize of the figure title
+
+def make_bifurcation_analysis(param, data=None, save_values=False):
     # name of the model
     DSargs = dst.args(name='temperature inversion strength model')
 
@@ -63,6 +75,9 @@ def make_bifurcation_analysis(param, data=None):
     #
     # plt.savefig(param.sol_directory_path + 'bifurcation_diagram_' + param.stab_func_type + '.pdf', bbox_inches='tight', dpi=300)
 
+    if save_values:
+        make_bifurcation_diagram(DSargs, [np.nan], 'none', 'none', np.nan, np.nan, save_values=True)
+
     # Plot bifurcation diagram
     fig, ax = plt.subplots(1, 1, figsize=(5, 5))
     if 'short' in param.stab_func_type:
@@ -71,23 +86,23 @@ def make_bifurcation_analysis(param, data=None):
         fig_label = 'b)'
     make_bifurcation_diagram(DSargs, [np.nan], 'none', 'none', ax, fig_label)
 
-    plt.savefig(param.sol_directory_path + 'bifurcation_diagram_single_' + param.stab_func_type + '.pdf',
+    plt.savefig(param.sol_directory_path + 'bifurcation_diagram_single_' + param.stab_func_type + '.png',
                 bbox_inches='tight', dpi=300)
 
     if data is not None:
         # Plot bifurcation diagram
         fig, ax = plt.subplots(1, 1, figsize=(5, 5))
         if 'short' in param.stab_func_type:
-            fig_label = ''  # 'a)'
+            fig_label = 'c)'  # 'a)'
         else:
             fig_label = 'b)'
         make_bifurcation_diagram(DSargs, [np.nan], 'none', 'none', ax, fig_label, data)
 
-        plt.savefig(param.sol_directory_path + 'bifurcation_diagram_domeC_' + param.stab_func_type + '.pdf',
+        plt.savefig(param.sol_directory_path + 'bifurcation_diagram_domeC_' + param.stab_func_type + '.png',
                     bbox_inches='tight', dpi=300)
 
 
-def make_bifurcation_diagram(DSargs, val_list, val_name, label, ax, title, data_val=None):
+def make_bifurcation_diagram(DSargs, val_list, val_name, label, ax, title, data_val=None, save_values=False):
     color = matplotlib.cm.get_cmap('cmc.batlow', len(val_list) + 1).colors
 
     for idx, val in enumerate(val_list):
@@ -119,6 +134,11 @@ def make_bifurcation_diagram(DSargs, val_list, val_name, label, ax, title, data_
             u_values = PC['EQ1'].sol['U']
             x_values = PC['EQ1'].sol['x']
 
+            if save_values:
+                np.savetxt('u_values.txt', u_values, delimiter=',')
+                np.savetxt('x_values.txt', x_values, delimiter=',')
+                return
+
             stable_points_idx = np.sort(
                 np.concatenate((np.where(u_values == bif_point_1[0]), np.where(u_values == bif_point_2[0]))).flatten())
 
@@ -139,7 +159,7 @@ def make_bifurcation_diagram(DSargs, val_list, val_name, label, ax, title, data_
             ax.plot(bif_point_2[0], bif_point_2[1], marker="o", markersize=5, color=color[idx])
             if idx == 0 and data_val is None:
                 ax.axvspan(u_values[stable_points_idx][0], u_values[stable_points_idx][1], alpha=0.3, color='red',
-                           label='transition region')
+                           label='bistable region')
 
             print('For ' + val_name + '=' + str(val) + ' the unstable u region is: ' + str(u_values[stable_points_idx]))
 
@@ -165,15 +185,15 @@ def make_bifurcation_diagram(DSargs, val_list, val_name, label, ax, title, data_
                                           borderpad=0., bbox_to_anchor=(-0.08, 0.5))
         ax.add_artist(anchored_ybox)
         # x axes labels
-        xbox1 = TextArea(r'$u$, ', textprops=dict(color=color[0], size=MEDIUM_SIZE, ha='left', va='bottom'))
+        xbox1 = TextArea(r'$U$, ', textprops=dict(color=color[0], size=MEDIUM_SIZE, ha='left', va='bottom'))
         xbox2 = TextArea(r'$U_{8m}$ ', textprops=dict(color=color[2], size=MEDIUM_SIZE, ha='left', va='bottom'))
-        xbox3 = TextArea('[m/s]', textprops=dict(color="black", size=MEDIUM_SIZE, ha='left', va='bottom'))
+        xbox3 = TextArea('[$\mathrm{ms^{-1}}$]', textprops=dict(color="black", size=MEDIUM_SIZE, ha='left', va='bottom'))
         xbox = HPacker(children=[xbox1, xbox2, xbox3], align="center", pad=0, sep=5)
         anchored_xbox = AnchoredOffsetbox(loc='center', child=xbox, pad=0, frameon=False, bbox_transform=ax.transAxes,
                                           borderpad=0., bbox_to_anchor=(0.5, -0.09))
         ax.add_artist(anchored_xbox)
     else:
-        ax.set_xlabel('u [m/s]')
-        ax.set_ylabel(r'$\Delta T_{eq}$ [K]')
+        ax.set_xlabel('U [$\mathrm{ms^{-1}}$]', fontsize=MEDIUM_SIZE)
+        ax.set_ylabel(r'$\Delta T_{eq}$ [K]', fontsize=MEDIUM_SIZE)
     ax.legend()
     ax.set_title(title, loc='left')

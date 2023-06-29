@@ -71,6 +71,7 @@ def make_2D_multi_line_plot(params, x, y_array, labels, file_name, xlabel='U [m/
     ax1.set_ylabel(ylabel, color=color[0])
     ax1.tick_params(axis="y", labelcolor=color[0])
 
+    #ax2.set_ylim([4.0,7.5])
     ax2.set_ylabel(ylabel2, color=color[1])
     ax2.tick_params(axis="y", labelcolor=color[1])
 
@@ -91,7 +92,7 @@ def make_distribution_plot(values, params, file_name, xlabel):
     plt.axvline(x=4, color='r')
     plt.axvline(x=12, color='r', linestyle='--')
     plt.hist(values, 100, color=color[0])
-
+    plt.ylim((0,3.25*10**6))
     plt.xlabel(xlabel)
     plt.ylabel(r'Density of $\Delta T$')
     plt.savefig(params.sol_directory_path + file_name, bbox_inches='tight', dpi=300)
