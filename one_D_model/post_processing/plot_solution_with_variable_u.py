@@ -105,7 +105,7 @@ ax1.set_prop_cycle('color', colors)
 plt_Rb_all_sim = ax1.plot(params.t_span, Rb_vw.T)
 
 plt_Rb_one_sim = ax1.plot(params.t_span, Rb_vw[0, :], color='black')
-plt_Rb_mean = ax1.plot(params.t_span, np.mean(Rb_vw, axis=0), color='blue', marker='v'markevery=1500, , markersize=10)
+plt_Rb_mean = ax1.plot(params.t_span, np.mean(Rb_vw, axis=0), color='blue', marker='v', markevery=1500, markersize=10)
 
 ax[0, 0].set_ylabel('u [m/s]', color='green')
 ax[0, 0].tick_params(axis="y", labelcolor='green')
@@ -117,9 +117,9 @@ ax1.set_yticklabels([])
 ax[1, 0].set_prop_cycle('color', colors)
 plt_sims_delta_T_all = ax[1, 0].plot(params.t_span, SDE_stab_func_sol_delta_T_vw.T)
 plt_sims_delta_T_one = ax[1, 0].plot(params.t_span, SDE_stab_func_sol_delta_T_vw[0, :], color='black')
-plt_det_sol = ax[1, 0].plot(params.t_span, ode_data_vw, color='orange', marker='.'markevery=1500, , markersize=10)
+plt_det_sol = ax[1, 0].plot(params.t_span, ode_data_vw, color='orange', marker='.', markevery=1500, markersize=10)
 plt_sims_delta_T_mean = ax[1, 0].plot(params.t_span, np.mean(SDE_stab_func_sol_delta_T_vw, axis=0), color='blue',
-                                      marker='v'markevery=1500, , markersize=10)
+                                      marker='v', markevery=1500, markersize=10)
 
 ax[1, 0].set_ylabel(r'$\Delta T$ [K]')
 ax[1, 0].set_title('b)', loc='left')
@@ -129,7 +129,7 @@ ax[2, 0].set_prop_cycle('color', colors)
 plt_sims_sf_all = ax[2, 0].plot(params.t_span, SDE_stab_func_sol_sf_vw.T)
 plt_sims_sf_one = ax[2, 0].plot(params.t_span, SDE_stab_func_sol_sf_vw[0, :], color='black')
 plt_sims_sf_mean = ax[2, 0].plot(params.t_span, np.mean(SDE_stab_func_sol_sf_vw, axis=0), color='blue',
-                                 marker='v'markevery=1500, , markersize=10)
+                                 marker='v', markevery=1500, markersize=10)
 ax[2, 0].set_ylabel(r'$\phi$')
 ax[2, 0].set_xlabel('time [h]')
 ax[2, 0].set_title('c)', loc='left')
@@ -171,7 +171,7 @@ plt_u = ax[0, 1].plot(params.t_span, params.u_range_wv, color='green')
 ax2.set_prop_cycle('color', colors)
 plt_Rb_all_sim = ax2.plot(params.t_span, Rb_wv.T)
 plt_Rb_one_sim = ax2.plot(params.t_span, Rb_wv[0, :], color='black')
-plt_Rb_mean = ax2.plot(params.t_span, np.mean(Rb_wv, axis=0), color='blue', marker='v'markevery=1500, , markersize=10)
+plt_Rb_mean = ax2.plot(params.t_span, np.mean(Rb_wv, axis=0), color='blue', marker='v', markevery=1500, markersize=10)
 
 ax2.set_ylabel(r'$R_b$', color='gray')
 ax2.tick_params(axis="y", labelcolor='gray')
@@ -189,9 +189,9 @@ ax[0, 1].set_title('d)', loc='left')
 ax[1, 1].set_prop_cycle('color', colors)
 plt_sims_delta_T_all = ax[1, 1].plot(params.t_span, SDE_stab_func_sol_delta_T_wv.T)
 plt_sims_delta_T_one = ax[1, 1].plot(params.t_span, SDE_stab_func_sol_delta_T_wv[0, :], color='black')
-plt_det_sol = ax[1, 1].plot(params.t_span, ode_data_wv, color='orange', marker='.'markevery=1500, , markersize=10)
+plt_det_sol = ax[1, 1].plot(params.t_span, ode_data_wv, color='orange', marker='.', markevery=1500, markersize=10)
 plt_sims_delta_T_mean = ax[1, 1].plot(params.t_span, np.mean(SDE_stab_func_sol_delta_T_wv, axis=0), color='blue',
-                                      marker='v'markevery=1500, , markersize=10)
+                                      marker='v', markevery=1500, markersize=10)
 
 ax[1, 1].legend(handles=[plt_sims_delta_T_all[0], plt_sims_delta_T_one[0], plt_sims_delta_T_mean[0], plt_det_sol[0]],
                 labels=['500 model runs', '1 model run', 'mean', 'deterministic model (eq. 2)'], facecolor='white', edgecolor="black",
@@ -208,7 +208,7 @@ ax[2, 1].set_prop_cycle('color', colors)
 plt_sims_sf_all = ax[2, 1].plot(params.t_span, SDE_stab_func_sol_sf_wv.T)
 plt_sims_sf_one = ax[2, 1].plot(params.t_span, SDE_stab_func_sol_sf_wv[0, :], color='black')
 plt_sims_sf_mean = ax[2, 1].plot(params.t_span, np.mean(SDE_stab_func_sol_sf_wv, axis=0), color='blue',
-                                 marker='v'markevery=1500, , markersize=10)
+                                 marker='v', markevery=1500, markersize=10)
 
 ax[2, 1].set_xlabel('time [h]')
 ax[2, 1].legend(handles=[plt_sims_sf_all[0], plt_sims_sf_one[0], plt_sims_sf_mean[0]],
