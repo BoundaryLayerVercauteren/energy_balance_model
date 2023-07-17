@@ -41,21 +41,23 @@ def create_u_range(param_vals, num_u_steps=50):
 
 
 def make_ode_plots(param):
+    """Create all plots which are relevant to study the ODE model (eq. 2)."""
     # Set plotting style and font sizes for figures
     set_plotting_style.configure_plotting_style(figure_type='full_page_width')
 
     # Process Dome C data
     data_domec = process_dome_c_data.main()
 
-    # Solve deterministic ODE
+    # Solve ODE
     ODE_sol = solve_ODE.solve_deterministic_ODE(param)
-    # Plot solution of deterministic model
+
+    # Plot solution of ODE
     plot.make_2D_plot(param, ODE_sol.t.flatten(), ODE_sol.y.flatten(), 'ODE_sol.png')
 
-    # Plot stability functions
+    # Plot stability functions (figure 2)
     compare_stability_functions.make_comparison(param.sol_directory_path)
 
-    # Make bifurcation plots
+    # Make bifurcation plots (figure 1)
     # copy dataclass to prevent overwriting original
     param_copy = dataclasses.replace(param)
     param_copy.sol_directory_path = param.sol_directory_path
@@ -64,11 +66,13 @@ def make_ode_plots(param):
     param_copy.stab_func_type = 'long_tail'
     make_bifurcation_analysis.make_bifurcation_analysis(param_copy, data_domec)
 
-    # Plot potential
+    # Plot potential (figure 3)
     plot.plot_potentials(param)
 
 
 def solve_ode_with_variable_u(param):
+    """Solve ODE model (eq. 2) with variable wind. This function was used to create the data for the orange line in
+     figure 10."""
     param.u_range = create_u_range(param)
     if param.delta_T_0 < 12:
         param.u_range = param.u_range[::-1]
@@ -101,6 +105,8 @@ def run_sde_model(param, **randomization_type):
 
 
 def run_sde_model_with_nonconstant_wind(param, **randomization_type):
+    """Solve SDE model with stochastic stability function (eq. 6) and variable wind. See section 2.3.3. and figure 10
+    for a detailed description."""
     param.u_range = create_u_range(param)
     if param.delta_T_0 < 12:
         param.u_range = param.u_range[::-1]
@@ -119,6 +125,8 @@ def create_directory(path):
 
 
 def make_sensitivity_study_for_sde_model(param, **randomization_type):
+    """Perform sensitivity analysis for one of the randomized models (eq. 3-6). See for example section 2.3.1. and
+    figure 4 for a detailed description."""
     u_step_size = 0.1
     u_range = np.round(np.arange(param.u_range_start, param.u_range_end + u_step_size, u_step_size), 3)
     sigma_step_size = 0.02
