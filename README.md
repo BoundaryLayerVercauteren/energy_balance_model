@@ -2,7 +2,12 @@
 
 The code in this repository is used to study the sensitivity of the nocturnal and polar atmospheric boundary layer to transient phenomena. 
 The analysis is performed with a  model for near-surface temperature inversion transitions which was originally defined by van de Wiel et. al. [1] but has been modified
-to include perturbations. 
+to include different types of perturbations. 
+
+The corresponding publication is:
+ Kaiser, A., Vercauteren, N., and Krumscheid, S.: Sensitivity of the nocturnal and polar boundary layer to transient phenomena, EGUsphere [preprint], https://doi.org/10.5194/egusphere-2023-1519, 2023.
+
+If comments in the code include references to figures or equations they refer to the ones in this publication.
 
 ## How to set up and run the model
 1. Clone repository
