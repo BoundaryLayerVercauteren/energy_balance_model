@@ -41,6 +41,9 @@ python3 main.py # docker
 ```
 Output files can be found in output/ directory with current data and time.
 
+### Change model parameters
+All model parameters can be set in the [file](one_D_model/model/parameters.py). For a description of most of the model parameters see section 2.1.
+
 ### Command-line options for running the model
 
 ```bash
