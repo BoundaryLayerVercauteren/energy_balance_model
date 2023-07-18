@@ -10,6 +10,8 @@ import ast
 import dataclasses
 import numpy as np
 
+import one_D_model.model.solve_SDEs
+
 # To be able to run this script on an external system
 sys.path.append(os.getcwd())
 
@@ -17,7 +19,7 @@ from DomeC import process_dome_c_data
 from one_D_model.utils import plot_output as plot, parse_command_line_input, set_plotting_style
 from one_D_model.model import run_SDE_model as run_1D_SDE_model
 from one_D_model.model import parameters, solve_ODE, make_bifurcation_analysis, solve_SDEs, \
-    solve_SDE_stoch_stab_function, compare_stability_functions
+    compare_stability_functions
 
 
 def save_parameters_in_file(param_vals):
@@ -49,7 +51,7 @@ def make_ode_plots(param):
     data_domec = process_dome_c_data.main()
 
     # Solve ODE
-    ODE_sol = solve_ODE.solve_deterministic_ODE(param)
+    ODE_sol = solve_ODE.solve_ODE(param)
 
     # Plot solution of ODE
     plot.make_2D_plot(param, ODE_sol.t.flatten(), ODE_sol.y.flatten(), 'ODE_sol.png')
@@ -98,7 +100,7 @@ def run_sde_model(param, **randomization_type):
     if randomization_type.get('stab_function'):
         # Solve model with a stochastic stability function (eq. 6)
         run_1D_SDE_model.solve_model_with_randomized_parameter(param,
-                                                               solve_SDE_stoch_stab_function.solve_SDE_with_stoch_stab_function,
+                                                               one_D_model.model.solve_SDEs.solve_SDE_with_stoch_stab_function,
                                                                'SDE_stab_func_sol')
     # Save parameters
     save_parameters_in_file(param)
@@ -114,7 +116,7 @@ def run_sde_model_with_nonconstant_wind(param, **randomization_type):
 
     if randomization_type.get('stab_function'):
         run_1D_SDE_model.solve_model_with_randomized_parameter(param,
-                                                               solve_SDE_stoch_stab_function.solve_SDE_with_stoch_stab_function_time_dependent_u,
+                                                               one_D_model.model.solve_SDEs.solve_SDE_with_stoch_stab_function_time_dependent_u,
                                                                'SDE_stab_func_sol')
 
 
