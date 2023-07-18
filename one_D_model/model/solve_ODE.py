@@ -1,46 +1,19 @@
+"""Script for all functions related to the deterministic model (eq. 2)."""
 import numpy as np
 import sdeint
 from scipy.integrate import quad, solve_ivp
 
 
 def calculate_neutral_drag_coefficient(param):
-    """Function to calculate neutral drag coefficient for given reference height, surface roughness length, von karman
-    constant
-
-    Args:
-        param (class): parameter class which is defined in parameters.py
-
-    Returns:
-        (float): neutral drag coefficient
-    """
     return (param.kappa / np.math.log(param.zr / param.z0)) ** 2
 
 
 def calculate_richardson_number(param, delta_T, U):
-    """Function to calculate Richardson number
-
-    Args:
-        param (class): parameter class which is defined in parameters.py
-        delta_T (float): potential temperature
-        U (float): wind velocity
-
-    Returns:
-        (float): Richardson number
-    """
     return param.zr * (param.grav / param.Tr) * (delta_T / (U ** 2))
 
 
 def calculate_stability_function(param, delta_T, U):
-    """Function to calculate stability function (short- or long-tail). The type is specified in the parameter class.
-
-    Args:
-        param (class): parameter class which is defined in parameters.py
-        delta_T (float): potential temperature
-        U (float): wind velocity
-
-    Returns:
-        (float): values of stability function
-    """
+    """Calculate stability function (short- or long-tail). The type is specified in the parameter class."""
     # Calculate Richardson number
     Ri = calculate_richardson_number(param, delta_T, U)
     # Calculate stability function
@@ -49,29 +22,34 @@ def calculate_stability_function(param, delta_T, U):
     elif param.stab_func_type == 'long_tail':
         return np.math.exp(-2 * param.alpha * Ri)
     else:
-        print('The stability function needs to be either sort_tail or long_tail.')
+        print('The stability function needs to be either short_tail or long_tail.')
         exit()
 
 
-def define_deterministic_ODE(t, delta_T, u, Lambda, Qi, param):
-    f_stab = calculate_stability_function(param, delta_T, u)
+def define_ODE(t, delta_T, u, Lambda, Qi, param, f_stab=None):
+    """Define conceptual model for temperature inversions (eq. 2) (without perturbations)."""
+    if f_stab is None:
+        f_stab = calculate_stability_function(param, delta_T, u)
     c_D = calculate_neutral_drag_coefficient(param)
     return (1 / param.cv) * (Qi - Lambda * delta_T - param.rho * param.cp * c_D * u * delta_T * f_stab)
 
 
-def solve_deterministic_ODE(param):
-    return solve_ivp(define_deterministic_ODE, [param.t_start, param.t_end], [param.delta_T_0], t_eval=param.t_span,
+def solve_ODE(param):
+    """Solve conceptual model for temperature inversions (eq. 2) (without perturbations)."""
+    return solve_ivp(define_ODE, [param.t_start, param.t_end], [param.delta_T_0], t_eval=param.t_span,
                      args=(param.U, param.Lambda, param.Q_i, param))
 
 
 def solve_ODE_with_time_dependent_u(param):
-    # Define functions for 2D SDE
+    """Define and solve conceptual model for temperature inversions (eq. 2) with time-varying wind forcing u."""
+    # A stochastic solver (but without a stochastic term) is used to make results comparable with the ones where the
+    # stability function is randomized (see figure 10).
     def _f(delta_T, t):
         # Find index of time step in t_span which is closest to the time step at which the ODE is currently evaluated
         idx = (np.abs(param.t_span - t)).argmin()
         # Find corresponding u value
         param.U = param.u_range[idx]
-        return define_deterministic_ODE(t, delta_T, param.U, param.Lambda, param.Q_i, param)
+        return define_ODE(t, delta_T, param.U, param.Lambda, param.Q_i, param)
 
     def _G(X, t):
         return 0
@@ -80,8 +58,9 @@ def solve_ODE_with_time_dependent_u(param):
 
 
 def calculate_potential(delta_T, u, param):
-    ode = lambda x: define_deterministic_ODE(0.0, x, u, param.Lambda, param.Q_i, param)
-
+    """Calculate potential of conceptual model for temperature inversions (eq. 2). See section 2.2. for further
+    details."""
+    ode = lambda x: define_ODE(0.0, x, u, param.Lambda, param.Q_i, param)
     potential = np.zeros_like(delta_T)
     for i, val in enumerate(delta_T):
         y, _ = quad(ode, 0, val)
