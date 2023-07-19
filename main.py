@@ -2,24 +2,21 @@
 """
 Main script to run conceptual model for temperature inversions (with and without perturbations).
 """
+import ast
+import dataclasses
+import json
 import os
 import sys
 import time
-import json
-import ast
-import dataclasses
-import numpy as np
 
-import one_D_model.model.solve_SDEs
-import one_D_model.post_processing.plot_simulation_output
+import numpy as np
 
 # To be able to run this script on an external system
 sys.path.append(os.getcwd())
 
 from DomeC import process_dome_c_data
-from one_D_model.utils import plot_output as plot, parse_command_line_input, set_plotting_style
-from one_D_model.model import run_SDE_model as run_1D_SDE_model
-from one_D_model.model import parameters, solve_ODE, make_bifurcation_analysis, solve_SDEs, \
+from one_D_model.utils import plot_output, parse_command_line_input, set_plotting_style
+from one_D_model.model import run_SDE_model, parameters, solve_ODE, make_bifurcation_analysis, solve_SDEs, \
     compare_stability_functions
 
 
@@ -55,7 +52,7 @@ def make_ode_plots(param):
     ODE_sol = solve_ODE.solve_ODE(param)
 
     # Plot solution of ODE
-    plot.make_line_plot_of_single_solution(param, ODE_sol.t.flatten(), ODE_sol.y.flatten(), 'ODE_sol.png')
+    plot_output.make_line_plot_of_single_solution(param, ODE_sol.t.flatten(), ODE_sol.y.flatten(), 'ODE_sol.png')
 
     # Plot stability functions (figure 2)
     compare_stability_functions.make_comparison(param.sol_directory_path)
@@ -70,7 +67,7 @@ def make_ode_plots(param):
     make_bifurcation_analysis.make_bifurcation_analysis(param_copy, data_domec)
 
     # Plot potential (figure 3)
-    one_D_model.post_processing.plot_simulation_output.plot_potentials(param)
+    plot_output.plot_potentials(param)
 
 
 def solve_ode_with_variable_u(param):
@@ -89,20 +86,19 @@ def run_sde_model(param, **randomization_type):
      subsections."""
     if randomization_type.get('function'):
         # Solve model with small-scale fluctuations of an unresolved process (eq. 3)
-        run_1D_SDE_model.solve_randomized_model(param)
+        run_SDE_model.solve_randomized_model(param)
     if randomization_type.get('wind'):
         # Solve model with small-scale fluctuations of the wind forcing (eq. 4)
-        run_1D_SDE_model.solve_model_with_randomized_parameter(param, solve_SDEs.solve_SDE_with_stoch_u, 'SDE_u_sol')
+        run_SDE_model.solve_model_with_randomized_parameter(param, solve_SDEs.solve_SDE_with_stoch_u, 'SDE_u_sol')
     if randomization_type.get('wind_and_function'):
         # Solve model with the previous two randomizations combined (eq. 5)
-        run_1D_SDE_model.solve_model_with_randomized_parameter(param,
-                                                               solve_SDEs.solve_SDE_with_stoch_u_and_internal_var,
-                                                               'SDE_u_internal_var_sol')
+        run_SDE_model.solve_model_with_randomized_parameter(param,
+                                                            solve_SDEs.solve_SDE_with_stoch_u_and_internal_var,
+                                                            'SDE_u_internal_var_sol')
     if randomization_type.get('stab_function'):
         # Solve model with a stochastic stability function (eq. 6)
-        run_1D_SDE_model.solve_model_with_randomized_parameter(param,
-                                                               one_D_model.model.solve_SDEs.solve_SDE_with_stoch_stab_function,
-                                                               'SDE_stab_func_sol')
+        run_SDE_model.solve_model_with_randomized_parameter(param, solve_SDEs.solve_SDE_with_stoch_stab_function,
+                                                            'SDE_stab_func_sol')
     # Save parameters
     save_parameters_in_file(param)
 
@@ -116,9 +112,9 @@ def run_sde_model_with_nonconstant_wind(param, **randomization_type):
     np.savetxt(str(param.sol_directory_path) + 'u_range.txt', param.u_range)
 
     if randomization_type.get('stab_function'):
-        run_1D_SDE_model.solve_model_with_randomized_parameter(param,
-                                                               one_D_model.model.solve_SDEs.solve_SDE_with_stoch_stab_function_time_dependent_u,
-                                                               'SDE_stab_func_sol')
+        run_SDE_model.solve_model_with_randomized_parameter(param,
+                                                            solve_SDEs.solve_SDE_with_stoch_stab_function_time_dependent_u,
+                                                            'SDE_stab_func_sol')
 
 
 def create_directory(path):
@@ -202,4 +198,3 @@ if __name__ == "__main__":
     # Run SDE model with time dependent wind velocity
     if sfu:
         run_sde_model_with_nonconstant_wind(params, stab_function=sfu)
-
