@@ -11,6 +11,7 @@ import dataclasses
 import numpy as np
 
 import one_D_model.model.solve_SDEs
+import one_D_model.post_processing.plot_simulation_output
 
 # To be able to run this script on an external system
 sys.path.append(os.getcwd())
@@ -54,7 +55,7 @@ def make_ode_plots(param):
     ODE_sol = solve_ODE.solve_ODE(param)
 
     # Plot solution of ODE
-    plot.make_2D_plot(param, ODE_sol.t.flatten(), ODE_sol.y.flatten(), 'ODE_sol.png')
+    plot.make_line_plot_of_single_solution(param, ODE_sol.t.flatten(), ODE_sol.y.flatten(), 'ODE_sol.png')
 
     # Plot stability functions (figure 2)
     compare_stability_functions.make_comparison(param.sol_directory_path)
@@ -69,7 +70,7 @@ def make_ode_plots(param):
     make_bifurcation_analysis.make_bifurcation_analysis(param_copy, data_domec)
 
     # Plot potential (figure 3)
-    plot.plot_potentials(param)
+    one_D_model.post_processing.plot_simulation_output.plot_potentials(param)
 
 
 def solve_ode_with_variable_u(param):
