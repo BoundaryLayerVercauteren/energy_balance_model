@@ -47,8 +47,6 @@ def read_command_line_input():
         stab_function = args.stab_function
         u = args.u
         uf = args.u_and_function
-        sfu = args.stab_function_and_time_dependent_u
-        ss = args.sensitivity_study
-        odeu = args.ode_with_var_u
 
-    return function, stab_function, u, args.plot, uf, sfu, ss, odeu
+    return function, stab_function, u, args.plot, uf, args.stab_function_and_time_dependent_u, args.sensitivity_study, \
+           args.ode_with_var_u
