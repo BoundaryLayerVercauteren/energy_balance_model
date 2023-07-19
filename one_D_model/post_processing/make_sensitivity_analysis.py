@@ -7,7 +7,6 @@ import random
 # ---------------------------------------------------------------------------
 # Define directory where simulation output is saved
 output_directory = 'output/sensitivity_study/internal_variability/very_weakly/'
-# output_directory = '/uio/hypatia/geofag-personlig/metos-staff/amandink/01_energy_balance_model/01_output/sensitivity_study/internal_variability/weakly_very/'
 
 # Define name of solution file
 # deltaT_file_name = '/SDE_u_sol_delta_T.npy'
