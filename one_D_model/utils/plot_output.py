@@ -3,6 +3,8 @@ import matplotlib
 import numpy as np
 import dataclasses
 
+from matplotlib import pyplot as plt
+
 from one_D_model.model import solve_ODE
 from one_D_model.utils.set_plotting_style import configure_plotting_style
 
@@ -118,3 +120,42 @@ def plot_potentials_and_output_distribution(param_class, delta_T_data):
 
     plt.savefig(param_class.sol_directory_path + 'data_dist_potentials_' + param_copy.stab_func_type + '.pdf',
                 bbox_inches='tight', dpi=300)
+
+
+def plot_potentials(param_class):
+    delta_T_range = np.arange(0, 30, 0.5)
+    u_list_st = [5.3, 5.6, 5.9]
+    u_list_lt = [4.87, 4.89, 4.9]
+
+    color = matplotlib.cm.get_cmap('cmc.batlow', 4).colors
+    markers = ['v', 's', 'p']
+
+    # copy dataclass to prevent overwriting original
+    param_copy = dataclasses.replace(param_class)
+
+    fig, ax = plt.subplots(1, 2, figsize=(15, 5))
+    for idx, u_elem in enumerate(u_list_st):
+        param_copy.stab_func_type = 'short_tail'
+        potential_st = solve_ODE.calculate_potential(delta_T_range, u_elem, param_copy)
+        ax[0].plot(delta_T_range, - potential_st, label='u = ' + str(u_elem), color=color[idx], marker=markers[idx],
+                   markevery=5)
+
+    ax[0].set_xlabel('$\Delta T$ [K]')
+    ax[0].set_ylabel('V [$K^2$/s]')
+    # ax[0].set_ylim(-0.25, 0.15)
+    ax[0].legend()
+    ax[0].set_title('a)', loc='left')
+
+    for idx, u_elem in enumerate(u_list_lt):
+        param_copy.stab_func_type = 'long_tail'
+        potential_lt = solve_ODE.calculate_potential(delta_T_range, u_elem, param_copy)
+        ax[1].plot(delta_T_range[8:44], - potential_lt[8:44], label='u = ' + str(u_elem), color=color[idx],
+                   marker=markers[idx], markevery=5)
+
+    ax[1].set_xlabel('$\Delta T$ [K]')
+    ax[1].set_ylabel('V [$K^2$/s]')
+    # ax[1].set_ylim(-0.25/2, 0.15/2)
+    ax[1].legend()
+    ax[1].set_title('b)', loc='left')
+
+    plt.savefig(param_class.sol_directory_path + 'potentials.pdf', bbox_inches='tight', dpi=300)
