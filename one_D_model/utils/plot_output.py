@@ -3,11 +3,10 @@ import numpy as np
 import dataclasses
 
 from matplotlib import pyplot as plt
+import cmcrameri as cmc
 
 from one_D_model.model import solve_ODE
 from one_D_model.utils.set_plotting_style import configure_plotting_style
-
-plt.style.use('science')
 
 # Set plotting style
 configure_plotting_style('full_page_width')
