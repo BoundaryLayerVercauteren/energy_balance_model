@@ -1,9 +1,9 @@
-import matplotlib
-import numpy as np
 import dataclasses
 
-from matplotlib import pyplot as plt
 import cmcrameri as cmc
+import matplotlib
+import numpy as np
+from matplotlib import pyplot as plt
 
 from one_D_model.model import solve_ODE
 from one_D_model.utils.set_plotting_style import configure_plotting_style

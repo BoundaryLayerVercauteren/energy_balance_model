@@ -1,5 +1,6 @@
-import pandas as pd
 import numpy as np
+import pandas as pd
+
 from DomeC.process_dome_c_data import prepare_dome_c_data
 
 

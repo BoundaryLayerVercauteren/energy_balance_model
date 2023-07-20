@@ -1,7 +1,8 @@
 import json
-import numpy as np
 from operator import itemgetter
+
 import matplotlib.pyplot as plt
+import numpy as np
 
 # Set plotting style
 plt.style.use('science')

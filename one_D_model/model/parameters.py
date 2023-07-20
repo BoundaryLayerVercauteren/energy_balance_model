@@ -1,7 +1,8 @@
 """File where values for all parameters which are used by the model can be set."""
 
-import numpy as np
 from dataclasses import dataclass
+
+import numpy as np
 from dataclasses_json import dataclass_json
 
 

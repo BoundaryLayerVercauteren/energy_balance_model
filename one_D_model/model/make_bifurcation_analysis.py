@@ -1,10 +1,11 @@
 """Script to perform bifurcation analysis for the model (eq. 2)."""
 import traceback
-import PyDSTool as dst
+
 import matplotlib
 import numpy as np
+import PyDSTool as dst
 from matplotlib import pyplot as plt
-from matplotlib.offsetbox import AnchoredOffsetbox, TextArea, HPacker, VPacker
+from matplotlib.offsetbox import AnchoredOffsetbox, HPacker, TextArea, VPacker
 
 from one_D_model.utils.set_plotting_style import configure_plotting_style
 

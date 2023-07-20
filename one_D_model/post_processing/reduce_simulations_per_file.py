@@ -1,6 +1,7 @@
-import numpy as np
-import random
 import os
+import random
+
+import numpy as np
 
 # Define directory where data is saved
 data_directory = 'output/1000_sim_short_tail_stab_func_multi_noise_var_u/sigma_0_1_start_very/simulations/'

@@ -15,9 +15,11 @@ import numpy as np
 sys.path.append(os.getcwd())
 
 from DomeC import process_dome_c_data
-from one_D_model.utils import plot_output, parse_command_line_input, set_plotting_style
-from one_D_model.model import run_SDE_model, parameters, solve_ODE, make_bifurcation_analysis, solve_SDEs, \
-    compare_stability_functions
+from one_D_model.model import (compare_stability_functions,
+                               make_bifurcation_analysis, parameters,
+                               run_SDE_model, solve_ODE, solve_SDEs)
+from one_D_model.utils import (parse_command_line_input, plot_output,
+                               set_plotting_style)
 
 
 def save_parameters_in_file(param_vals):

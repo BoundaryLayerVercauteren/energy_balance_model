@@ -1,8 +1,9 @@
-import os
-import numpy as np
 import json
-from concurrent.futures import ProcessPoolExecutor
+import os
 import random
+from concurrent.futures import ProcessPoolExecutor
+
+import numpy as np
 
 # ---------------------------------------------------------------------------
 # Define directory where simulation output is saved

@@ -5,7 +5,6 @@ import numpy as np
 
 from one_D_model.utils.set_plotting_style import configure_plotting_style
 
-
 # Set plotting style
 configure_plotting_style('full_page_width')
 

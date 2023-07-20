@@ -1,5 +1,6 @@
-import pandas as pd
 import numpy as np
+import pandas as pd
+
 
 def load_data(file_name):
     # load data and skip comments in header

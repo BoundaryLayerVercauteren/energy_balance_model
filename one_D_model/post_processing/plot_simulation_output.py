@@ -3,11 +3,11 @@ import dataclasses
 import os
 from dataclasses import dataclass
 
+import cmcrameri as cmc
 import matplotlib
 import numpy as np
 from dataclasses_json import dataclass_json
 from matplotlib import pyplot as plt
-import cmcrameri as cmc
 
 from one_D_model.model import solve_ODE
 from one_D_model.utils import plot_output
