@@ -10,7 +10,7 @@ from dataclasses_json import dataclass_json
 @dataclass
 class Parameters:
     Q_i: float = 50.0  # isothermal net radiation [W/m^2]
-    Lambda: float = 2.0  # lumped parameter representing all feedback from soil heat conduction and radiative cooling as a net linear effect [W/m^2K]
+    Lambda: float = 2.0  # lumped parameter [W/m^2K]
     kappa: float = 0.4  # von Karman constant [-]
     cv: float = 1000  # heat capacity of the soil per surface area [J/m^2K]
     zr: float = 10.0  # reference height [m]
@@ -22,7 +22,9 @@ class Parameters:
     U: float = 5.6  # wind speed at reference height [m/s]
     alpha: float = 5.0  # parameter for stability function
 
-    stab_func_type: str = 'short_tail'  # stability function type, options are [short_tail, long_tail]
+    stab_func_type: str = (
+        "short_tail"  # stability function type, options are [short_tail, long_tail]
+    )
 
     t_start: float = 0.0  # simulation start time
     t_end_h: float = 1 * 1.0  # simulation end time [hours]

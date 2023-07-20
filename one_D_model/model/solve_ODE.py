@@ -9,7 +9,7 @@ def calculate_neutral_drag_coefficient(param):
 
 
 def calculate_richardson_number(param, delta_T, U):
-    return param.zr * (param.grav / param.Tr) * (delta_T / (U ** 2))
+    return param.zr * (param.grav / param.Tr) * (delta_T / (U**2))
 
 
 def calculate_stability_function(param, delta_T, U):
@@ -17,12 +17,12 @@ def calculate_stability_function(param, delta_T, U):
     # Calculate Richardson number
     Ri = calculate_richardson_number(param, delta_T, U)
     # Calculate stability function
-    if param.stab_func_type == 'short_tail':
+    if param.stab_func_type == "short_tail":
         return np.math.exp(-2 * param.alpha * Ri - (param.alpha * Ri) ** 2)
-    elif param.stab_func_type == 'long_tail':
+    elif param.stab_func_type == "long_tail":
         return np.math.exp(-2 * param.alpha * Ri)
     else:
-        print('The stability function needs to be either short_tail or long_tail.')
+        print("The stability function needs to be either short_tail or long_tail.")
         exit()
 
 
@@ -31,17 +31,25 @@ def define_ODE(t, delta_T, u, Lambda, Qi, param, f_stab=None):
     if f_stab is None:
         f_stab = calculate_stability_function(param, delta_T, u)
     c_D = calculate_neutral_drag_coefficient(param)
-    return (1 / param.cv) * (Qi - Lambda * delta_T - param.rho * param.cp * c_D * u * delta_T * f_stab)
+    return (1 / param.cv) * (
+        Qi - Lambda * delta_T - param.rho * param.cp * c_D * u * delta_T * f_stab
+    )
 
 
 def solve_ODE(param):
     """Solve conceptual model for temperature inversions (eq. 2) (without perturbations)."""
-    return solve_ivp(define_ODE, [param.t_start, param.t_end], [param.delta_T_0], t_eval=param.t_span,
-                     args=(param.U, param.Lambda, param.Q_i, param))
+    return solve_ivp(
+        define_ODE,
+        [param.t_start, param.t_end],
+        [param.delta_T_0],
+        t_eval=param.t_span,
+        args=(param.U, param.Lambda, param.Q_i, param),
+    )
 
 
 def solve_ODE_with_time_dependent_u(param):
     """Define and solve conceptual model for temperature inversions (eq. 2) with time-varying wind forcing u."""
+
     # A stochastic solver (but without a stochastic term) is used to make results comparable with the ones where the
     # stability function is randomized (see figure 10).
     def _f(delta_T, t):

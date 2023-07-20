@@ -11,7 +11,9 @@ def solve_SDE_with_internal_var(param):
     """Conceptual model for temperature inversions with additive noise term to represent small-scale fluctuations of an
     unresolved process (eq. 3)."""
     # Note: itoint(f, G, y0, tspan) for Ito equation dy = f(y,t)dt + G(y,t)dW
-    f = lambda delta_T, t: solve_ODE.define_ODE(t, delta_T, param.U, param.Lambda, param.Q_i, param)
+    f = lambda delta_T, t: solve_ODE.define_ODE(
+        t, delta_T, param.U, param.Lambda, param.Q_i, param
+    )
     G = lambda delta_T, t: param.sigma_delta_T
     return sdeint.itoint(f, G, param.delta_T_0, param.t_span)
 
@@ -24,8 +26,12 @@ def solve_SDE_with_stoch_u(param):
 
     # Define deterministic part
     def _f(X, t):
-        return np.array([solve_ODE.define_ODE(t, X[0], X[1], param.Lambda, param.Q_i, param),
-                         param.relax_u * (X[1] - param.U)])
+        return np.array(
+            [
+                solve_ODE.define_ODE(t, X[0], X[1], param.Lambda, param.Q_i, param),
+                param.relax_u * (X[1] - param.U),
+            ]
+        )
 
     # Define stochastic part
     def _G(X, t):
@@ -43,8 +49,12 @@ def solve_SDE_with_stoch_u_and_internal_var(param):
 
     # Define deterministic part
     def _f(X, t):
-        return np.array([solve_ODE.define_ODE(t, X[0], X[1], param.Lambda, param.Q_i, param),
-                         param.relax_u * (X[1] - param.U)])
+        return np.array(
+            [
+                solve_ODE.define_ODE(t, X[0], X[1], param.Lambda, param.Q_i, param),
+                param.relax_u * (X[1] - param.U),
+            ]
+        )
 
     # Define stochastic part
     def _G(X, t):
@@ -62,8 +72,15 @@ def solve_SDE_with_stoch_stab_function(param):
 
     # Define deterministic part
     def _f(X, t):
-        return np.array([solve_ODE.define_ODE(t, X[0], param.U, param.Lambda, param.Q_i, param, X[1]),
-                         param.relax_phi * (X[1] - calculate_stability_function(param, X[0], param.U))])
+        return np.array(
+            [
+                solve_ODE.define_ODE(
+                    t, X[0], param.U, param.Lambda, param.Q_i, param, X[1]
+                ),
+                param.relax_phi
+                * (X[1] - calculate_stability_function(param, X[0], param.U)),
+            ]
+        )
 
     # Define stochastic part
     def _G(X, t):
@@ -93,8 +110,15 @@ def solve_SDE_with_stoch_stab_function_time_dependent_u(param):
         idx = (np.abs(param.t_span - t)).argmin()
         # Find corresponding u value
         param.U = param.u_range[idx]
-        return np.array([solve_ODE.define_ODE(t, X[0], param.U, param.Lambda, param.Q_i, param, X[1]),
-                         param.relax_phi * (X[1] - calculate_stability_function(param, X[0], param.U))])
+        return np.array(
+            [
+                solve_ODE.define_ODE(
+                    t, X[0], param.U, param.Lambda, param.Q_i, param, X[1]
+                ),
+                param.relax_phi
+                * (X[1] - calculate_stability_function(param, X[0], param.U)),
+            ]
+        )
 
     # Define stochastic part
     def _G(X, t):
