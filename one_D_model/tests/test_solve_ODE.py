@@ -3,15 +3,10 @@ import math
 import numpy as np
 import pytest
 
-from one_D_model.model.solve_ODE import (
-    calculate_neutral_drag_coefficient,
-    calculate_potential,
-    calculate_richardson_number,
-    calculate_stability_function,
-    define_ODE,
-    solve_ODE,
-    solve_ODE_with_time_dependent_u,
-)
+from one_D_model.model.solve_ODE import (calculate_neutral_drag_coefficient,
+                                         calculate_richardson_number,
+                                         calculate_stability_function,
+                                         solve_ODE)
 
 
 # Define a mock parameter class for testing purposes
@@ -83,36 +78,8 @@ def test_calculate_stability_function_invalid_type():
         calculate_stability_function(param, delta_T, U)
 
 
-# Test cases for the 'define_ODE' function
-# def test_define_ODE():
-#     param = MockParameters()
-#     t = 0.0
-#     delta_T = 5.0
-#     u = 10.0
-#     Lambda = 0.01
-#     Qi = 100.0
-#     expected_result = pytest.approx(-0.09310838023522712)
-#     assert define_ODE(t, delta_T, u, Lambda, Qi, param) == expected_result
-
-
 # Test cases for the 'solve_ODE' function
 def test_solve_ODE():
     param = MockParameters()
     result = solve_ODE(param)
     assert result.success
-
-
-# def test_solve_ODE_with_time_dependent_u():
-#     param = MockParameters()
-#     result = solve_ODE_with_time_dependent_u(param)
-#     assert result.shape == param.t_span.shape
-#
-#
-# # Test cases for the 'calculate_potential' function
-# def test_calculate_potential():
-#     param = MockParameters()
-#     delta_T = np.linspace(0, 5, 11)
-#     u = 10.0
-#     potential = calculate_potential(delta_T, u, param)
-#     expected_result = np.array([0.0, 0.175, 0.353, 0.533, 0.714, 0.896, 1.080, 1.265, 1.452, 1.640, 1.830])
-#     assert np.allclose(potential, expected_result, atol=1e-3)
