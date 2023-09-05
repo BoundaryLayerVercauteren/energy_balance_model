@@ -13,15 +13,15 @@ from one_D_model.model import solve_ODE
 from one_D_model.utils import plot_output
 
 # Define directory where simulation output is saved
-output_directory = "output/20230719_1159_24/"
+output_directory = "output/0_18/"
 
 # Specify what type of simulation was run and shall be plotted
 sim_type_options = ["internal_var", "wind", "internal_var_wind", "turbulence"]
-sim_type = sim_type_options[3]
+sim_type = sim_type_options[0]
 
 # Load data
 if sim_type == sim_type_options[0]:
-    file_name_delta_T = "SDE_internal_var_sol_delta_T"
+    file_name_delta_T = "SDE_sol_delta_T"
     SDE_sol_delta_T = np.load(output_directory + file_name_delta_T + ".npy")
 else:
     if sim_type == sim_type_options[1]:
@@ -85,7 +85,7 @@ def make_distribution_plot(values, params, file_name, xlabel):
     plt.hist(values, 100, color=color[0])
     # plt.ylim((0, 3.25 * 10 ** 6))
     plt.xlabel(xlabel)
-    plt.ylabel(r"Density of $\Delta T$")
+    plt.ylabel(r"Histogram of $\Delta T$")
     plt.savefig(params.sol_directory_path + file_name, bbox_inches="tight", dpi=300)
     # To clear memory
     plt.cla()  # Clear the current axes.
@@ -155,10 +155,10 @@ def plot_potentials_and_output_distribution(param_class, delta_T_data, file_str)
 
     ax1.set_xlabel(r"$\Delta T$ [K]")
     ax1.set_ylabel("V [$K^2$/s]")
-    ax2.set_ylabel(r"Density of $\Delta T$", color=color[1], alpha=1)
+    ax2.set_ylabel(r"Histogram of $\Delta T$", color=color[1], alpha=1)
     ax2.tick_params(axis="y", labelcolor=color[1])
 
-    # ax2.set_ylim((0.0, 4.5 * 10 ** 6))
+    ax2.set_ylim((0.0, 4.5 * 10 ** 6))
     ax1.set_title(title, loc="left")
     ax1.legend()  # loc='upper left')
 
@@ -175,7 +175,7 @@ plot_potentials_and_output_distribution(
 
 # Plot ten time series for every simulation type
 if params.num_simulation >= 1:
-    vis_idx = np.linspace(0, params.num_simulation - 1, 10).astype(int)
+    vis_idx = np.linspace(0, 500 - 1, 10).astype(int)
     for idx in vis_idx:
         if sim_type == sim_type_options[0]:
             plot_output.make_line_plot_of_single_solution(

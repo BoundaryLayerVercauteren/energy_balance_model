@@ -24,11 +24,12 @@ plt.rc("axes", titlesize=SMALL_SIZE)  # fontsize of the axes title
 plt.rc("axes", labelsize=MEDIUM_SIZE)  # fontsize of the x and y labels
 plt.rc("xtick", labelsize=SMALL_SIZE)  # fontsize of the tick labels
 plt.rc("ytick", labelsize=SMALL_SIZE)  # fontsize of the tick labels
-plt.rc("legend", fontsize=SMALL_SIZE)  # legend fontsize
+plt.rc("legend", fontsize=MEDIUM_SIZE)  # legend fontsize
 plt.rc("figure", titlesize=BIGGER_SIZE)  # fontsize of the figure title
 
 # Define directory where simulation output is saved
-output_directory = "/mn/vann/amandink/01_energy_balance_model/01_output/1000_sim_short_tail_stab_func_multi_noise_var_u/"
+output_directory = ("/mn/vann/amandink/01_energy_balance_model/01_output/"
+                    "1000_sim_short_tail_stab_func_multi_noise_var_u/")
 sde_directory_vw = output_directory + "sigma_0_1_start_very/simulations/"
 sde_directory_wv = output_directory + "sigma_0_1_start_weakly/simulations/"
 
@@ -134,6 +135,27 @@ ax[0, 0].tick_params(axis="y", labelcolor="green")
 
 ax[0, 0].set_title("a)", loc="left")
 ax1.set_yticklabels([])
+
+ax[0, 0].legend(
+    handles=[
+        plt_perturb_region,
+        plt_u[0],
+        plt_Rb_all_sim[0],
+        plt_Rb_one_sim[0],
+        plt_Rb_mean[0],
+    ],
+    labels=[
+        "perturbation region",
+        "forcing",
+        r"$R_b$: 500 model runs",
+        r"$R_b$: 1 model run",
+        r"$R_b$: mean",
+    ],
+    facecolor="white",
+    edgecolor="black",
+    frameon=True,
+    prop={"size": SMALL_SIZE},
+)
 # ----------------------------------
 # Second panel: plot of delta T over time
 ax[1, 0].set_prop_cycle("color", colors)
@@ -155,6 +177,21 @@ plt_sims_delta_T_mean = ax[1, 0].plot(
 
 ax[1, 0].set_ylabel(r"$\Delta T$ [K]")
 ax[1, 0].set_title("b)", loc="left")
+
+ax[1, 0].legend(
+    handles=[
+        plt_sims_delta_T_all[0],
+        plt_sims_delta_T_one[0],
+        plt_sims_delta_T_mean[0],
+        plt_det_sol[0],
+    ],
+    labels=["500 model runs", "1 model run", "mean", "deterministic model (eq. 2)"],
+    facecolor="white",
+    edgecolor="black",
+    frameon=True,
+    prop={"size": SMALL_SIZE},
+)
+
 # ----------------------------------
 # Third panel: plot of perturbed stability function over time
 ax[2, 0].set_prop_cycle("color", colors)
@@ -173,6 +210,16 @@ plt_sims_sf_mean = ax[2, 0].plot(
 ax[2, 0].set_ylabel(r"$\phi$")
 ax[2, 0].set_xlabel("time [h]")
 ax[2, 0].set_title("c)", loc="left")
+
+ax[2, 0].legend(
+    handles=[plt_sims_sf_all[0], plt_sims_sf_one[0], plt_sims_sf_mean[0]],
+    labels=["500 model runs", "1 model run", "mean"],
+    facecolor="white",
+    edgecolor="black",
+    frameon=True,
+    prop={"size": SMALL_SIZE},
+)
+
 # ----------------------------------
 # Free memory
 SDE_stab_func_sol_sf_vw = np.nan
@@ -253,7 +300,7 @@ ax[0, 1].legend(
     facecolor="white",
     edgecolor="black",
     frameon=True,
-    prop={"size": SMALL_SIZE / 2},
+    prop={"size": SMALL_SIZE},
 )
 ax[0, 1].get_legend().legendHandles[2].set_color("gray")
 for line in ax[0, 1].get_legend().get_lines():
@@ -289,7 +336,7 @@ ax[1, 1].legend(
     facecolor="white",
     edgecolor="black",
     frameon=True,
-    prop={"size": SMALL_SIZE / 2},
+    prop={"size": SMALL_SIZE},
 )
 ax[1, 1].get_legend().legendHandles[0].set_color("gray")
 for line in ax[1, 1].get_legend().get_lines():
@@ -320,7 +367,7 @@ ax[2, 1].legend(
     facecolor="white",
     edgecolor="black",
     frameon=True,
-    prop={"size": SMALL_SIZE / 2},
+    prop={"size": SMALL_SIZE},
 )
 ax[2, 1].get_legend().legendHandles[0].set_color("gray")
 for line in ax[2, 1].get_legend().get_lines():

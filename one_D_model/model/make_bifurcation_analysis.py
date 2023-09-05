@@ -10,9 +10,9 @@ from matplotlib.offsetbox import AnchoredOffsetbox, HPacker, TextArea, VPacker
 from one_D_model.utils.set_plotting_style import configure_plotting_style
 
 # Set font sizes for plots
-small_font_size = 13
-medium_font_size = 15
-large_font_size = 18
+small_font_size = 15
+medium_font_size = 17
+large_font_size = 20
 configure_plotting_style(
     None,
     small_size=small_font_size,
@@ -196,6 +196,9 @@ def make_bifurcation_diagram(DSargs, ax, title, data_val=None, save_values=False
     ax.set_xlim((0, 10))
     ax.set_ylim((0, 26))
 
+    plt.xticks(fontsize=small_font_size)
+    plt.yticks(fontsize=small_font_size)
+
     # Set labels for x and y axes
     if data_val is not None:
         # y axes labels
@@ -237,7 +240,7 @@ def make_bifurcation_diagram(DSargs, ax, title, data_val=None, save_values=False
             frameon=False,
             bbox_transform=ax.transAxes,
             borderpad=0.0,
-            bbox_to_anchor=(-0.08, 0.5),
+            bbox_to_anchor=(-0.11, 0.5),
         )
         ax.add_artist(anchored_ybox)
         # x axes labels
@@ -267,15 +270,15 @@ def make_bifurcation_diagram(DSargs, ax, title, data_val=None, save_values=False
             frameon=False,
             bbox_transform=ax.transAxes,
             borderpad=0.0,
-            bbox_to_anchor=(0.5, -0.09),
+            bbox_to_anchor=(0.5, -0.11),
         )
         ax.add_artist(anchored_xbox)
     else:
-        ax.set_xlabel("U [$\mathrm{ms^{-1}}$]", fontsize=medium_font_size)
-        ax.set_ylabel(r"$\Delta T_{eq}$ [K]", fontsize=medium_font_size)
+        ax.set_xlabel("U [$\mathrm{ms^{-1}}$]", fontsize=medium_font_size, labelpad=7)
+        ax.set_ylabel(r"$\Delta T_{eq}$ [K]", fontsize=medium_font_size, labelpad=7)
 
-    ax.legend()
-    ax.set_title(title, loc="left")
+    ax.legend(fontsize=medium_font_size)
+    ax.set_title(title, loc="left", fontsize=large_font_size)
 
 
 def make_bifurcation_analysis(params, data=None, save_values=False):
@@ -297,6 +300,8 @@ def make_bifurcation_analysis(params, data=None, save_values=False):
     else:
         fig_label = "b)"
     make_bifurcation_diagram(bif_args, ax, fig_label)
+
+    fig.tight_layout()
 
     plt.savefig(
         params.sol_directory_path
