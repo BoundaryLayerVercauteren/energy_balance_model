@@ -155,7 +155,14 @@ ax[0, 0].legend(
     edgecolor="black",
     frameon=True,
     prop={"size": SMALL_SIZE},
+    loc="upper right",
+    bbox_to_anchor=(1,1)
 )
+
+ax[0, 0].get_legend().legendHandles[2].set_color("gray")
+for line in ax[0, 0].get_legend().get_lines():
+    line.set_linewidth(2.0)
+
 # ----------------------------------
 # Second panel: plot of delta T over time
 ax[1, 0].set_prop_cycle("color", colors)
@@ -185,12 +192,16 @@ ax[1, 0].legend(
         plt_sims_delta_T_mean[0],
         plt_det_sol[0],
     ],
-    labels=["500 model runs", "1 model run", "mean", "deterministic model (eq. 2)"],
+    labels=["500 model runs", "1 model run", "mean", "deterministic model\n(eq. 2)"],
     facecolor="white",
     edgecolor="black",
     frameon=True,
     prop={"size": SMALL_SIZE},
 )
+
+ax[1, 0].get_legend().legendHandles[0].set_color("gray")
+for line in ax[1, 0].get_legend().get_lines():
+    line.set_linewidth(2.0)
 
 # ----------------------------------
 # Third panel: plot of perturbed stability function over time
@@ -219,6 +230,10 @@ ax[2, 0].legend(
     frameon=True,
     prop={"size": SMALL_SIZE},
 )
+
+ax[2, 0].get_legend().legendHandles[0].set_color("gray")
+for line in ax[2, 0].get_legend().get_lines():
+    line.set_linewidth(2.0)
 
 # ----------------------------------
 # Free memory
@@ -332,7 +347,7 @@ ax[1, 1].legend(
         plt_sims_delta_T_mean[0],
         plt_det_sol[0],
     ],
-    labels=["500 model runs", "1 model run", "mean", "deterministic model (eq. 2)"],
+    labels=["500 model runs", "1 model run", "mean", "deterministic model\n(eq. 2)"],
     facecolor="white",
     edgecolor="black",
     frameon=True,
