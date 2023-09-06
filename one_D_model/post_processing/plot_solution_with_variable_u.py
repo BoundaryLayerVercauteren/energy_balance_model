@@ -28,8 +28,10 @@ plt.rc("legend", fontsize=MEDIUM_SIZE)  # legend fontsize
 plt.rc("figure", titlesize=BIGGER_SIZE)  # fontsize of the figure title
 
 # Define directory where simulation output is saved
-output_directory = ("/mn/vann/amandink/01_energy_balance_model/01_output/"
-                    "1000_sim_short_tail_stab_func_multi_noise_var_u/")
+output_directory = (
+    "/mn/vann/amandink/01_energy_balance_model/01_output/"
+    "1000_sim_short_tail_stab_func_multi_noise_var_u/"
+)
 sde_directory_vw = output_directory + "sigma_0_1_start_very/simulations/"
 sde_directory_wv = output_directory + "sigma_0_1_start_weakly/simulations/"
 
@@ -156,7 +158,7 @@ ax[0, 0].legend(
     frameon=True,
     prop={"size": SMALL_SIZE},
     loc="upper right",
-    bbox_to_anchor=(1,1)
+    bbox_to_anchor=(1, 1),
 )
 
 ax[0, 0].get_legend().legendHandles[2].set_color("gray")
@@ -316,6 +318,8 @@ ax[0, 1].legend(
     edgecolor="black",
     frameon=True,
     prop={"size": SMALL_SIZE},
+    loc="upper left",
+    bbox_to_anchor=(0, 0),
 )
 ax[0, 1].get_legend().legendHandles[2].set_color("gray")
 for line in ax[0, 1].get_legend().get_lines():
