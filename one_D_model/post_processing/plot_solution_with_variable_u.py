@@ -319,7 +319,7 @@ ax[0, 1].legend(
     frameon=True,
     prop={"size": SMALL_SIZE},
     loc="upper left",
-    bbox_to_anchor=(0, 0),
+    bbox_to_anchor=(0, 1),
 )
 ax[0, 1].get_legend().legendHandles[2].set_color("gray")
 for line in ax[0, 1].get_legend().get_lines():
